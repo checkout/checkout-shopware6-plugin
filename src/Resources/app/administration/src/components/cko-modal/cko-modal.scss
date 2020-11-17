@@ -1,0 +1,88 @@
+@import "~scss/variables";
+
+// modal size
+.sw-modal .sw-modal__dialog{
+
+    width:500px;
+
+}
+// modal title
+.sw-modal .sw-modal__title{
+
+    margin: 0;
+    font-weight: 700;
+    font-size: 18px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+// modal footer height
+.sw-modal .sw-modal__footer{
+    
+    height: 62px;
+
+}
+
+// void modal
+.sw-modal .voidLabel{
+
+    font-weight: 600;
+    font-size: 18px;
+    color:#1e242e;
+    display: inline-block;
+
+}
+.sw-modal .voidAmount{
+
+    font-size: 20px;
+}
+
+// capture modal
+.sw-modal .captureLabel{
+
+    font-weight: 600;
+    font-size: 18px;
+    color:#1e242e;
+    display: inline-block;
+}
+.sw-modal .captureAmountLabel{
+
+    font-weight: 450;
+    font-size: 17px;
+    //color: #12161b;
+
+}
+.sw-modal .captureAmountInput{
+    
+    display: inline-block;
+    border: 1px solid #9e9292;
+    border-radius: 4px;
+    height: 24px;
+    padding-left: 10px
+
+}
+
+// refund modal
+.sw-modal .refundLabel{
+
+    font-weight: 600;
+    font-size: 18px;
+    color:#1e242e;
+    display: inline-block;
+
+}
+.sw-modal .refundAmountLabel{
+
+    font-weight: 450;
+    font-size: 17px;
+    //color: #12161b;
+}
+.sw-modal .refundAmountInput{
+
+    display: inline-block;
+    border: 1px solid #9e9292;
+    border-radius: 4px;
+    height: 24px;
+    padding-left: 10px
+    
+}

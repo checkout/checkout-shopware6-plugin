@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/master/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>Checkout.com</title>
+        <title lang="de-DE">Checkout.com</title>
+        <title lang="nl-NL">Checkout.com</title>
+
+        <input-field>
+            <name>publicKey</name>
+            <label>Public Key</label>
+        </input-field>
+
+        <input-field>
+            <name>secretKey</name>
+            <label>Secret Key</label>
+        </input-field>
+
+        <input-field type="url">
+            <name>ckoUrl</name>
+            <label>Checkout.com Url</label>
+            <defaultValue>https://api.checkout.com/</defaultValue>
+        </input-field>
+
+        <input-field type="url">
+            <name>cloudPluginUrl</name>
+            <label>Cloud Plugin Url</label>
+            <defaultValue>https://shopware6.cko-qa.ckotech.co/</defaultValue>
+        </input-field>
+
+    </card>
+</config>

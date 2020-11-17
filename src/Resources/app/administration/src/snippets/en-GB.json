@@ -1,0 +1,64 @@
+{
+  "checkoutcom": {
+    "info": {
+      "ckoTitle": "Checkout.com"
+    },
+    "actions": {
+      "capture": "Capture",
+      "void": "Void",
+      "refund": "Refund"
+    },
+    "status": {
+      "authorized": "Authorized",
+      "captured": "Captured",
+      "declined": "Declined",
+      "refunded": "Refunded",
+      "voided": "Voided",
+      "partiallyRefunded": "Partially Refunded",
+      "partiallyCaptured": "Partially Captured",
+      "capturePending": "Capture Pending",
+      "paymentPending": "Payment Pending",
+      "paymentExpired": "Payment Expired",
+      "paymentCanceled": "Payment Canceled",
+      "authorizedFlagged": "Authorised-flagged"
+    },
+    "label": {
+      "paymentId": "Payment ID",
+      "date": "Time Stamp",
+      "status": "Status",
+      "actionId": "Action ID",
+      "amount": "Amount",
+      "action": "Action",
+      "paymentMethod": "Payment Method :"
+    },
+    "error": {
+      "globalErrorMsg": "An error has occured."
+    },
+    "ModalMessageVoid": {
+      "voidTitle": "Void",
+      "confirmVoid": "Confirm Void",
+      "paymentAmount": "Payment Amount",
+      "voidButton": "Void payment"
+    },
+    "ModalMessageRefund": {
+      "refundTitle": "Refund",
+      "partialRefund": "Partial Refund",
+      "confirmRefund": "Confirm Refund",
+      "refundAmount": "Refund Amount",
+      "remainingAmount": "Remaining Amount"
+    },
+    "ModalMessageCapture": {
+      "captureTitle": "Capture",
+      "partialCapture": "Partial Capture",
+      "confirmCapture": "Confirm Capture",
+      "captureAmount": "Capture Amount"
+    },
+    "message": {
+      "inputmessage": "Please enter the amount",
+      "captureError": "Please enter amount less or equal to amount authorized",
+      "refundError1": "Please enter amount less or equal to amount captured",
+      "refundError2": "Please enter amount less or equal to total amount refunded",
+      "noActions": "No actions available"
+    }
+  }
+}

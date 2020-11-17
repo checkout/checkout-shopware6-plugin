@@ -1,0 +1,112 @@
+{% block cko_modal_component %}
+
+
+<sw-modal title="Checkout.com"
+          {# style="max-width: 300px" #}
+          :isLoading="isLoading"
+          @modal-close="closeModal"
+          >
+
+{% block content %}
+
+{% block content_body %}
+
+    
+        {# void action modal element #}
+        <template v-if="action == 'void'">
+        <div>
+            <label class="voidLabel">{{ $tc('checkoutcom.ModalMessageVoid.confirmVoid') }}<label><br>
+        </div>
+        <br>
+        <div>
+            <label class="paymentLabel">{{ $tc('checkoutcom.ModalMessageVoid.paymentAmount') }}<label><br>
+        </div>
+        <div>
+            <label class="voidAmount">{{orderInfo.customFields["payment_approved"].amount }} </label>
+            <span class="input-group-addon">{{(orderInfo.currency.translated.shortName)}}</span>
+        </div>
+        </template>
+
+        {# capture action modal element #}
+        <template v-if="action == 'capture'">
+        <div>
+            <label class="captureLabel">{{ $tc('checkoutcom.ModalMessageCapture.confirmCapture') }}</label><br>
+        </div>
+        <br>
+        <div>
+            <label class="captureAmountLabel">{{ $tc('checkoutcom.ModalMessageCapture.captureAmount') }}</label>
+        </div>
+        <div>
+            <span class="currency">{{(orderInfo.currency.translated.shortName)}}</span>
+            <input  class="captureAmountInput" type="number" id="amount" placeholder ="0.00" message = "{{ $tc('checkoutcom.message.inputmessage') }}">
+        </div>
+        <div>
+            <label id="captureError" style="color: red"></label>
+        </div>
+        </template>
+
+        {# refund action modal element #}
+         <template v-if="action == 'refund'">
+        <div>
+            <label class="refundLabel">{{ $tc('checkoutcom.ModalMessageRefund.confirmRefund') }}</label><br>
+        </div>
+        <br>
+        <div>
+            <label class="refundAmountLabel">{{ $tc('checkoutcom.ModalMessageRefund.refundAmount') }}</label>
+        </div>
+        <div>
+            <span class="currency">{{(orderInfo.currency.translated.shortName)}}</span>
+            <input  class="refundAmountInput" type="number" id="amount" placeholder ="0.00" message = "{{ $tc('checkoutcom.message.inputmessage') }}">
+        </div>
+        <div>
+            <label id="refundError" style="color: red"></label>
+        </div>
+        </template>
+    
+
+{% endblock content_body %}
+
+{% block modal_footer %}
+<template #modal-footer>
+
+    <div class= "Button">
+    {# capture button #}
+        <sw-button v-if="action =='capture'"
+                :disabled="false"
+                :square="false"
+                :block="false" 
+                 variant="primary"
+                :isLoading="false"
+                @click="validate('capture',paymentMethod)">
+        {{ $tc('checkoutcom.ModalMessageCapture.captureTitle') }}
+        </sw-button>
+    {# refund button #}
+          <sw-button v-if="action =='refund'"
+                :disabled="false"
+                :square="false"
+                 variant="primary"
+                :block="false" 
+                :isLoading="false"
+                @click="validate('refund',paymentMethod)">
+        {{ $tc('checkoutcom.ModalMessageRefund.refundTitle') }}
+        </sw-button>
+    {# void button #}
+          <sw-button v-if="action =='void'"
+                :disabled="false"
+                :square="false"
+                :block="false"
+                 variant="primary"
+                :isLoading="false"
+                @click="voidOrder(paymentMethod)">
+        {{ $tc('checkoutcom.ModalMessageVoid.voidTitle') }}
+        </sw-button>
+    </div>
+</template>
+{% endblock modal_footer %}
+
+{% endblock content %}
+
+</sw-modal>
+
+
+{% endblock cko_modal_component %}

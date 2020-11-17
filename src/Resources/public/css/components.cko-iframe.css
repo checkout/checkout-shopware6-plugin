@@ -1,0 +1,142 @@
+.one-liner {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-frame {
+  border: solid 1px #13395E;
+  border-radius: 3px;
+  width: 100%;
+  margin-bottom: 8px;
+  height: 40px;
+  box-shadow: 0 1px 3px 0 rgba(19,57,94,0.2);
+  background-color: white;
+}
+
+.card-frame.frame--rendered {
+  opacity: 1; /* Prevents iFrame rendering issue */
+
+  /* Reminder: consider removal of 'rendered' */
+  /* event passing to Merchant page */
+}
+
+.card-frame.frame--rendered.frame--focus {
+  border: solid 1px #13395E;
+  box-shadow: 0 2px 5px 0 rgba(19,57,94,0.15);
+}
+
+.card-frame.frame--rendered.frame--invalid {
+  border: solid 1px #D96830;
+  box-shadow: 0 2px 5px 0 rgba(217,104,48,0.15);
+}
+
+@media screen and (min-width: 31rem) {
+  .one-liner {
+    flex-direction: row;
+  }
+
+  .card-frame {
+    width: 318px;
+    margin-bottom: 10px;
+  }
+
+  #pay-button {
+    width: 175px;
+    margin-left: 8px;
+  }
+}
+
+.cko-saved-card-checkbox {
+  padding-top: 2px;
+}
+
+.cko-save-card-ul {
+  padding-left: 0px;
+  margin-bottom: 2px;
+}
+
+.cko-apms-ul{
+  padding-left: 0px;
+  margin-bottom: 3px;
+
+}
+
+.cko-klarna-methods{
+  margin-top: 1px;
+  margin-left: 15px;
+}
+
+.cko-sepa-fields{
+  margin-top: 1px;
+  margin-left: 15px;
+}
+
+
+#cko-error-label {
+  color: red
+}
+
+#cko-error {
+  padding-top: 10px;
+}
+
+.payment-cko-save-card-ul {
+  padding-left: 0px;
+  margin-bottom: 0px;
+}
+
+.cko-remove-btn {
+  /* font-weight: 600; */
+  background: none;
+  border: none;
+}
+
+.cko-remove-btn:focus {
+  outline: none;
+}
+
+.cko-delete-btn {
+  width: 17px;
+}
+
+#cko-delete-btn:hover {
+  width: 18px !important;
+}
+
+img {
+  vertical-align: middle;
+  border-style: none;
+  margin-left: 2px;
+}
+
+#alternative-payment {
+  font-weight: 700;
+  margin-top: 9px;
+}
+
+.sepa-card-header-text {
+  text-align: center;
+  padding-bottom: 25px;
+  padding-top: 15px;
+}
+
+.sepa-par {
+  padding-bottom: 20px;
+  padding-top: 1px;
+}
+
+.sepa-par > hr {
+  padding-bottom: 20px;
+  padding-top: 10px;
+}
+
+.sepa-checkbox-container {
+  height: 5px;
+  padding-top: 25px;
+}
+
+.sepa-footer-title {
+  text-align: center;
+  opacity: 0.6;
+  padding-top: 10px;
+}

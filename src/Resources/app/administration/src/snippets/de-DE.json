@@ -1,0 +1,64 @@
+{
+  "checkoutcom": {
+    "info": {
+      "ckoTitle": "Checkout.com"
+    },
+    "actions": {
+      "capture": "Erfassung",
+      "void": "Ungültig",
+      "refund": "Rückerstattung"
+    },
+    "status": {
+      "authorized": "Autorisiert",
+      "captured": "Erfasst",
+      "declined": "Abgelehnt",
+      "refunded": "Rückerstattet",
+      "voided": "Ungültig",
+      "partiallyRefunded": "Partiell rückerstattet",
+      "partiallyCaptured": "Partielle Erfassung",
+      "capturePending": "Erfassung noch ausstehend",
+      "paymentPending": "Zahlung noch ausstehend",
+      "paymentExpired": "Zahlung abgelaufen",
+      "paymentCanceled": "Zahlung storniert",
+      "authorizedFlagged": "Autorisiert gekennzeichnet"
+    },
+    "label": {
+      "paymentId": "Zahlungs-ID",
+      "date": "Zeitpunkt",
+      "status": "Status",
+      "actionId": "Aktions-ID",
+      "amount": "Betrag",
+      "action": "Aktion",
+      "paymentMethod": "Bezahlverfahren :"
+    },
+    "error": {
+      "globalErrorMsg": "Es ist ein Fehler aufgetreten."
+    },
+    "ModalMessageVoid": {
+      "voidTitle": "Ungültig",
+      "confirmVoid": "Ungültigkeit bestätigen",
+      "paymentAmount": "Zahlungsbetrag",
+      "voidButton": "Zahlung ungültig"
+    },
+    "ModalMessageRefund": {
+      "refundTitle": "Rückerstattung",
+      "partialRefund": "Partielle Rückerstattung",
+      "confirmRefund": "Rückerstattung bestätigen",
+      "refundAmount": "Rückerstattungsbetrag",
+      "remainingAmount": "Ausstehender Betrag"
+    },
+    "ModalMessageCapture": {
+      "captureTitle": "Erfassung",
+      "partialCapture": "Partielle Erfassung",
+      "confirmCapture": "Erfassung bestätigen",
+      "captureAmount": "Erfassungsbetrag"
+    },
+    "message": {
+      "inputmessage": "Bitte geben Sie den Betrag ein",
+      "captureError": "Bitte geben Sie einen Betrag niedriger oder in der gleichen Höhe wie der autorisierte Betrag ein.",
+      "refundError1": "Bitte geben Sie einen Betrag niedriger oder in der gleichen Höhe wie der Erfassungsbetrag ein.",
+      "refundError2": "Bitte geben Sie einen Betrag niedriger oder in der gleichen Höhe wie die gesamte Rückerstattung ein.",
+      "noActions": "Keine Aktionen vorhanden."
+    }
+  }
+}

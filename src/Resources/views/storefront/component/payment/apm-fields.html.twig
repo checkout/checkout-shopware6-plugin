@@ -1,0 +1,151 @@
+{% block apm_field_block %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<div id="cko-apm">
+    
+    {% if page.apms|length > 0 %}
+        <label id="alternative-payment">{{ "Checkoutcom.components.alternativePayment" | trans}}</label>
+    {% endif %}
+
+    <ul class="cko-apms-ul">
+        {% if "paypal" in page.apms %}
+            <label>
+                <input  class="cko-apm" type="radio" id="cko-apm-paypal" name="cko-saved-card" value="paypal"/>
+                <img class="cko-apm-logo" src="{{ asset('bundles/checkoutcom/images/paypal.svg') }}">
+            </label>
+            <br>
+        {% endif %}
+        
+        {% if "sofort" in page.apms %}
+            <label>
+                <input  class="cko-apm" type="radio" id="cko-apm-sofort" name="cko-saved-card" value="sofort"/>
+                <img class="cko-apm-logo" src="{{ asset('bundles/checkoutcom/images/sofort.svg') }}">
+            </label>
+            <br>
+        {% endif %}
+        
+        {% if "klarna" in page.apms and page.paymentMethodCategory|length > 0 %}
+
+            <input type="hidden" name="method_chosen" id="method_chosen" value="none" />
+            <input type="hidden" name="klarna_message" id="klarna_message" value='{{"Checkoutcom.components.KlarnaMessage" | trans}}' />
+            <input type="hidden" name="klarna_paylater" id="klarna_paylater_message" value='{{"Checkoutcom.components.payLaterMessage" | trans}}' />
+            <input type="hidden" name="klarna_sliceIt" id="klarna_sliceIt_message" value='{{"Checkoutcom.components.sliceItMessage" | trans}}' />
+
+            <label>
+                <input  class="cko-apm" type="radio" id="cko-apm-klarna" name="cko-saved-card" value="klarna"/>
+                <img class="cko-apm-logo" src="{{ asset('bundles/checkoutcom/images/klarna.svg') }}">
+                <label type="hidden" id="klarna-validation" style="color: red"></label>
+            </label>
+            <br>
+            {# display klarna methods #}
+            <div class="cko-klarna-methods" id="cko-klarna-methods" style="display:none;">
+                {% if "pay_later" in page.paymentMethodCategory %}
+                    <label>
+                        <input  class="cko-klarna-method" type="radio" id="cko-apm-klarna-pay-later" name="cko" value="pay later" onclick="loadWidget('pay_later')"/>
+                        {{ "Checkoutcom.components.payLater" | trans}}
+                        <icon id="paylater_id" data-toggle="tooltip" data-placement="right">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                            </svg>
+                        </icon>
+                    </label>
+                    <br>
+                {% endif %}
+
+                {% if "pay_over_time" in page.paymentMethodCategory %}
+                    <label>
+                        <input  class="cko-klarna-method" type="radio" id="cko-apm-klarna-pay-over-time" name="cko" value="pay over time" onclick="loadWidget('pay_over_time')"/>
+                        {{ "Checkoutcom.components.sliceIt" | trans}}
+                        <icon id="sliceit_id" data-toggle="tooltip" data-placement="right">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                            </svg>
+                        </icon>
+                    </label>
+                {% endif %}
+
+                {% block klarna_block %}
+                    {% if "klarna" in page.apms %}
+                        <input type="hidden" name="method" id="methodSelected" value="" />
+                        <div id="klarna_container"></div>
+                        <template>
+                            {% sw_include '@Storefront/storefront/component/payment/klarna.html.twig' %}
+                        </template>
+                    {% endif %}
+                    
+                {% endblock klarna_block %}
+            </div>
+
+        {% endif %}
+
+        {% if "sepa" in page.apms %}
+            <label>
+                <input  class="cko-apm" type="radio" id="cko-apm-sepa" name="cko-saved-card" value="sepa"/>
+                <img class="cko-apm-logo" src="{{ asset('bundles/checkoutcom/images/sepa.svg') }}">
+                <label type="hidden" id="sepa-validation" style="color: red"></label>
+            </label>
+
+            {# display sepa fields #}
+
+            <div class="cko-sepa-fields" id="cko-sepa" style="display:none;">
+                
+                <label> IBAN </label>
+                <input type="text" id="iban-text" autocomplete="off" name="iban-text-name">
+                <input type="button" id="open-modal" value="{{ 'Checkoutcom.components.continue'|trans|sw_sanitize }}" onclick="validate()">
+                {% sw_include '@Storefront/storefront/component/payment/sepa-modal.html.twig' %}
+            </div>
+
+        {% endif %}
+
+    </ul>
+</div>
+
+{% endblock apm_field_block %}
+
+{% block apm_script_block %}
+
+<script>
+
+{# load the widget when one of the methods is clicked #}
+function loadWidget(method) {
+    document.getElementById("methodSelected").value = method
+
+    let template = document.getElementsByTagName("template")[0];
+    let clon = template.content.cloneNode(true);
+    document.body.appendChild(clon);
+}
+
+{# $("#sepa-modal").on('hide.bs.modal', function(){
+    alert('The modal is about to be hidden.');
+  }); #}
+
+{# check if iban is entered #}
+function validate() {
+    if (document.getElementById("iban-text").value != '') {
+        
+        // validation for IBAN number
+        let ibanValueCountryCode = document.getElementById("iban-text").value.substring(0,2);
+
+        if (ibanValueCountryCode.length == 2 && ibanValueCountryCode === ibanValueCountryCode.toUpperCase()) {
+            document.getElementById("sepa-dd-iban").innerHTML = "Iban: " + document.getElementById('iban-text').value
+            $('#sepa-modal').modal('show');
+        } else {
+            document.getElementById("sepa-validation").innerHTML = "{{ 'Checkoutcom.components.validIbanMessage'|trans|sw_sanitize }}"
+            setTimeout(this.fadeSepaMessage, 3000);
+            $('#sepa-modal').modal('hide');
+        }
+
+    } else {
+        document.getElementById("sepa-validation").innerHTML = "{{ 'Checkoutcom.components.IbanMessage'|trans|sw_sanitize }}"
+        setTimeout(this.fadeSepaMessage, 3000);
+        $('#sepa-modal').modal('hide');
+    }
+}
+
+function fadeSepaMessage() {
+    document.getElementById("sepa-validation").innerHTML = "";
+}
+
+</script>
+
+{% endblock apm_script_block %}

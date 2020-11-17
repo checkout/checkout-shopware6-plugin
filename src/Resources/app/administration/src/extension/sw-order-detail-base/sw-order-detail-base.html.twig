@@ -1,0 +1,21 @@
+{% block sw_order_detail_base_status_card %}
+
+{% parent %}
+
+{# cko card block #}
+{% block cko_card %}
+
+{# cko card is displayed only when an order is made using cko payment method #}
+<cko-card   v-if="order.transactions.last().paymentMethod.customFields.cko_payment_method_name === 'ckocreditcard'"
+            :currentOrder="order"
+            >
+</cko-card>
+
+
+{# <sw-card :hero="false" :isLoading="false" :large="false">
+    {{order.transactions.last().paymentMethod.customFields.cko_payment_method_name}}
+</sw-card> #}
+
+{% endblock cko_card %}
+
+{% endblock sw_order_detail_base_status_card %}

@@ -1,0 +1,86 @@
+{% block cko_card_component %}
+<div class="ckocard">
+        <sw-card :title="$tc('checkoutcom.info.ckoTitle')"
+                :isLoading="isLoading">
+
+                <cko-modal v-if="showmodal"
+                        :action="actionClicked"
+                        :orderInfo="currentOrder"
+                        :paymentMethod="paymentMethod"
+                        @modal-close="closeModal"
+                        >
+                </cko-modal>
+
+                <div style="padding-bottom: 10px;">
+                        <span style="font-size: 14px; font-weight: 700;"> {{ $tc('checkoutcom.label.paymentMethod') }}</span>
+                        {# <span> {{paymentInfo.paymentMethodValue}} </span> #}
+                        <cko-logo
+                                :method="paymentMethod"
+                                >
+                        </cko-logo>
+                </div>
+
+                <div style="padding-bottom: 25px;">
+                        <span style="font-size: 14px;font-weight: 700;"> {{paymentInfo.paymentIdLabel}} </span> 
+                        <span> {{paymentInfo.paymentIdvalue}} </span>
+                </div>
+                
+                <div>      
+                        <sw-data-grid
+                                :dataSource="displayData"
+                                :columns="getPaymentDetailsColumn"
+                                :showSelection="false"
+                                :showActions="true">
+
+                                <template #actions>
+                                        {% block grid_actions %}
+                                        <sw-context-menu-item  v-if= "allActions || captureAction"
+                                                                :disabled="false"
+                                                                icon="default-eye-open"
+                                                                @click="openModal('capture')"
+                                                                >
+                                                {% block capture_action %}
+                                                {{ $tc('checkoutcom.actions.capture') }}
+                                                {% endblock capture_action %}
+                                        
+                                        </sw-context-menu-item>
+                                        
+                                        <sw-context-menu-item v-if="allActions || voidAction" 
+                                                                :disabled="false"
+                                                                icon="default-eye-open"
+                                                                @click="openModal('void')"
+                                                                >
+                                                {% block void_action %}
+                                                {{ $tc('checkoutcom.actions.void') }}
+                                                {% endblock void_action %}
+                                        
+                                        </sw-context-menu-item>
+
+                                        <sw-context-menu-item v-if="refundAction"
+                                                                :disabled="false"
+                                                                icon="default-eye-open"
+                                                                @click="openModal('refund')"
+                                                                >
+                                                {% block refund_action %}
+                                                {{ $tc('checkoutcom.actions.refund') }}
+                                                {% endblock refund_action %}
+                                        
+                                        </sw-context-menu-item>
+
+                                        <sw-context-menu-item v-if="noActions"
+                                                                :disabled="true"
+                                                                icon="default-eye-open"
+                                                                >
+                                                {% block no_action %}
+                                                {{ $tc('checkoutcom.message.noActions') }}
+                                                {% endblock no_action %}
+                                        
+                                        </sw-context-menu-item>
+                                        
+                                        {% endblock grid_actions %}
+                                </template>
+                        </sw-data-grid>
+                </div>
+        </sw-card>
+</div>
+{% endblock cko_card_component %}

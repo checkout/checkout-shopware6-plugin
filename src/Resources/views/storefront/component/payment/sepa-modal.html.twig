@@ -1,0 +1,124 @@
+{% block sepa_modal %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<div class="modal fade show" id="sepa-modal" tabindex="-1" role="dialog" data-backdrop="static" style="display:none;">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            {% block cko_sepa_modal_header %}
+            {% endblock cko_sepa_modal_header %}
+            {% block cko_sepa_modal_body %}
+                <div class="modal-body">
+                    <div class="sepa-mandate-card" style="display: block;">
+                        <div class="sepa-card-header">
+                            <div class="sepa-card-header-text">
+                                <div class="sepa-card-title">
+                                    <h4 style="font-weight: bold;">{{"Checkoutcom.sepaMandateMsg.mandateTitle" | trans}}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sepa-mandate-content">
+                            <table style="width:100%">
+                                <tr>
+                                    <th>
+                                        <h4 style="margin: unset; color:black;">{{"Checkoutcom.sepaMandateMsg.creditor" | trans}}</h4>
+                                    </th>
+                                    <th>
+                                        <h4 style="margin: unset; color:black;">{{"Checkoutcom.sepaMandateMsg.debtor" | trans}}</h4>
+                                    </th>
+                                </tr>
+                                <tr>        
+                                    <th>  
+                                        <h4 style="margin: unset; font-weight: bold; ">{{ page.sepaCreditor.name}}</h4>
+                                        <p style="margin: unset;">{{ page.sepaCreditor.address.address_line1}}</p>
+                                        <p style="margin: unset;">{{ page.sepaCreditor.address.zip}} {{page.sepaCreditor.address.city}}</p>
+                                        <p style="margin: unset;">{{ page.sepaCreditor.address.country}}</p>
+                                        <br>
+                                        <p style="margin: unset;" class="monospace">{{ "Checkoutcom.sepaMandateMsg.creditorID" | trans}} {{ page.sepaCreditor.id}}</p>
+                                    </th>
+                                    <th>
+                                        <h4 style="margin: unset; font-weight: bold;">{{ page.name}}</h4>
+                                        <div class="address" style="margin: unset;">
+                                            <p style="margin: unset;" >{{page.customerBillingAddress.addressLine1}}</p>
+                                            <p style="margin: unset;" class="address2">{{ page.customerBillingAddress.zip}} {{page.customerBillingAddress.city}}</p>
+                                            <p style="margin: unset;" class="country">{{ page.customerBillingAddress.country}}</p>
+                                        </div>
+                                        <br>
+                                        <p class="monospace" style="margin: unset;" id="sepa-dd-iban"></p>
+                                    </th>
+                                <tr>
+                            </table>
+                        </div>
+                        <div class="sepa-par">
+                            <hr style="opacity: 0.9;max-width: inherit;">
+                            <p>{{ "Checkoutcom.sepaMandateMsg.msg1" | trans}} {{ page.sepaCreditor.name}} {{ "Checkoutcom.sepaMandateMsg.msg2" | trans}} {{ "Checkoutcom.sepaMandateMsg.msg3" | trans}} {{ page.sepaCreditor.name}}.</p>
+                            <p>{{ "Checkoutcom.sepaMandateMsg.msg4" | trans}}</p>
+                            <div class="sepa-checkbox-container" id="sepa-checkbox-container">
+                                <label class="sepa-checkbox-layout" for="sepa-checkbox-input">
+                                    <div class="sepa-checkbox-inner-container">
+                                        <label>
+                                            <label style="font-size: 12px;font-weight: 500">
+                                            <input class="sepa-checkbox-input" type="checkbox" name="sepa-checkbox-input" id="sepa-checkbox-input" required>
+                                            {{ "Checkoutcom.sepaMandateMsg.sepaAccept" | trans}}
+                                            </label>
+                                            <p style="color:red;" id="sepa-checkbox-confirm-error"></p>
+                                        </label>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="sepa-right">
+                            <hr style="opacity: 0.9;max-width: inherit;margin-bottom: 22px; margin-top:35px">
+                            <div class="sepa-card-footer-text">
+                                <div class="sepa-footer-title">
+                                    {{ "Checkoutcom.sepaMandateMsg.footerMsg" | trans}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock cko_sepa_modal_body %}
+            {% block cko_sepa_modal_footer %}
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" style="background-color:#ffcccc;" id="pay-now" data-dismiss="modal3" value="{{"Checkoutcom.sepaMandateMsg.payNow" | trans}}">
+                    <input type="button" class="btn btn-default" id="close-modal" data-dismiss="modal2" value="{{"Checkoutcom.sepaMandateMsg.close" | trans}}">
+                </div>
+            {% endblock cko_sepa_modal_footer %}
+        </div>
+    </div>
+</div>
+{% endblock sepa_modal %}
+
+{% block sepa_modal_script %}
+    <script>
+        $("input[data-dismiss=modal2]").click( function() {
+            $('#sepa-modal').modal('hide');
+        });
+
+        $("#sepa-checkbox-input").click( function() {
+            if (document.getElementById("sepa-checkbox-input").checked) {
+                document.getElementById("sepa-checkbox-confirm-error").innerHTML = "";
+            }
+        });
+
+        $("input[data-dismiss=modal3]").click( function() {
+            if (document.getElementById("sepa-checkbox-input").checked) {
+                const fetchUrl = '/cko/getsource'
+                + '/' +  document.getElementById('iban-text').value
+                fetch(fetchUrl, { headers: {}})
+                    .then(res => res.json())
+                    .then(response => {
+                        if (response['state'] == 'SUCCESS') {
+                            document.getElementById("sepa-validation").innerHTML = "{{ 'Checkoutcom.components.sepaConfirm'|trans|sw_sanitize }}";
+                            $('#sepa-modal').modal('hide');
+                        }
+                    })
+                    .catch(err => {
+                        document.getElementById("sepa-validation").innerHTML = "{{ 'Checkoutcom.components.error'|trans|sw_sanitize }}";
+                        $('#sepa-modal').modal('hide');
+                    });
+            } else {
+                document.getElementById("sepa-checkbox-confirm-error").innerHTML = "{{ 'Checkoutcom.sepaMandateMsg.confirmCheckboxMsg'|trans|sw_sanitize }}";
+                setTimeout(this.fadeSepaMessageModal, 3000);
+            }
+        });
+    </script>
+{% endblock sepa_modal_script %}

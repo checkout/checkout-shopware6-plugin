@@ -1,0 +1,24 @@
+{
+	"name": "checkoutcom/shopware6",
+	"description": "Checkout.com Shopware6 plugin",
+	"version": "1.0.0",
+	"type": "shopware-platform-plugin",
+	"license": "MIT",
+	"require": {
+	  "phpunit/phpunit": "^8.3"
+	},
+	"autoload": {
+	  "psr-4": {
+		"Checkoutcom\\": "src/"
+	  }
+	},
+	"extra": {
+	  "shopware-plugin-class": "Checkoutcom\\Checkoutcom",
+	  "plugin-icon": "src/Resources/public/cko-favicon.ico",
+	  "copyright": "(c) by checkout",
+	  "label": {
+		"de-DE": "Checkout.com",
+		"en-GB": "Checkout.com"
+	  }
+	}
+  }

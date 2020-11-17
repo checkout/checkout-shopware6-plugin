@@ -1,0 +1,43 @@
+{
+    "Checkoutcom": {
+        "components": {
+            "saveCard": "Diese Karte speichern",
+            "invalidCard": "Bitte überprüfen Sie Ihre Angaben.",
+            "newCard": "Neue Karte",
+            "removeCard": "Entfernen",
+            "paypal": "Paypal",
+            "sofort": "Sofort",
+            "klarna": "Klarna",
+            "alternativePayment": "Alternative Zahlungsmethode",
+            "payLater" : "Später zahlen",
+            "sliceIt" : "Ratenkauf",
+            "KlarnaMessage" : "Klarna autorisiert. Klicken Sie auf Speichern um fortzufahren.",
+            "KlarnaPaymentMethodMsg" : "Bitte wählen Sie eine Zahlungsmethode", 
+            "continue" : "Fortfahren",
+            "paywithcard" : "Kartenzahlung",
+            "IbanMessage" : "Bitte geben Sie Ihre IBAN Nummer ein",
+            "Iban" : "IBAN:",
+            "sepaConfirm" : "Speichern und fortfahren",
+            "error" : "Fehler aufgetreten",
+            "validIbanMessage": "Bitte geben Sie ein gültiges Iban ein",
+            "clickContinue": "Mandat nicht angenommen, klicken Sie auf Weiter",
+            "payLaterMessage": "Jetzt kaufen, später bezahlen.",
+            "sliceItMessage": "Bezahlen Sie Ihre Bestellung in Raten."
+        },
+        "sepaMandateMsg": {
+            "mandateTitle": "SEPA Lastschriftmandat für eine Einmalzahlung",
+            "creditor": "Gläubiger",
+            "debtor": "schuldner",
+            "creditorID": "Gläubiger-ID: ",
+            "msg1": "Durch die Annahme dieses Mandatsformulars ermächtigen Sie (A) ",
+            "msg2": "Anweisungen an Ihre Bank zu senden, um Ihr Konto zu belasten. (B)",
+            "msg3": "Ihre Bank wird Ihr Konto gemäß den Anweisungen von belasten ",
+            "msg4": "Im Rahmen Ihrer Rechte haben Sie Anspruch auf eine Rückerstattung von Ihrer Bank gemäß den Bedingungen Ihrer Vereinbarung mit Ihrer Bank. Eine Rückerstattung muss innerhalb von 8 Wochen ab dem Datum der Belastung Ihres Kontos beantragt werden.",
+            "sepaAccept": "Ich akzeptiere das Lastschriftmandat für eine Einmalzahlung",
+            "footerMsg": "Ihre Rechte in Bezug auf das oben genannte Mandat werden in einer Erklärung erläutert, die Sie bei Ihrer Bank erhalten können.",
+            "payNow": "fortsetzen",
+            "close": "Abbrechen",
+            "confirmCheckboxMsg": "Bitte klicken Sie die Tickbox"
+        }
+    }
+}

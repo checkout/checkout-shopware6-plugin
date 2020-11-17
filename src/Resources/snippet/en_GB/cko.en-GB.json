@@ -1,0 +1,43 @@
+{
+    "Checkoutcom": {
+        "components": {
+            "saveCard": "Save this card",
+            "invalidCard": "Please check your card details.",
+            "newCard": "New card",
+            "removeCard": "Remove",
+            "paypal": "Paypal",
+            "sofort": "Sofort",
+            "klarna": "Klarna",
+            "alternativePayment": "Alternative Payment",
+            "payLater" : "Pay later",
+            "sliceIt" : "Slice it",
+            "KlarnaMessage" : "Klarna Authorized, click save to continue",
+            "KlarnaPaymentMethodMsg" : "Please choose a payment method", 
+            "continue" : "Continue",
+            "paywithcard" : "card Payment",
+            "IbanMessage" : "Please enter IBAN number",
+            "Iban" : "IBAN:",
+            "sepaConfirm" : "click save to continue",
+            "error" : "error occured",
+            "validIbanMessage": "Please enter valid Iban",
+            "clickContinue": "Mandate not accepted, click continue",
+            "payLaterMessage": "Buy now, pay later.",
+            "sliceItMessage": "Pay for your order in instalments."
+        },
+        "sepaMandateMsg": {
+            "mandateTitle": "SEPA Direct Debit Mandate for single payment",
+            "creditor": "Creditor",
+            "debtor": "Debtor",
+            "creditorID": "Creditor Id: ",
+            "msg1": "By accepting this mandate form, you authorise (A) ",
+            "msg2": "to send instructions to your bank to debit your account (B) ",
+            "msg3": "your bank to debit your account in accordance with the instructions from ",
+            "msg4": "As part of your rights, you are entitled to a refund from your bank under the terms and conditions of your agreement with your bank. A refund must be claimed within 8 weeks starting from the date on which your account was debited.",
+            "sepaAccept": "I accept the mandate for a single payment",
+            "footerMsg": "Your rights regarding the above mandate are explained in a statement that you can obtain from your bank.",
+            "payNow": "Continue",
+            "close": "Close",
+            "confirmCheckboxMsg": "Please check the box"
+        }
+    }
+}

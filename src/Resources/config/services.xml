@@ -1,0 +1,91 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <!-- Handle payment-->
+        <service id="Checkoutcom\Handler\CheckoutcomCard">
+            <argument type="service" id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"/>
+            <argument type="service" id="Checkoutcom\Service\CustomerService" />
+            <argument type="service" id="Checkoutcom\Config\Config" />
+             <argument type="service" id="Checkoutcom\Service\PaymentService" />
+            <tag name="shopware.payment.method.async" />
+        </service>
+
+        <!-- Configuration -->
+        <service id="Checkoutcom\Config\Config" class="Checkoutcom\Config\Config">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+        </service>
+
+        <service id="Checkoutcom\Subscriber\CheckoutPageSubscriber" class="Checkoutcom\Subscriber\CheckoutPageSubscriber">
+            <argument type="service" id="Checkoutcom\Config\Config" />
+            <argument type="service" id="payment_method.repository" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <!-- Customer Services -->
+        <service id="Checkoutcom\Service\CustomerService" class="Checkoutcom\Service\CustomerService">
+            <argument type="service" id="customer.repository" />
+        </service>
+
+        <!-- Payment service -->
+        <service id="Checkoutcom\Service\PaymentService" class="Checkoutcom\Service\PaymentService">
+            <argument type="service" id="Checkoutcom\Config\Config" />
+            <argument type="service" id="Checkoutcom\Helper\Url" />
+        </service>
+
+        <!-- Components controller -->
+        <service id="Checkoutcom\Storefront\Controller\ComponentsController" public="true">
+            <argument type="service" id="Checkoutcom\Service\CustomerService" />
+            <argument type="service" id="Checkoutcom\Config\Config" />
+            <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+        </service>
+
+        <!-- Checkout controller -->
+        <service id="Checkoutcom\Storefront\Controller\CheckoutController" public="true">
+            <!-- <argument type="service" id="Shopware\Core\Checkout\Order\SalesChannel\OrderService"/> -->
+        </service>
+
+        <!-- Refund controller -->
+        <service id="Checkoutcom\Storefront\Controller\RefundController" public="true">
+            <argument type="service" id="Checkoutcom\Service\PaymentService" />
+        </service>
+
+        <!-- Void controller -->
+        <service id="Checkoutcom\Storefront\Controller\VoidController" public="true">
+            <argument type="service" id="Checkoutcom\Service\PaymentService" />
+        </service>
+
+        <!-- Capture controller -->
+        <service id="Checkoutcom\Storefront\Controller\CaptureController" public="true">
+            <argument type="service" id="Checkoutcom\Service\PaymentService" />
+        </service>
+
+        <!-- RedirectionController controller -->
+        <service id="Checkoutcom\Storefront\Controller\RedirectionController" public="true">
+            <argument type="service" id="Checkoutcom\Service\PaymentService" />
+        </service>
+
+         <!-- SepaSourceController controller -->
+        <service id="Checkoutcom\Storefront\Controller\SepaSourceController" public="true">
+            <argument type="service" id="Checkoutcom\Service\PaymentService" />
+        </service>
+
+        <!-- Utility service -->
+        <service id="Checkoutcom\Helper\Utilities" public="true">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+        </service>
+
+        <!-- URL service -->
+        <service id="Checkoutcom\Helper\Url" public="true">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+        </service>
+
+        <!-- payload service -->
+        <service id="Checkoutcom\Helper\payloadHandler" public="true">
+        </service>
+        
+    </services>
+</container>

@@ -1,0 +1,194 @@
+{% sw_extends '@Storefront/storefront/component/payment/payment-fields.html.twig' %}
+
+{% block component_payment_method_description %}
+    {{ parent() }}
+
+    {# load framesjs #}
+    {% if payment.customFields.cko_payment_method_name == 'ckocreditcard' %}
+
+        {# Add cko stylesheet #}
+        <link rel="stylesheet" href="{{ path('frontend.cko.components.css') }}">
+
+        <input type='hidden' name='cko-current-page' id="cko-current-page" value="{{ page.current_page }}" />
+
+        {# Add cko custom js #}
+        <script src="{{ path('frontend.cko.components.js')}}"></script>
+
+        {% if page.current_page == 'paymentMethodPageLoadedEvent' %}
+            {% block account_page_payment_method %}
+                <div class="payment-cko-save-card">
+                    <ul class="payment-cko-save-card-ul">
+                        {% for key, token in page.activeToken %}
+                            <label>
+                                {# <input  class="rmv-cko-saved-card" type="hidden" name="cko-saved-card" value="{{token.0}}"/> #}
+                                <img class="cko-card-logo" src="{{ asset('bundles/checkoutcom/images/' ~ token.scheme|lower ~ '.svg') }}">
+                                {{ token.bin|e }}******{{ token.last_4|e }} Exp {{token.expiry_month}}/{{token.expiry_year}}
+                                <button class="cko-remove-btn" type="button" onclick="removeCard('{{token.0}}')">
+                                    <img class="cko-delete-btn" id="cko-delete-btn" src="{{ asset('bundles/checkoutcom/images/delete.svg') }}"/>
+                                </button>
+                            </label>
+                            <br>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endblock account_page_payment_method %}
+
+            {% else %}
+                {% block checkout_page_payment_method_change %}
+                    <div class="cko-components-credit-card" id="cko_components_credit_card" style="display: none;">
+                        <input type="hidden" name="cko_card_token" id="cko_card_token" value="" />
+                        <input type="hidden" name="cko_context_id" id="cko_context_id" value="{{ page.ckoContextId }}" />
+                        <input type="hidden" name="ckobillingAddress" id="ckobillingAddress" value="{{page.billingAddress}}" />
+                        <input type="hidden" name="cko_pay_id" id="cko_pay_id" value="{{page.ckoPaymentMethodId}}" />
+                        <input type="hidden" name="cko_invalid_card" id="cko_invalid_card" value='{{"Checkoutcom.components.invalidCard" | trans}}' />
+                        <input type="hidden" name="customer_id" id="customer_id" value="{{ context.customer.id }}" />
+                        <input type="hidden" name="apms_available" id="apms_available" value="{{ page.apmAvailable }}" />
+                        <input type="hidden" name="cko_sepa_empty_iban" id="cko_sepa_empty_iban" value='{{"Checkoutcom.components.clickContinue" | trans | sw_sanitize }}' />
+                        <input type="hidden" name="cko_klarna_method" id="cko_klarna_method" value='{{"Checkoutcom.components.KlarnaPaymentMethodMsg" | trans | sw_sanitize }}' />
+                        <input type="hidden" name="customer_loggedIn" id="customer_loggedIn" value="{{ page.isLoggedIn }}" />
+                        <input type="hidden" name="locale_used" id="locale_used" value="{{ app.request.getLocale() }}" />
+                        <input type="hidden" name="locale_conversion" id="locale_conversion" value="" />
+
+                        {# Add frames script #}
+                        <script src="{{page.framesUrl}}"></script>
+
+                        {# Check if save card exist and display in ul #}
+                        {% if page.activeToken %}
+                            <div class="cko-save-card">
+                                <ul class="cko-save-card-ul">
+                                    {% for key, token in page.activeToken %}
+                                        <label>
+                                            <input  class="cko-saved-card" type="radio" name="cko-saved-card" value="{{token.0}}"/>
+                                            <img class="cko-card-logo" src="{{ asset('bundles/checkoutcom/images/' ~ token.scheme|lower ~ '.svg') }}">
+                                            {{ token.bin|e }}******{{ token.last_4|e }} Exp {{token.expiry_month}}/{{token.expiry_year}}
+                                        </label>
+                                        <br>
+                                    {% endfor %}
+                                    <label>
+                                        <input  class= "cko-new-card" type="radio" name="cko-saved-card"  value="new_card"/>
+                                        <img class="cko-card-logo" src="{{ asset('bundles/checkoutcom/images/addcard.svg') }}">
+                                        {{ "Checkoutcom.components.newCard" | trans}}
+                                    </label>
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        {% if not page.activeToken %}
+                            <div class="cko-card">
+                                <ul class="cko-save-card-ul">
+                                    {% if page.isLoggedIn %}
+                                        <label>
+                                            <input  class= "cko-new-card" type="radio" name="cko-saved-card"  value="new_card"/>
+                                            <img class="cko-card-logo" src="{{ asset('bundles/checkoutcom/images/addcard.svg') }}">
+                                            {{ "Checkoutcom.components.newCard" | trans}}
+                                        </label>
+                                    {% else %}
+                                        <label>
+                                            <input  class= "cko-new-card" type="radio" name="cko-saved-card"  value="new_card"/>
+                                            {{ "Checkoutcom.components.paywithcard" | trans}}
+                                        </label>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        {# form will be added here #}
+                        <div class="cko-iframe" style="display:none;">
+                            <div class="one-liner">
+                                <div class="card-frame">
+                                    <!-- form will be added here -->
+                                </div>
+                            </div>
+                            {# Initialise framesjs #}
+                            <script>
+                                let localization = localeConvert(document.getElementById('locale_used').value);
+
+                                const form = document.querySelector('#confirmPaymentForm')
+                                Frames.init({
+                                    publicKey : "{{ page.ckoPublicKey }}",
+                                    localization : localization,
+                                    cardholder: {
+                                        name : "{{page.name}}",
+                                        billingAddress : JSON.parse(document.getElementById('ckobillingAddress').value)
+                                    }
+                                });
+
+                                /**
+                                * Add card tokenized event.
+                                */
+                                Frames.addEventHandler(
+                                    Frames.Events.CARD_TOKENIZED,
+                                    function (event) {
+                                        console.log(event.token)
+                                        Frames.enableSubmitForm();
+
+                                        // submit card token in customer custom field
+                                        const fetchUrl = '/cko/components/store-card-token/'
+                                        + document.getElementById('customer_id').value
+                                        + '/' + event.token
+                                        + '/' + document.getElementById('cko_context_id').value
+                                        + '/' + 'new_card'
+                                        + '/' + window.isSaveCardCheck
+
+                                        // Store the token on the customer
+                                        fetch(fetchUrl, { headers: { "Content-Type": "application/json; charset=utf-8" }})
+                                            .then(res => res.json())
+                                            .then(response => {})
+                                            .catch(err => {});
+
+                                        form.submit()
+                                    }
+                                );
+                 
+                                {# modifiy format of locale used by customer for Iframe language #}
+                                function localeConvert(locale) {
+                                    if (locale === "de-DE") {
+                                        document.getElementById('locale_conversion').value = "DE-DE"
+                                    } 
+                                    if (locale === "en-GB") {
+                                        document.getElementById('locale_conversion').value = "EN-GB"
+                                    }
+                                    if (locale === "es-ES") {
+                                        document.getElementById('locale_conversion').value = "ES-ES"
+                                    }
+                                    if (locale === "kr-KR") {
+                                        document.getElementById('locale_conversion').value = "KR-KR"
+                                    }
+                                    if (locale === "fr-FR") {
+                                        document.getElementById('locale_conversion').value = "FR-FR"
+                                    }
+                                    if (locale === "it-IT") {
+                                        document.getElementById('locale_conversion').value = "IT-IT"
+                                    }
+                                    if (locale === "nl-NL") {
+                                        document.getElementById('locale_conversion').value = "NL-NL"
+                                    }
+
+                                    return document.getElementById('locale_conversion').value
+                                }
+                            </script>
+
+                            {# Check if saved card is enable and customer is logged in #}
+                            {% if page.isSaveCard and page.isLoggedIn %}
+                                <div class="cko-saved-card-checkbox">
+                                    <label for="cko-saved-card-checkbox" >
+                                        <input type="checkbox" id="cko-saved-card-checkbox"/>
+                                        {{ "Checkoutcom.components.saveCard" | trans}}
+                                    </label>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div id="cko-error" style="display:none;">
+                            <label id="cko-error-label"></label>
+                        </div>
+
+                        {% block apms_block %}
+                            {% sw_include '@Storefront/storefront/component/payment/apm-fields.html.twig' %}
+                        {% endblock apms_block %}
+                    </div>
+                {% endblock checkout_page_payment_method_change %}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+

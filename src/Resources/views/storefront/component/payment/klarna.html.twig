@@ -1,0 +1,97 @@
+
+{% block klarna_script_block %}
+
+    {# klarna script #}
+
+    <script type="text/javascript">
+
+        data = {{page.sessionData | json_encode | raw}}
+        delete data.customer
+        data.customer = {}
+
+        window.klarnaAsyncCallback = function() {
+            try {
+                Klarna.Payments.init(
+                    // options
+                    {
+                        client_token: "{{ page.clientToken }}"
+                    }
+                );
+            } catch (e) {
+                // Handle error
+                console.debug('ERROR: Klarna.Payments.init -> ', e);
+            }
+            try {
+                document.getElementById("methodSelected").value 
+
+                    Klarna.Payments.load(
+                        {
+                            container: "#klarna_container",
+                            payment_method_categories: [document.getElementById("methodSelected").value],
+                            instance_id: "klarna-payments-instance"
+                        },
+                        // data
+                        
+                            data
+                        ,
+                        
+                        // callback
+                        function(response) {
+                            // Authorize
+                            try {
+                                Klarna.Payments.authorize(
+                                    // options
+                                    {
+                                        instance_id: "klarna-payments-instance", // Same as instance_id set in Klarna.Payments.load()
+                                        auto_finalize: true // Optional, defaults to true - relevant in case of payment_method_category "pay_now". Should be true for single-page checkout and false for multi-page checkout
+                                    },
+                                    // data
+                                    {
+                                        // ...
+                                    },
+                                    // callback
+                                    function(response) {
+
+                                       const fetchUrl = '/cko/components/store-authorization-token'
+                                        + '/' + response['authorization_token']
+
+                                        // Store the token in session
+                                        fetch(fetchUrl, { headers: { "Content-Type": "application/json; charset=utf-8" }})
+                                            .then(res => res.json())
+                                            .then(response => {})
+                                            .catch(err => {});
+
+                                        if (response['approved']) {
+                                        let text =  document.getElementById("klarna-validation");
+                                        text.innerHTML = document.getElementById("klarna_message").value
+
+                                        setTimeout(this.fadeKlarnaMessage, 5000);
+                                        }
+
+                                        console.debug('Result: ', response);
+                                    }
+                                );
+                            } catch (e) {
+                                // Handle error. The authorize~callback will have been called
+                                // with "{ show_form: false, approved: false }" at this point.
+                                console.debug('ERROR: Klarna.Payments.authorize -> ', e);
+                            }
+                        }
+                    );
+               
+            } catch (e) {
+                // Handle error. The load~callback will have been called
+                // with "{ show_form: false }" at this point.
+                console.debug('ERROR: Klarna.Payments.load -> ', e);
+            }
+        };
+
+        function fadeKlarnaMessage(){
+            document.getElementById("klarna-validation").innerHTML = "";
+        }
+
+    </script>
+
+    <script src="https://x.klarnacdn.net/kp/lib/v1/api.js" async></script>
+
+{% endblock klarna_script_block %}
