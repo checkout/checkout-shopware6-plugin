@@ -1,0 +1,24 @@
+name: Unit test
+
+on:
+  push:
+    branches:
+      - '*/*'
+      -  '*'
+      - '!master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Composer install
+        run: composer install
+
+      - name: Unit Tests
+        uses: php-actions/phpunit@v8
+        with:
+          bootstrap: vendor/autoload.php
+          configuration: phpunit.xml
