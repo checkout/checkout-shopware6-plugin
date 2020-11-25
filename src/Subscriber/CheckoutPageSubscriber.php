@@ -295,7 +295,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 }
 
                 if ($apm['name'] == 'sepa') {
-                    $apmsapmList['sepaCreditor'] = $apm['metadata']['creditor'];
+                    $apmList['sepaCreditor'] = $apm['metadata']['creditor'];
                 }
             }
         }
