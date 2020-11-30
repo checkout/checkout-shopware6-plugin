@@ -273,13 +273,14 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         return $activeToken;
     }
     
+        
     /**
-     * return list of Apms
+     * getApms
      *
      * @param  mixed $ckoContext
-     * @return void|array
+     * @return void
      */
-    public function getApms($ckoContext)
+    public static function getApms($ckoContext)
     {
         $apmList = null;
 
@@ -309,7 +310,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      * @param  mixed $apms
      * @return void
      */
-    public function getPaymentMethodCategory($apms)
+    public static function getPaymentMethodCategory($apms)
     {
         $paymentMethodCategory = [];
         
