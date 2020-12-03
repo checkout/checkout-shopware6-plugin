@@ -138,10 +138,10 @@ class PaymentService
 
     }
 
-    public function void($paymentId,$paymentMethod)
+    public function void($param)
     {
         $secretKey = $this->config::secretKey();
-        $url = Url::voidPaymentUrl($paymentId);
+        $url = Url::voidPaymentUrl($param, $secretKey);
         $response = [];
     
         $request =  new Request(
@@ -153,6 +153,46 @@ class PaymentService
             ]
         );
         
+
+        try {
+            $paymentResponse = $this->restClient->send($request);
+
+            $response['statusCode'] = $paymentResponse->getStatusCode();
+
+            if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
+                $response['state'] = self::PAYMENT_SUCCESS;
+            } else {
+                $response['state'] = self::PAYMENT_ERROR;
+                $response['message'] = "An error has occured"; // @todo give proper error message to frontstore
+            }
+            
+            return $response;
+            
+        } catch (Exception $e) {
+            // @todo catch and log error
+
+            $response['statusCode'] = 500;
+            $response['state'] = self::PAYMENT_ERROR;
+            $response['message'] = $e->getMessage();
+
+            return $response;
+        }
+    }
+
+    public function klarnaVoid($param)
+    {
+        $publicKey = $this->config::publicKey();
+        $url = Url::voidPaymentUrl($param, $publicKey);
+        $response = [];
+    
+        $request =  new Request(
+            'POST',
+            $url,
+            [
+                'Authorization' => $publicKey,
+                'Content-Type' => 'application/json',
+            ]
+        );
 
         try {
             $paymentResponse = $this->restClient->send($request);
