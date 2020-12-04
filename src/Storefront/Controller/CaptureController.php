@@ -40,7 +40,7 @@ class CaptureController extends StorefrontController
         }
 
         // Send capture request
-        $captureResponse = $this->paymentService->capture($param);
+        $captureResponse = $param["payment_method"] == "Klarna" ? $this->paymentService->klarnaCapture($param) : $this->paymentService->capture($param);
 
         return new JsonResponse([
             "statusCode" => $captureResponse['statusCode'],
