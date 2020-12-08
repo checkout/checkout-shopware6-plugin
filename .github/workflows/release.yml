@@ -20,7 +20,7 @@ jobs:
 
       - name: Create Artifact for Repository
         run: mkdir cko-shopware6-store-plugin &&
-          cp cp src/ bin/ README.md LICENSE composer.json -r cko-shopware6-store-plugin/ &&
+          cp src/ bin/ README.md LICENSE composer.json -r cko-shopware6-store-plugin/ &&
           zip cko-shopware6-store-plugin.zip cko-shopware6-store-plugin/ -r
 
       - name: Bump version and push tag
