@@ -80,7 +80,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
         $name = $customerInfo->getFirstName()." ".$customerInfo->getLastName();
-        $billingAddress = $this->validateCutomerInfo($customerInfo);
+        $billingAddress = $this->setCutomerInfo($customerInfo);
         
         $isLoggedIn = $context->getCustomer()->getGuest() == true ? false : true;
         $customField = $context->getCustomer()->getCustomFields();
@@ -120,11 +120,11 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $context = $arg->getSalesChannelContext();
         $ckoContext = $session->get('cko_context');
         $isSaveCard = $session->get('saveCard');
-        $apms = $this->getApms($ckoContext);
+        $apmData = $this->getApmData($ckoContext);
 
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
         $name = $customerInfo->getFirstName()." ".$customerInfo->getLastName();
-        $billingAddress = $this->validateCutomerInfo($customerInfo);
+        $billingAddress = $this->setCutomerInfo($customerInfo);
         
         $isLoggedIn = $context->getCustomer()->getGuest() == true ? false : true;
         $salesChannelContext = $arg->getSalesChannelContext()->getContext();
@@ -146,11 +146,11 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'ckoPaymentMethodId' => $this->getPaymentMethodId($salesChannelContext),
                 'framesUrl' => Url::CKO_IFRAME_URL,
                 'activeToken' => $this->getActiveToken($customField),
-                'apms' => $apms,
-                'clientToken' => $apms['clientToken'],
-                'sessionData' => $apms['sessionData'],
-                'paymentMethodCategory' => $this->getPaymentMethodCategory($apms),
-                'sepaCreditor' => $apms['sepaCreditor'],
+                'apms' => $apmData->apmName,
+                'clientToken' => $apmData->clientToken ?? null,
+                'sessionData' => $apmData->sessionData ?? null,
+                'sepaCreditor' => $apmData->sepaCreditor ?? null,
+                'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null,
                 'customerBillingAddress' => $billingAddress
             ]
         );
@@ -180,7 +180,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      * @param  mixed $customerInfo
      * @return void
      */
-    public function validateCutomerInfo($customerInfo)
+    public function setCutomerInfo($customerInfo)
     {
         $info = [];
 
@@ -205,6 +205,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         }
 
         return $info;
+
     }
 
     /**
