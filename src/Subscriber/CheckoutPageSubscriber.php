@@ -16,6 +16,7 @@ use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Config\Config;
 use GuzzleHttp\Client;
 use Checkoutcom\helper\Url;
+use Checkoutcom\Models\Address;
 
 class CheckoutPageSubscriber implements EventSubscriberInterface
 {
@@ -70,11 +71,11 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         
         // Get cko context
         $ckoContext = $this->getCkoContext($token, $publicKey, $currencyCode);
-        $apms = $this->getApms($ckoContext);
+        $apmData = $this->getApmData($ckoContext);
         
         // check if save card is available in context
         // and save in session, this will be used when payment failed
-        $isSaveCard = in_array("saveCard", $apms) == true ? true : false;
+        $isSaveCard = in_array('saveCard', $apmData->apmName);
         $session->set('saveCard', $isSaveCard);
 
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
@@ -96,11 +97,12 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'activeToken' => $this->getActiveToken($customField),
                 'isSaveCard' => $isSaveCard,
                 'customerBillingAddress' => $billingAddress,
-                'apms' => $apms,
-                'clientToken' => $apms['clientToken'],
-                'sessionData' => $apms['sessionData'],
-                'sepaCreditor' => $apms['sepaCreditor'],
-                'paymentMethodCategory' => $this->getPaymentMethodCategory($apms)
+                'apms' => $apmData->apmName,
+                'clientToken' => $apmData->clientToken ?? null,
+                'sessionData' => $apmData->sessionData ?? null,
+                'sepaCreditor' => $apmData->sepaCreditor ?? null,
+                'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null
+
             ]
         );
     }
@@ -237,10 +239,10 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $method = 'POST';
         $url = Url::getCloudContextUrl();
-        $body = json_encode(['currency' => $currencyCode]);
+        $body = json_encode(['currency' => $currencyCode, 'reference' => $token]);
         $header = [
             'Authorization' => $publicKey,
-            'sw_context_token' => $token,
+            'Content-Type' => 'application/json',
             'x-correlation-id' => $uuid
         ];
 
@@ -255,17 +257,19 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
     {
         $activeToken = [];
 
-        // check if token exist and set value in $activeToken
-        foreach ( $customField as $key => $value) {
-            if (strstr($key, 'active_token_')) {
-                // unset the source id from array
-                if(!empty($value)) {
-                    unset($value['id']);
-                
-                    $arr = array_merge((array)$key,$value);
-    
-                    // push data to active token 
-                    array_push( $activeToken, $arr);
+        if (isset($customField)) {
+            // check if token exist and set value in $activeToken
+            foreach ( $customField as $key => $value) {
+                if (strstr($key, 'active_token_')) {
+                    // unset the source id from array
+                    if (!empty($value)) {
+                        unset($value['id']);
+                        
+                        $arr = array_merge((array)$key, $value);
+        
+                        // push data to active token 
+                        array_push($activeToken, $arr);
+                    }
                 }
             }
         }
@@ -280,28 +284,31 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      * @param  mixed $ckoContext
      * @return void
      */
-    public static function getApms($ckoContext)
+    public static function getApmData($ckoContext) : object
     {
-        $apmList = null;
+        $apmData = new \stdClass();
 
-        if (array_key_exists("apms", $ckoContext) && count($ckoContext['apms']) > 0) {
+        if (isset($ckoContext['apms'])) {
             $apmArray = $ckoContext['apms'];
             foreach ($apmArray as $apm) {
-                $apmList[] = $apm['name'];
 
-                if ($apm['name'] == 'klarna') {
-                    $apmList['clientToken'] = $apm['metadata']['details']['client_token'];
-                    $apmList['sessionData'] = $apm['metadata']['session'];
-                    $apmList['paymentMethodAvailable'] = $apm['metadata']['details']['payment_method_category'];
+                if (isset($apm['name'])) {
+                        $apmData->apmName[] = $apm['name'];
                 }
 
-                if ($apm['name'] == 'sepa') {
-                    $apmList['sepaCreditor'] = $apm['metadata']['creditor'];
+                if (isset($apm['metadata']['details']['client_token'])) {
+                        $apmData->clientToken = $apm['metadata']['details']['client_token'];
+                        $apmData->sessionData = $apm['metadata']['session'];
+                        $apmData->paymentMethodAvailable = $apm['metadata']['details']['payment_method_category'];
+                }
+
+                if (isset($apm['metadata']['creditor'])) {
+                        $apmData->sepaCreditor = $apm['metadata']['creditor'];
                 }
             }
         }
 
-        return $apmList;
+        return $apmData;
     }
 
     /**
@@ -310,16 +317,17 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      * @param  mixed $apms
      * @return void
      */
-    public static function getPaymentMethodCategory($apms)
+    public static function getPaymentMethodCategory($paymentMethodAvailable)
     {
         $paymentMethodCategory = [];
-        
-        if (sizeof($apms['paymentMethodAvailable']) > 0) {
-            foreach ($apms['paymentMethodAvailable'] as $method) {
+
+        if (isset($paymentMethodAvailable)) {
+            foreach ($paymentMethodAvailable as $method) {
                 $paymentMethodCategory[] = $method['identifier'];
             }
         }
 
         return $paymentMethodCategory;
     }
+
 }
