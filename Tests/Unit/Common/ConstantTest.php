@@ -3,6 +3,6 @@
 namespace Checkoutcom\Tests\Unit\Common;
 
 class ConstantTest {
-    const APMS = ['sepa', 'paypal', 'sofort', 'klarna'];
+    const APMS = ['klarna', 'sofort', 'paypal', 'sepa', 'saveCard'];
     const PAYMENT_METHOD_CATEGORY = ['pay_later', 'pay_over_time'];
 }

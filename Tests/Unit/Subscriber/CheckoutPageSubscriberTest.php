@@ -7,24 +7,15 @@ use Checkoutcom\Tests\Unit\Common\ConstantTest;
 
 class CheckoutPageSubscriberTest extends TestCase 
 {
-    public function testGetApms()
+    public function testGetApmData()
     {
         $ckoContext = MockTest::ckoContextResponse();
         $array = (array) json_decode($ckoContext, true);
     
-        $value = CheckoutPageSubscriber::getApms($array);
-        
-        $this->assertContains($value[0], ConstantTest::APMS);
-    }
+        $value = CheckoutPageSubscriber::getApmData($array);
 
-    public function testGetApmsNull()
-    {
-        $ckoContext = MockTest::ckoContextNoApms();
-        $array = (array) json_decode($ckoContext, true);
-
-        $value = CheckoutPageSubscriber::getApms($array);
+        $this->assertEquals($value->apmName, ConstantTest::APMS);
         
-        $this->assertSame($value, null) ; 
     }
 
     public function testGetPaymentMethodCategory()
@@ -32,10 +23,11 @@ class CheckoutPageSubscriberTest extends TestCase
         $ckoContext = MockTest::ckoContextResponse();
         $array = (array) json_decode($ckoContext, true);
     
-        $apms = CheckoutPageSubscriber::getApms($array);
-        $value = CheckoutPageSubscriber::getPaymentMethodCategory($apms);
+        $apms = CheckoutPageSubscriber::getApmData($array);
+
+        $value = CheckoutPageSubscriber::getPaymentMethodCategory($apms->paymentMethodAvailable);
             
-        $this->assertContains($value['0'], ConstantTest::PAYMENT_METHOD_CATEGORY) ; 
-        $this->assertContains($value['1'], ConstantTest::PAYMENT_METHOD_CATEGORY) ; 
+        $this->assertContains($value[0], ConstantTest::PAYMENT_METHOD_CATEGORY); 
+        $this->assertContains($value[1], ConstantTest::PAYMENT_METHOD_CATEGORY); 
     }
 }
