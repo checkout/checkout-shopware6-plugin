@@ -53,7 +53,7 @@ class PaymentService
 
             //@todo log response in cloud
 
-            if ($paymentResponsebody['requireRedirect'] === true) {
+            if ($paymentResponsebody['requiresRedirect'] === true) {
                 $response['state'] = self::PAYMENT_REDIRECT;
                 $response['url'] = $paymentResponsebody['redirectLink'];
             } else {

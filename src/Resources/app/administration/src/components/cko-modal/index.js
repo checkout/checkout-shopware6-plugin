@@ -44,16 +44,7 @@ Shopware.Component.register("cko-modal", {
         currency: this.orderInfo.currency.isoCode,
         payment_method: paymentMethod,
       }).then((response) => {
-        console.log(response);
-        if (
-          response.statusCode === HTTP_STATUS_CODE_200 ||
-          response.statusCode === HTTP_STATUS_CODE_202
-        ) {
-          document.location.reload();
-        } else {
-          alert(this.$tc("checkoutcom.error.globalErrorMsg"));
-          this.closeModal();
-        }
+        this.handleStatus(response);
       });
     },
     voidOrder(paymentMethod) {
@@ -61,21 +52,13 @@ Shopware.Component.register("cko-modal", {
         payment_id: this.orderInfo.customFields.payment_approved.payment_id,
         payment_method: paymentMethod,
       }).then((response) => {
-        if (
-          response.statusCode === HTTP_STATUS_CODE_200 ||
-          response.statusCode === HTTP_STATUS_CODE_202
-        ) {
-          document.location.reload();
-        } else {
-          alert(this.$tc("checkoutcom.error.globalErrorMsg"));
-          this.closeModal();
-        }
+        this.handleStatus(response);
       });
     },
     refundOrder(amountRefund, paymentMethod) {
       let paymentID;
 
-      if (paymentMethod === "Sofort" || paymentMethod === "Sepa") {
+      if (this.orderInfo.customFields.payment_pending) {
         paymentID = this.orderInfo.customFields.payment_pending.payment_id;
       } else {
         paymentID = this.orderInfo.customFields.payment_approved.payment_id;
@@ -87,16 +70,7 @@ Shopware.Component.register("cko-modal", {
         currency: this.orderInfo.currency.isoCode,
         payment_method: paymentMethod,
       }).then((response) => {
-        if (
-          response.statusCode === HTTP_STATUS_CODE_200 ||
-          response.statusCode === HTTP_STATUS_CODE_202
-        ) {
-          console.log(response.statusCode);
-          document.location.reload();
-        } else {
-          alert(this.$tc("checkoutcom.error.globalErrorMsg"));
-          this.closeModal();
-        }
+        this.handleStatus(response);
       });
     },
     fadeCaptureErrorText() {
@@ -162,6 +136,17 @@ Shopware.Component.register("cko-modal", {
             this.refundOrder(inputAmount, paymentMethod);
           }
         }
+      }
+    },
+    handleStatus(response) {
+      if (
+        response.statusCode === HTTP_STATUS_CODE_200 ||
+        response.statusCode === HTTP_STATUS_CODE_202
+      ) {
+        document.location.reload();
+      } else {
+        alert(this.$tc("checkoutcom.error.globalErrorMsg"));
+        this.closeModal();
       }
     },
   },
