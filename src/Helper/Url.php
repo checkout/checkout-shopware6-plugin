@@ -34,7 +34,7 @@ class Url {
     public function voidPaymentUrl($param, string $key) {
         $isLive = self::isLive($key);
         
-        if($param['payment_method'] == "Klarna") {
+        if($param['payment_method'] === "Klarna") {
             $url = $isLive ? self::checkUrlSlash(config::ckoUrl()). 'klarna/'. 'orders/'. $param['payment_id']. '/voids' : self::checkUrlSlash(config::ckoUrl()). 'klarna-external/'. 'orders/'. $param['payment_id']. '/voids' ;
         } else {
             $url = self::checkUrlSlash(config::ckoUrl()). 'payments/'. $param['payment_id']. '/voids';
