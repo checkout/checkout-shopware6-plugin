@@ -22,7 +22,7 @@
             <label class="paymentLabel">{{ $tc('checkoutcom.ModalMessageVoid.paymentAmount') }}<label><br>
         </div>
         <div>
-            <label class="voidAmount">{{orderInfo.customFields["payment_approved"].amount }} </label>
+            <label class="voidAmount">{{voidAmount.amount}} </label>
             <span class="input-group-addon">{{(orderInfo.currency.translated.shortName)}}</span>
         </div>
         </template>

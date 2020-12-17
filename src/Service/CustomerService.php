@@ -41,7 +41,6 @@ class CustomerService
         // If custom fields are empty, create a new array
         if (!is_array($customFields)) {
             $customFields = [];
-           // echo("<script>console.log('new custom field');</script>");
         }
 
         // Store the card token in the custom fields

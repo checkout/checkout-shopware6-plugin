@@ -29,7 +29,8 @@
       "actionId": "Action ID",
       "amount": "Amount",
       "action": "Action",
-      "paymentMethod": "Payment Method :"
+      "paymentMethod": "Payment Method :",
+      "sepaMandateReference": "Mandate Reference :"
     },
     "error": {
       "globalErrorMsg": "An error has occured."
