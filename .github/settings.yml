@@ -1,5 +1,5 @@
 repository:
-  name: cko-shopware6-store-plugin
+  name: checkout-shopware6-plugin
   default_branch: master
   has_wiki: false
 
