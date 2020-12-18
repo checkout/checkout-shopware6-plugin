@@ -240,11 +240,12 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $method = 'POST';
         $url = Url::getCloudContextUrl();
-        $body = json_encode(['currency' => $currencyCode, 'reference' => $token]);
+
+        $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
         $header = [
             'Authorization' => $publicKey,
-            'Content-Type' => 'application/json',
-            'x-correlation-id' => $uuid
+            'x-correlation-id' => $uuid,
+            'Content-Type' => 'application/json'
         ];
 
         $ckoContext = Utilities::postRequest($method, $url, $header, $body);
