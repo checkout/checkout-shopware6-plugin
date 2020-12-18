@@ -18,7 +18,7 @@ jobs:
         run: composer install
 
       - name: Unit Tests
-        uses: php-actions/phpunit@v8
+        uses: php-actions/phpunit@v7
         with:
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
