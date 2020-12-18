@@ -24,11 +24,12 @@ class VoidController extends StorefrontController
      */
     public function void(Request $request): JsonResponse
     {
-        $paymentId = $request->get('payment_id');
-        $paymentMethod = $request->get('payment_method');
+        $param = [];
+        $param["payment_id"] = $request->get('payment_id');
+        $param["payment_method"] = $request->get('payment_method');
 
         // Send void request
-        $voidResponse = $this->paymentService->void($paymentId,$paymentMethod);
+        $voidResponse = $param["payment_method"] === "Klarna" ? $this->paymentService->klarnaVoid($param) : $this->paymentService->void($param);
 
         return new JsonResponse([
             "statusCode" => $voidResponse['statusCode'],
