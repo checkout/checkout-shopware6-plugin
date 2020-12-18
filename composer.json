@@ -5,9 +5,8 @@
   "type": "shopware-platform-plugin",
   "license": "MIT",
   "require": {
-    "phpunit/phpunit": "^8.3",
+    "phpunit/phpunit": "^7.3",
     "shopware/core": "6.3.2.0",
-    "php": "^7.2"
   },
   "autoload": {
     "psr-4": {
