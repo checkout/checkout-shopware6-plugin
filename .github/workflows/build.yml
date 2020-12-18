@@ -14,9 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-    steps:
-      - uses: actions/checkout@master
-      - uses: nanasess/setup-php@master
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
           php-version: '7.2'
 
