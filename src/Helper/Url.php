@@ -45,11 +45,11 @@ class Url {
     /**
      * cko capture payment url
      */
-    public function capturePaymentUrl(String $SecretKey, $param) {
-        $isLive = self::isLive($SecretKey);
+    public function capturePaymentUrl($param, String $key) {
+        $isLive = self::isLive($key);
         
-        if($param['payment_method'] == "Klarna") {
-            $url = $isLive ? self::checkUrlSlash(config::ckoUrl()). '/'. 'klarna/'. 'orders/'. $param['payment_id']. '/captures' : self::checkUrlSlash(config::ckoUrl()). '/'. 'klarna-external/'. 'orders/'. $param['payment_id']. '/captures' ;
+        if($param['payment_method'] === "Klarna") {
+            $url = $isLive ? self::checkUrlSlash(config::ckoUrl()). 'klarna/'. 'orders/'. $param['payment_id']. '/captures' : self::checkUrlSlash(config::ckoUrl()). 'klarna-external/'. 'orders/'. $param['payment_id']. '/captures' ;
         } else {
             $url = self::checkUrlSlash(config::ckoUrl()). 'payments/'. $param['payment_id']. '/captures';
         }

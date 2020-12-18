@@ -182,7 +182,7 @@ class PaymentService
     public function capture($param)
     {
         $secretKey = $this->config::secretKey();
-        $url = Url::capturePaymentUrl($secretKey, $param);
+        $url = Url::capturePaymentUrl($param, $secretKey);
         $response = [];
 
         $request =  new Request(
@@ -193,6 +193,48 @@ class PaymentService
                 'Content-Type' => 'application/json',
             ],
             json_encode($param)
+        );
+
+        try {
+            $paymentResponse = $this->restClient->send($request);
+            $response['statusCode'] = $paymentResponse->getStatusCode();
+
+            if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
+                $response['state'] = self::PAYMENT_SUCCESS;
+            } else {
+                $response['state'] = self::PAYMENT_ERROR;
+                $response['message'] = "An error has occured"; // @todo give proper error message to frontstore
+            }
+
+            return $response;
+            
+        } catch (Exception $e) {
+            // @todo catch and log error
+
+            $response['statusCode'] = 500;
+            $response['state'] = self::PAYMENT_ERROR;
+            $response['message'] = $e->getMessage();
+
+            return $response;
+        }
+    }
+
+    public function klarnaCapture($param)
+    {
+        $publicKey = $this->config::publicKey();
+        $url = Url::capturePaymentUrl($param, $publicKey);
+        $response = [];
+
+        $body = ["Klarna" => array()];
+        
+        $request =  new Request(
+            'POST',
+            $url,
+            [
+                'Authorization' => $publicKey,
+                'Content-Type' => 'application/json',
+            ],
+            json_encode($body,JSON_FORCE_OBJECT)
         );
 
         try {
