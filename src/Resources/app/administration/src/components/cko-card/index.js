@@ -172,11 +172,6 @@ Shopware.Component.register("cko-card", {
         this.captureAction = true;
         this.voidAction = true;
         this.noActions = false;
-        if (paymentMethod == "Klarna") {
-          this.captureAction = false;
-          this.voidAction = false;
-          this.noActions = true;
-        }
       }
 
       // actions when payment is captured or partially captured

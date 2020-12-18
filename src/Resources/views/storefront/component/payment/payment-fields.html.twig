@@ -42,7 +42,6 @@
                         <input type="hidden" name="cko_pay_id" id="cko_pay_id" value="{{page.ckoPaymentMethodId}}" />
                         <input type="hidden" name="cko_invalid_card" id="cko_invalid_card" value='{{"Checkoutcom.components.invalidCard" | trans}}' />
                         <input type="hidden" name="customer_id" id="customer_id" value="{{ context.customer.id }}" />
-                        <input type="hidden" name="apms_available" id="apms_available" value="{{ page.apmAvailable }}" />
                         <input type="hidden" name="cko_sepa_empty_iban" id="cko_sepa_empty_iban" value='{{"Checkoutcom.components.clickContinue" | trans | sw_sanitize }}' />
                         <input type="hidden" name="cko_klarna_method" id="cko_klarna_method" value='{{"Checkoutcom.components.KlarnaPaymentMethodMsg" | trans | sw_sanitize }}' />
                         <input type="hidden" name="customer_loggedIn" id="customer_loggedIn" value="{{ page.isLoggedIn }}" />
@@ -119,7 +118,6 @@
                                 Frames.addEventHandler(
                                     Frames.Events.CARD_TOKENIZED,
                                     function (event) {
-                                        console.log(event.token)
                                         Frames.enableSubmitForm();
 
                                         // submit card token in customer custom field

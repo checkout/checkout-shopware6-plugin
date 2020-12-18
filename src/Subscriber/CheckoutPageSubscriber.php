@@ -11,16 +11,12 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Checkoutcom\Handler\CheckoutcomCard;
-use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\Framework\Context;
 use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Config\Config;
-use GuzzleHttp\Psr7\Request;
-use Checkoutcom\Checkoutcom;
 use GuzzleHttp\Client;
-use RuntimeException;
-use Exception;
 use Checkoutcom\helper\Url;
+use Checkoutcom\Models\Address;
 
 class CheckoutPageSubscriber implements EventSubscriberInterface
 {
@@ -41,7 +37,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         return [
             CheckoutConfirmPageLoadedEvent::class => 'addComponentsVariable',
             AccountEditOrderPageLoadedEvent::class => 'accountPageLoadedEvent',
-            AccountPaymentMethodPageLoadedEvent::class => 'paymentMethodPageLoadedEvent' 
+            AccountPaymentMethodPageLoadedEvent::class => 'paymentMethodPageLoadedEvent'
         ];
     }
 
@@ -64,6 +60,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      */
     public function addComponentsVariable( $args)
     {
+        $session = new Session();
         $publicKey = $this->config::publicKey();
         $token = $args->getPage()->getCart()->getToken();
 
@@ -71,64 +68,74 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $context = $args->getSalesChannelContext();
         $currency = $context->getCurrency();
         $currencyCode = $currency->getIsoCode();
-        // Get context
+        
+        // Get cko context
         $ckoContext = $this->getCkoContext($token, $publicKey, $currencyCode);
+        $apmData = $this->getApmData($ckoContext);
+        
+        // check if save card is available in context
+        // and save in session, this will be used when payment failed
+        $isSaveCard = in_array('saveCard', $apmData->apmName);
+        $session->set('saveCard', $isSaveCard);
 
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
         $name = $customerInfo->getFirstName()." ".$customerInfo->getLastName();
-        $billingAddress = $this->validateCutomerInfo($customerInfo);
-        $isSaveCard = true;
+        $billingAddress = $this->setCutomerInfo($customerInfo);
+        
         $isLoggedIn = $context->getCustomer()->getGuest() == true ? false : true;
         $customField = $context->getCustomer()->getCustomFields();
-        $activeToken = [];
-
-        // handle apms available in the context
-        $apms = array();
-        $customerDetails = array();
-        $apmsAvailable = false;
-        $paymentMethodAvailable = array();
-        $paymentMethodCategory = array();
-        $clientToken = 'undefined';
-        $sessionData = 'undefined';
-        $sepaCreditor = 'undefined';
-
-        $customerDetails['firstName'] = $customerInfo->getFirstName();
-        $customerDetails['lastName'] = $customerInfo->getLastName();
-
-        if (array_key_exists("apms", $ckoContext) && count($ckoContext['apms']) > 0) {
-            $apmArray = $ckoContext['apms'];
-            foreach ($apmArray as $apm){
-                $apms[] = $apm['name'];
-
-                if ($apm['name'] == 'klarna') {
-                    $clientToken = $apm['metadata']['details']['client_token'];
-                    $sessionData = $apm['metadata']['session'];
-                    $paymentMethodAvailable = $apm['metadata']['details']['payment_method_category'];
-                }
-
-                if ($apm['name'] == 'sepa') {
-                    $sepaCreditor = $apm['metadata']['creditor'];
-                }
-            }
-        }
         
-        // display apms available for the customer
-        if (sizeof($apms) > 0) {
-            $apmsAvailable = true;
-        }
-
-         // get identifier of the payment method category
-        if (sizeof($paymentMethodAvailable) > 0) {
-            foreach ($paymentMethodAvailable as $method)
-                $paymentMethodCategory[] = $method['identifier'];
-        }
-        
-        // Check if custom field is empty
-        if (!empty( $customField)) {
-            $activeToken = $this->getActiveToken($customField);
-        }
-
         $args->getPage()->assign(
+            [
+                'ckoPublicKey' => $publicKey,
+                'ckoContextId' => $ckoContext['id'],
+                'name' => $name,
+                'billingAddress' => json_encode($billingAddress),
+                'isLoggedIn' => $isLoggedIn,
+                'ckoPaymentMethodId' => $this->getPaymentMethodId($salesChannelContext),
+                'framesUrl' => Url::CKO_IFRAME_URL,
+                'activeToken' => $this->getActiveToken($customField),
+                'isSaveCard' => $isSaveCard,
+                'customerBillingAddress' => $billingAddress,
+                'apms' => $apmData->apmName,
+                'clientToken' => $apmData->clientToken ?? null,
+                'sessionData' => $apmData->sessionData ?? null,
+                'sepaCreditor' => $apmData->sepaCreditor ?? null,
+                'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null
+
+            ]
+        );
+    }
+    
+    /**
+     * Adds the components variable to the storefront.
+     *
+     * @param accountPageLoadedEvent $arg
+     */
+    public function accountPageLoadedEvent( $arg)
+    {
+        $session = new Session();
+        $publicKey = $this->config::publicKey();
+
+        $context = $arg->getSalesChannelContext();
+        $ckoContext = $session->get('cko_context');
+        $isSaveCard = $session->get('saveCard');
+        $apmData = $this->getApmData($ckoContext);
+
+        $customerInfo = $context->getCustomer()->getActiveBillingAddress();
+        $name = $customerInfo->getFirstName()." ".$customerInfo->getLastName();
+        $billingAddress = $this->setCutomerInfo($customerInfo);
+        
+        $isLoggedIn = $context->getCustomer()->getGuest() == true ? false : true;
+        $salesChannelContext = $arg->getSalesChannelContext()->getContext();
+        $customField = $context->getCustomer()->getCustomFields();
+
+        // Remove session variable
+        $session->remove('saveCard');
+        $session->remove('ckoContext');
+        
+
+        $arg->getPage()->assign(
             [
                 'ckoPublicKey' => $publicKey,
                 'ckoContextId' => $ckoContext['id'],
@@ -138,26 +145,42 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'isLoggedIn' => $isLoggedIn,
                 'ckoPaymentMethodId' => $this->getPaymentMethodId($salesChannelContext),
                 'framesUrl' => Url::CKO_IFRAME_URL,
-                'activeToken' => $activeToken,
-                'apms' => $apms,
-                'apmAvailable' => $apmsAvailable,
-                'clientToken' => $clientToken,
-                'sessionData' => $sessionData,
-                'paymentMethodCategory' => $paymentMethodCategory,
-                'sepaCreditor' => $sepaCreditor,
-                'customerBillingAddress' => $billingAddress,
-                'customerDetails' => $customerDetails
+                'activeToken' => $this->getActiveToken($customField),
+                'apms' => $apmData->apmName,
+                'clientToken' => $apmData->clientToken ?? null,
+                'sessionData' => $apmData->sessionData ?? null,
+                'sepaCreditor' => $apmData->sepaCreditor ?? null,
+                'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null,
+                'customerBillingAddress' => $billingAddress
             ]
         );
     }
-    
+
+    /**
+     *  @param AccountPaymentMethodPageLoadedEvent $arg
+     */
+    public function paymentMethodPageLoadedEvent($arg)
+    {
+        $context = $arg->getSalesChannelContext();
+        $isLoggedIn = $context->getCustomer()->getGuest() == true ? false : true;
+        $customField = $context->getCustomer()->getCustomFields();
+
+        $arg->getPage()->assign(
+            [
+                'isLoggedIn' => $isLoggedIn,
+                'activeToken' => $this->getActiveToken($customField),
+                'current_page' => 'paymentMethodPageLoadedEvent'
+            ]
+        );
+    }
+
     /**
      * validateCutomerInfo
      *
      * @param  mixed $customerInfo
      * @return void
      */
-    public function validateCutomerInfo($customerInfo)
+    public function setCutomerInfo($customerInfo)
     {
         $info = [];
 
@@ -182,129 +205,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         }
 
         return $info;
-    }
 
-    /**
-     * Adds the components variable to the storefront.
-     *
-     * @param accountPageLoadedEvent $arg
-     */
-    public function accountPageLoadedEvent( $arg)
-    {
-        $session = new Session();
-        $publicKey = $this->config::publicKey();
-
-        $context = $arg->getSalesChannelContext();
-        $token = $context->getToken();
-        $currency = $context->getCurrency();
-        $currencyCode = $currency->getIsoCode();
-        $ckoContext = $session->get('cko_context');
-
-        // @todo clear ckoContext sesssion
-
-        $customerInfo = $context->getCustomer()->getActiveBillingAddress();
-        $name = $customerInfo->getFirstName()." ".$customerInfo->getLastName();
-        $billingAddress = $this->validateCutomerInfo($customerInfo);
-        $isSaveCard = true;
-        $isLoggedIn = $context->getCustomer()->getGuest() == true ? false : true;
-        $salesChannelContext = $arg->getSalesChannelContext()->getContext();
-        $customField = $context->getCustomer()->getCustomFields();
-        $activeToken = [];
-
-         // handle apms available in the context
-         $apms = array();
-         $apmsAvailable = false;
-         $paymentMethodAvailable = array();
-         $paymentMethodCategory = array();
-         $clientToken = 'undefined';
-         $sessionData = 'undefined';
-         $sepaCreditor = 'undefined';
- 
-         $customerDetails['firstName'] = $customerInfo->getFirstName();
-         $customerDetails['lastName'] = $customerInfo->getLastName();
- 
-         if (array_key_exists("apms", $ckoContext) && count($ckoContext['apms']) > 0) {
-             $apmArray = $ckoContext['apms'];
-             foreach ($apmArray as $apm){
-                 $apms[] = $apm['name'];
-
-                 if ($apm['name'] == 'klarna') {
-                    $clientToken = $apm['metadata']['details']['client_token'];
-                    $sessionData = $apm['metadata']['session'];
-                    $paymentMethodAvailable = $apm['metadata']['details']['payment_method_category'];
-                }
-
-                if ($apm['name'] == 'sepa') {
-                    $sepaCreditor = $apm['metadata']['creditor'];
-                }
-             }
-         }
-         
-         // display apms available for the customer
-         if (sizeof($apms) > 0) {
-             $apmsAvailable = true;
-         }
-
-        // get identifier of the payment method category
-        if (sizeof($paymentMethodAvailable) > 0) {
-            foreach ($paymentMethodAvailable as $method)
-                $paymentMethodCategory[] = $method['identifier'];
-        }
-        
-        // Check if custom field is empty
-        if (!empty( $customField)) {
-            $activeToken = $this->getActiveToken($customField);
-        }
-
-        $arg->getPage()->assign(
-            [
-                'ckoPublicKey' => $publicKey,
-                'ckoContextId' => $ckoContext['id'],
-                'name' => $name,
-                'billingAddress' => json_encode($billingAddress),
-                'isSaveCard' => $isSaveCard,
-                'isLoggedIn' => $isLoggedIn,
-                'ckoPaymentMethodId' => $this->getPaymentMethodId($salesChannelContext),
-                'framesUrl' => Url::CKO_IFRAME_URL,
-                'activeToken' => $activeToken,
-                'apms' => $apms,
-                'apmAvailable' => $apmsAvailable,
-                'clientToken' => $clientToken,
-                'sessionData' => $sessionData,
-                'paymentMethodCategory' => $paymentMethodCategory,
-                'sepaCreditor' => $sepaCreditor,
-                'customerBillingAddress' => $billingAddress,
-                'customerDetails' => $customerDetails
-            ]
-        );
-    }
-
-    /**
-     *  @param AccountPaymentMethodPageLoadedEvent $arg
-     */
-    public function paymentMethodPageLoadedEvent($arg)
-    {
-        $context = $arg->getSalesChannelContext();
-        $isSaveCard = true;
-        $isLoggedIn = $context->getCustomer()->getGuest() == true ? false : true;
-        $salesChannelContext = $arg->getSalesChannelContext()->getContext();
-        $customField = $context->getCustomer()->getCustomFields();
-        $activeToken = [];
-        
-        // Check if custom field is empty
-        if (!empty( $customField)) {
-            $activeToken = $this->getActiveToken($customField);
-        }
-
-        $arg->getPage()->assign(
-            [
-                'isSaveCard' => $isSaveCard,
-                'isLoggedIn' => $isLoggedIn,
-                'ckoPaymentMethodId' => $this->getPaymentMethodId($salesChannelContext),
-                'activeToken' => $activeToken,
-                'current_page' => 'paymentMethodPageLoadedEvent'
-            ]
-        );
     }
 
     /**
@@ -339,6 +240,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $method = 'POST';
         $url = Url::getCloudContextUrl();
+
         $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
         $header = [
             'Authorization' => $publicKey,
@@ -357,22 +259,77 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
     {
         $activeToken = [];
 
-
-        // check if token exist and set value in $activeToken
-        foreach ( $customField as $key => $value) {
-            if (strstr($key, 'active_token_')) {
-                // unset the source id from array
-                if(!empty($value)) {
-                    unset($value['id']);
-                
-                    $arr = array_merge((array)$key,$value);
-    
-                    // push data to active token 
-                    array_push( $activeToken, $arr);
+        if (isset($customField)) {
+            // check if token exist and set value in $activeToken
+            foreach ( $customField as $key => $value) {
+                if (strstr($key, 'active_token_')) {
+                    // unset the source id from array
+                    if (!empty($value)) {
+                        unset($value['id']);
+                        
+                        $arr = array_merge((array)$key, $value);
+        
+                        // push data to active token 
+                        array_push($activeToken, $arr);
+                    }
                 }
             }
         }
 
         return $activeToken;
     }
+    
+        
+    /**
+     * getApms
+     *
+     * @param  mixed $ckoContext
+     * @return void
+     */
+    public static function getApmData($ckoContext) : object
+    {
+        $apmData = new \stdClass();
+
+        if (isset($ckoContext['apms'])) {
+            $apmArray = $ckoContext['apms'];
+            foreach ($apmArray as $apm) {
+
+                if (isset($apm['name'])) {
+                        $apmData->apmName[] = $apm['name'];
+                }
+
+                if (isset($apm['metadata']['details']['client_token'])) {
+                        $apmData->clientToken = $apm['metadata']['details']['client_token'];
+                        $apmData->sessionData = $apm['metadata']['session'];
+                        $apmData->paymentMethodAvailable = $apm['metadata']['details']['payment_method_category'];
+                }
+
+                if (isset($apm['metadata']['creditor'])) {
+                        $apmData->sepaCreditor = $apm['metadata']['creditor'];
+                }
+            }
+        }
+
+        return $apmData;
+    }
+
+    /**
+     * getPaymentMethodCategory
+     *
+     * @param  mixed $apms
+     * @return void
+     */
+    public static function getPaymentMethodCategory($paymentMethodAvailable)
+    {
+        $paymentMethodCategory = [];
+
+        if (isset($paymentMethodAvailable)) {
+            foreach ($paymentMethodAvailable as $method) {
+                $paymentMethodCategory[] = $method['identifier'];
+            }
+        }
+
+        return $paymentMethodCategory;
+    }
+
 }
