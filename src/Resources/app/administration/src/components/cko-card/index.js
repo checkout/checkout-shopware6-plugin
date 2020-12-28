@@ -1,4 +1,5 @@
 import template from "./cko-card-html.twig";
+import getIndex from "../utilities";
 
 const PAYMENT_APPROVED = "payment_approved";
 const PAYMENT_CAPTURED = "payment_captured";
@@ -43,20 +44,22 @@ Shopware.Component.register("cko-card", {
     closeModal() {
       this.showmodal = false;
     },
-    displaylogo(method, Scheme) {
+    displaylogo(method, scheme) {
       this.paymentMethod = method;
 
       if (method === "cc") {
-        this.paymentMethod = Scheme;
+        this.paymentMethod = scheme;
       }
     },
     disableRefund() {
-      let customFields = this.currentOrder.customFields;
-      let captureAmount = customFields["payment_captured"].amount * 1;
+      let customFields = this.currentOrder.customFields.ckoEvent;
+      let captureAmount =
+        customFields[getIndex(customFields, "event", "payment_captured")]
+          .amount * 1;
       let refundAmount = 0;
 
       for (let i in customFields) {
-        if (i.includes("payment_refunded_act")) {
+        if (customFields[i].event.includes("payment_refunded_act")) {
           refundAmount += customFields[i].amount * 1;
         }
       }
@@ -68,19 +71,21 @@ Shopware.Component.register("cko-card", {
     },
     checkLabel(status) {
       let amountApproved;
+      const ckoEvent = this.currentOrder.customFields.ckoEvent;
 
-      if (this.currentOrder.customFields["payment_approved"]) {
+      if (status === "payment_approved") {
         amountApproved =
-          this.currentOrder.customFields["payment_approved"].amount * 1;
+          ckoEvent[getIndex(ckoEvent, "event", "payment_approved")].amount * 1;
       }
 
-      if (this.currentOrder.customFields["payment_capture_pending"]) {
+      if (status === "payment_capture_pending") {
         amountApproved =
-          this.currentOrder.customFields["payment_capture_pending"].amount * 1;
+          ckoEvent[getIndex(ckoEvent, "event", "payment_capture_pending")]
+            .amount * 1;
       }
 
       let amountCaptured =
-        this.currentOrder.customFields["payment_captured"].amount * 1;
+        ckoEvent[getIndex(ckoEvent, "event", "payment_captured")].amount * 1;
 
       if (status == "payment_captured") {
         if (amountCaptured < amountApproved) {
@@ -89,13 +94,13 @@ Shopware.Component.register("cko-card", {
       }
 
       if (status.includes("payment_refunded_act")) {
-        let customFields = this.currentOrder.customFields;
+        let customFields = this.currentOrder.customFields.ckoEvent;
         let remaniningAmount = 0;
         let AmountRefunded = 0;
         let count = 0;
 
         for (let i in customFields) {
-          if (i.includes("payment_refunded_act")) {
+          if (customFields[i].event.includes("payment_refunded_act")) {
             count++;
             AmountRefunded += customFields[i].amount * 1;
           }
@@ -108,9 +113,9 @@ Shopware.Component.register("cko-card", {
         }
       }
     },
-    changeStatusLabel(param, customFields) {
+    changeStatusLabel(customFields) {
       let label = "";
-      switch (param) {
+      switch (customFields.event) {
         case PAYMENT_APPROVED:
           if (customFields.risk == true) {
             label = this.$tc("checkoutcom.status.authorizedFlagged");
@@ -119,7 +124,7 @@ Shopware.Component.register("cko-card", {
           }
           break;
         case PAYMENT_CAPTURED:
-          this.checkLabel(param);
+          this.checkLabel(customFields.event);
           if (this.partialCapture) {
             label = this.$tc("checkoutcom.status.partiallyCaptured");
           } else {
@@ -142,10 +147,10 @@ Shopware.Component.register("cko-card", {
           label = this.$tc("checkoutcom.status.paymentCanceled");
           break;
         default:
-          label = param;
+          label = customFields.event;
           // refund status
-          if (param.includes("payment_refunded_act")) {
-            this.checkLabel(param);
+          if (customFields.event.includes("payment_refunded_act")) {
+            this.checkLabel(customFields.event);
             if (this.refunded) {
               label = this.$tc("checkoutcom.status.refunded");
             } else {
@@ -153,7 +158,7 @@ Shopware.Component.register("cko-card", {
             }
           }
           // payment declined status
-          if (param.includes("payment_declined_act")) {
+          if (customFields.event.includes("payment_declined_act")) {
             label = this.$tc("checkoutcom.status.declined");
           }
           break;
@@ -245,15 +250,16 @@ Shopware.Component.register("cko-card", {
       return columnDefinitions;
     },
     displayData() {
-      let orderCustomFields = this.currentOrder.customFields;
+      let orderCustomFields = this.currentOrder.customFields.ckoEvent;
       let paymentMethod = Object.values(orderCustomFields)[0].payment_method;
+
       let item = [];
 
       for (let i in orderCustomFields) {
         item.push({
           date: orderCustomFields[i].processed_on,
           dateD: Date.parse(orderCustomFields[i].processed_on),
-          status: this.changeStatusLabel(i, orderCustomFields[i]),
+          status: this.changeStatusLabel(orderCustomFields[i]),
           actionId: orderCustomFields[i].action_id,
           amount: orderCustomFields[i].amount,
         });
@@ -277,20 +283,29 @@ Shopware.Component.register("cko-card", {
       return sortbyDate;
     },
     paymentInfo() {
-      let customFields = this.currentOrder.customFields;
+      let customFields = this.currentOrder.customFields.ckoEvent;
       let paymentId = Object.values(customFields)[0].payment_id;
       let paymentMethod = Object.values(customFields)[0].payment_method;
       let paymentScheme = "";
+      let mandateReference;
 
-      if (customFields[PAYMENT_APPROVED] && paymentMethod === "cc") {
-        paymentScheme = customFields[PAYMENT_APPROVED].scheme;
+      if (
+        customFields[0].event === PAYMENT_APPROVED &&
+        paymentMethod === "cc"
+      ) {
+        paymentScheme = customFields[0].scheme;
       }
       this.displaylogo(paymentMethod, paymentScheme);
+
+      if (this.currentOrder.customFields.mandate) {
+        mandateReference = this.currentOrder.customFields.mandate;
+      }
 
       return {
         paymentIdLabel: this.$tc("checkoutcom.label.paymentId") + " : ",
         paymentIdvalue: paymentId,
         paymentMethodValue: paymentMethod,
+        sepaMandateReference: mandateReference,
       };
     },
   },

@@ -13,11 +13,16 @@
 
                 <div style="padding-bottom: 10px;">
                         <span style="font-size: 14px; font-weight: 700;"> {{ $tc('checkoutcom.label.paymentMethod') }}</span>
-                        
+
                         <cko-logo
                                 :method="paymentMethod"
                                 >
                         </cko-logo>
+
+                        <template v-if= 'paymentMethod === "Sepa"'>
+                                <span  style="font-size: 14px;font-weight: 700; padding-left:250px"> {{$tc('checkoutcom.label.sepaMandateReference')}} </span> 
+                                <span> {{paymentInfo.sepaMandateReference}} </span>
+                        </template>
                 </div>
 
                 <div style="padding-bottom: 25px;">

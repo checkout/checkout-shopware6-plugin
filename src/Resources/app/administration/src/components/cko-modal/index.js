@@ -1,5 +1,7 @@
 import template from "./cko-modal-html.twig";
 import "./cko-modal.scss";
+import getIndex from "../utilities";
+
 
 const { Component, Service } = Shopware;
 const HTTP_STATUS_CODE_202 = 202;
@@ -39,7 +41,7 @@ Shopware.Component.register("cko-modal", {
     },
     captureOrder(amountCapture, paymentMethod) {
       this.CkoCaptureService.capture({
-        payment_id: this.orderInfo.customFields.payment_approved.payment_id,
+        payment_id: this.orderInfo.customFields.ckoEvent[0].payment_id,
         amount: amountCapture,
         currency: this.orderInfo.currency.isoCode,
         payment_method: paymentMethod,
@@ -49,20 +51,14 @@ Shopware.Component.register("cko-modal", {
     },
     voidOrder(paymentMethod) {
       this.CkoVoidService.void({
-        payment_id: this.orderInfo.customFields.payment_approved.payment_id,
+        payment_id: this.orderInfo.customFields.ckoEvent[0].payment_id,
         payment_method: paymentMethod,
       }).then((response) => {
         this.handleStatus(response);
       });
     },
     refundOrder(amountRefund, paymentMethod) {
-      let paymentID;
-
-      if (this.orderInfo.customFields.payment_pending) {
-        paymentID = this.orderInfo.customFields.payment_pending.payment_id;
-      } else {
-        paymentID = this.orderInfo.customFields.payment_approved.payment_id;
-      }
+      const paymentID = this.orderInfo.customFields.ckoEvent[0].payment_id;
 
       this.CkoRefundService.refund({
         payment_id: paymentID,
@@ -81,12 +77,13 @@ Shopware.Component.register("cko-modal", {
     },
     validate(action, paymentMethod) {
       let inputAmount = document.getElementById("amount").value * 1;
-      let customFields = this.orderInfo.customFields;
+      let customFields = this.orderInfo.customFields.ckoEvent;
 
       // validate capture action
       if (action === "capture") {
-        let AmountApproved = customFields["payment_approved"].amount * 1;
-
+        let AmountApproved =
+          customFields[getIndex(customFields, "event", "payment_approved")]
+            .amount * 1;
         if (inputAmount > AmountApproved) {
           var text = document.getElementById("captureError");
           text.innerHTML = this.$tc("checkoutcom.message.captureError");
@@ -98,13 +95,15 @@ Shopware.Component.register("cko-modal", {
       }
       // validate refund action
       if (action === "refund") {
-        let AmountCaptured = customFields["payment_captured"].amount * 1;
+        let AmountCaptured =
+          customFields[getIndex(customFields, "event", "payment_captured")]
+            .amount * 1;
         let remaniningAmount;
         let AmountRefunded = 0;
 
         try {
           for (let i in customFields) {
-            if (i.includes("payment_refunded_act")) {
+            if (customFields[i].event.includes("payment_refunded_act")) {
               AmountRefunded += customFields[i].amount * 1;
             }
           }
@@ -117,7 +116,6 @@ Shopware.Component.register("cko-modal", {
             if (inputAmount > formattedRemaniningAmount) {
               var text = document.getElementById("refundError");
               text.innerHTML = this.$tc("checkoutcom.message.refundError2");
-
               setTimeout(this.fadeRefundErrorText, 3000);
             } else {
               this.refundOrder(inputAmount, paymentMethod);
@@ -148,6 +146,17 @@ Shopware.Component.register("cko-modal", {
         alert(this.$tc("checkoutcom.error.globalErrorMsg"));
         this.closeModal();
       }
+    },
+  },
+  computed: {
+    voidAmount() {
+      let customFields = this.orderInfo.customFields.ckoEvent;
+      const voidAmount =
+        customFields[getIndex(customFields, "event", "payment_approved")]
+          .amount * 1;
+      return {
+        amount: voidAmount,
+      };
     },
   },
 });
