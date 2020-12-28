@@ -105,10 +105,7 @@ class CheckoutcomCard implements AsynchronousPaymentHandlerInterface
         if ($ckoPaymentType != 'new_card' && $ckoPaymentType != $ckoApmSelected) {
             // If saved card, set source id in payment payload
             $type = self::TYPE_ID;
-            $token = $this->customerService->getSourceId(
-                $ckoPaymentType,
-                $customer
-            );
+            $token = $ckoPaymentType;
         }
 
         /**

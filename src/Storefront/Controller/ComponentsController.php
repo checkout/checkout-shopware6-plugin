@@ -2,8 +2,6 @@
 
 namespace Checkoutcom\Storefront\Controller;
 
-use Exception;
-use RuntimeException;
 use Shopware\Storefront\Controller\StorefrontController;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,11 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Shopware\Core\Framework\Routing\Annotation\RouteScope;
 use Checkoutcom\Service\CustomerService;
 use Checkoutcom\Config\Config;
-use Symfony\Component\HttpFoundation\Request;
 use Shopware\Core\Checkout\Cart\SalesChannel\CartService;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Service\PaymentService;
+use Checkoutcom\Helper\Url;
 
 class ComponentsController extends StorefrontController
 {
@@ -243,16 +241,13 @@ class ComponentsController extends StorefrontController
             'Accept' => 'application/json'
         ];
 
-        $url = Url::getCloudCardUrl(config::publicKey(), $customerId, $card);
+        $url = Url::getDeleteInstrumentUrl($customerId, $card);
 
-        $deleteCardRequest = Utilities::postRequest(
-            'DELETE',
-            $url,
-            $header
-        );
+        $deleteCardRequest = Utilities::postRequest( 'DELETE', $url, $header );
 
         return new Response(
-            json_encode( 
+            json_encode(
+                []
             ), 200, ['Content-Type' => 'text/javascript']
         );
     }

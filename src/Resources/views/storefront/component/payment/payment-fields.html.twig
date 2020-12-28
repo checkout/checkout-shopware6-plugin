@@ -20,10 +20,9 @@
                     <ul class="payment-cko-save-card-ul">
                         {% for key, token in page.activeToken %}
                             <label>
-                                {# <input  class="rmv-cko-saved-card" type="hidden" name="cko-saved-card" value="{{token.0}}"/> #}
                                 <img class="cko-card-logo" src="{{ asset('bundles/checkoutcom/images/' ~ token.scheme|lower ~ '.svg') }}">
                                 {{ token.bin|e }}******{{ token.last_4|e }} Exp {{token.expiry_month}}/{{token.expiry_year}}
-                                <button class="cko-remove-btn" type="button" onclick="removeCard('{{token.0}}')">
+                                <button class="cko-remove-btn" type="button" onclick="removeCard('{{token.id}}')">
                                     <img class="cko-delete-btn" id="cko-delete-btn" src="{{ asset('bundles/checkoutcom/images/delete.svg') }}"/>
                                 </button>
                             </label>
@@ -57,7 +56,7 @@
                                 <ul class="cko-save-card-ul">
                                     {% for key, token in page.activeToken %}
                                         <label>
-                                            <input  class="cko-saved-card" type="radio" name="cko-saved-card" value="{{token.0}}"/>
+                                            <input  class="cko-saved-card" type="radio" name="cko-saved-card" value="{{token.id}}"/>
                                             <img class="cko-card-logo" src="{{ asset('bundles/checkoutcom/images/' ~ token.scheme|lower ~ '.svg') }}">
                                             {{ token.bin|e }}******{{ token.last_4|e }} Exp {{token.expiry_month}}/{{token.expiry_year}}
                                         </label>
