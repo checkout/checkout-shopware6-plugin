@@ -2,6 +2,7 @@ import template from "./cko-modal-html.twig";
 import "./cko-modal.scss";
 import getIndex from "../utilities";
 
+
 const { Component, Service } = Shopware;
 const HTTP_STATUS_CODE_202 = 202;
 const HTTP_STATUS_CODE_200 = 200;
@@ -115,7 +116,6 @@ Shopware.Component.register("cko-modal", {
             if (inputAmount > formattedRemaniningAmount) {
               var text = document.getElementById("refundError");
               text.innerHTML = this.$tc("checkoutcom.message.refundError2");
-
               setTimeout(this.fadeRefundErrorText, 3000);
             } else {
               this.refundOrder(inputAmount, paymentMethod);
