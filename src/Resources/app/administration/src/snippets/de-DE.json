@@ -29,7 +29,8 @@
       "actionId": "Aktions-ID",
       "amount": "Betrag",
       "action": "Aktion",
-      "paymentMethod": "Bezahlverfahren :"
+      "paymentMethod": "Bezahlverfahren :",
+      "sepaMandateReference": "Mandatsreferenz"
     },
     "error": {
       "globalErrorMsg": "Es ist ein Fehler aufgetreten."
