@@ -75,8 +75,15 @@ class Url {
     /**
      * cloud plugin delete card url
      */
-    public function getCloudCardUrl(String $publicKey, String $customerId, String $cardId) {
-        return self::checkUrlSlash(config::cloudPluginUrl()).'merchants/'. $publicKey. '/customer'. '/'. $customerId. '/payment-instruments'. '/'. $cardId;
+    public function getDeleteInstrumentUrl(String $customerId, String $cardId) {
+        return self::checkUrlSlash(config::cloudPluginUrl()) . 'customer'. '/'. $customerId. '/payment-instruments'. '/'. $cardId;
+    }
+
+    /**
+     * cloud plugin retrieve instrument url
+     */
+    public function getRetrieveInstrumentUrl(string $customerId) {
+        return self::checkUrlSlash(config::cloudPluginUrl()).'customer/' . $customerId;
     }
 
     /**

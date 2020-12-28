@@ -15,7 +15,7 @@ use Shopware\Core\Framework\Context;
 use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Config\Config;
 use GuzzleHttp\Client;
-use Checkoutcom\helper\Url;
+use Checkoutcom\Helper\Url;
 use Checkoutcom\Models\Address;
 
 class CheckoutPageSubscriber implements EventSubscriberInterface
@@ -94,7 +94,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'isLoggedIn' => $isLoggedIn,
                 'ckoPaymentMethodId' => $this->getPaymentMethodId($salesChannelContext),
                 'framesUrl' => Url::CKO_IFRAME_URL,
-                'activeToken' => $this->getActiveToken($customField),
+                'activeToken' => $this->getPaymentInstrument($customField->getCustomerId()),
                 'isSaveCard' => $isSaveCard,
                 'customerBillingAddress' => $billingAddress,
                 'apms' => $apmData->apmName,
@@ -133,7 +133,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         // Remove session variable
         $session->remove('saveCard');
         $session->remove('ckoContext');
-        
 
         $arg->getPage()->assign(
             [
@@ -145,7 +144,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'isLoggedIn' => $isLoggedIn,
                 'ckoPaymentMethodId' => $this->getPaymentMethodId($salesChannelContext),
                 'framesUrl' => Url::CKO_IFRAME_URL,
-                'activeToken' => $this->getActiveToken($customField),
+                'activeToken' => $this->getPaymentInstrument($customerInfo->getCustomerId()),
                 'apms' => $apmData->apmName,
                 'clientToken' => $apmData->clientToken ?? null,
                 'sessionData' => $apmData->sessionData ?? null,
@@ -163,12 +162,12 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
     {
         $context = $arg->getSalesChannelContext();
         $isLoggedIn = $context->getCustomer()->getGuest() == true ? false : true;
-        $customField = $context->getCustomer()->getCustomFields();
+        $customerInfo = $context->getCustomer()->getActiveBillingAddress();
 
         $arg->getPage()->assign(
             [
                 'isLoggedIn' => $isLoggedIn,
-                'activeToken' => $this->getActiveToken($customField),
+                'activeToken' => $this->getPaymentInstrument($customerInfo->getCustomerId()),
                 'current_page' => 'paymentMethodPageLoadedEvent'
             ]
         );
@@ -255,28 +254,17 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         return $ckoContext;
     }
 
-    public function getActiveToken($customField)
+    public function getPaymentInstrument(string $customerId)
     {
-        $activeToken = [];
+        $url = Url::getRetrieveInstrumentUrl($customerId);
 
-        if (isset($customField)) {
-            // check if token exist and set value in $activeToken
-            foreach ( $customField as $key => $value) {
-                if (strstr($key, 'active_token_')) {
-                    // unset the source id from array
-                    if (!empty($value)) {
-                        unset($value['id']);
-                        
-                        $arr = array_merge((array)$key, $value);
+        $header = [
+            'Authorization' => $this->config::secretKey()
+        ];
+
+        $response = Utilities::postRequest('GET', $url, $header, false);
         
-                        // push data to active token 
-                        array_push($activeToken, $arr);
-                    }
-                }
-            }
-        }
-
-        return $activeToken;
+        return $response;
     }
     
         
