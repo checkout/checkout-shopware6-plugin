@@ -17,6 +17,9 @@ use Checkoutcom\Config\Config;
 use GuzzleHttp\Client;
 use Checkoutcom\Helper\Url;
 use Checkoutcom\Models\Address;
+use Checkoutcom\helper\CkoLogging;
+use RuntimeException;
+use Psr\Log\LoggerInterface;
 
 class CheckoutPageSubscriber implements EventSubscriberInterface
 {
@@ -26,6 +29,11 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      * @var EntityRepositoryInterface
      */
     private $paymentRepository;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      *  GetSubscribedEvents
@@ -46,11 +54,12 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      *
      * @param Config $config config
      */
-    public function __construct(Config $config, EntityRepositoryInterface $paymentRepository)
+    public function __construct(Config $config, EntityRepositoryInterface $paymentRepository, LoggerInterface $logger)
     {
         $this->config = $config;
         $this->restClient = new Client();
         $this->paymentRepository =  $paymentRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -240,15 +249,29 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $method = 'POST';
         $url = Url::getCloudContextUrl();
 
-        $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
+        $body = json_encode(['currenc' => $currencyCode, 'reference'=> $token ]);
         $header = [
             'Authorization' => $publicKey,
             'x-correlation-id' => $uuid,
             'Content-Type' => 'application/json'
         ];
+        try {
+            $ckoContext = Utilities::postRequest($method, $url, $header, $body);
+        } catch (\Exception $e) {
+            
+            $logMessage = Utilities::contructLogBody($e, "cko context", "checkout.context.error", $uuid);
+            CkoLogging::log($logMessage);
 
-        $ckoContext = Utilities::postRequest($method, $url, $header, $body);
 
+            // temporary store logging (Test)
+            $this->logger->error(
+                'Test',
+                ['ID' => $uuid]
+            );
+
+            throw new RuntimeException('cko context creation fail : ' . $e->getMessage());
+        }
+        
         $session->set('cko_context', $ckoContext);
 
         return $ckoContext;

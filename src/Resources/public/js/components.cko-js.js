@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
         paymentMethods,
         function (paymentMethodRadio) {
           paymentMethodRadio.addEventListener("change", function () {
-            if (event.srcElement.value != ckoPaymentMethodId) {
+            if (event.target.value != ckoPaymentMethodId) {
               ckoPaymentMethods.style.display = "none";
             } else {
               ckoPaymentMethods.style.display = "block";

@@ -34,7 +34,6 @@ class Utilities
             return $body;
 
         } catch (Exception $e) {
-
             // @todo catch and log error
             throw new RuntimeException('An error has occured ' . $e->getMessage());
         }
@@ -147,5 +146,22 @@ class Utilities
         }
 
         return $price;
+    }
+
+    /**
+     * build log body
+     */
+    public function contructLogBody($error, $scope, $type, $id = false) {
+
+        $logBody['error'] = $error->getMessage();
+        $message = [
+            "scope" => $scope,
+            "message" => json_encode($logBody),
+            "id" => $id,
+            "type" => $type
+        ];
+
+        return $message;
+
     }
 }

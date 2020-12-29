@@ -6,7 +6,8 @@
   "license": "MIT",
   "require": {
     "phpunit/phpunit": "^8.3",
-    "shopware/core": "6.3.3.1"
+    "shopware/core": "6.3.4.0",
+    "monolog/monolog": "^1"
   },
   "autoload": {
     "psr-4": {
