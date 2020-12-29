@@ -94,7 +94,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'isLoggedIn' => $isLoggedIn,
                 'ckoPaymentMethodId' => $this->getPaymentMethodId($salesChannelContext),
                 'framesUrl' => Url::CKO_IFRAME_URL,
-                'activeToken' => $this->getPaymentInstrument($customField->getCustomerId()),
+                'activeToken' => $this->getPaymentInstrument($customerInfo->getCustomerId()),
                 'isSaveCard' => $isSaveCard,
                 'customerBillingAddress' => $billingAddress,
                 'apms' => $apmData->apmName,
