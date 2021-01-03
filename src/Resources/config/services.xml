@@ -97,6 +97,7 @@
         <!-- Log service -->
         <service id="Checkoutcom\Helper\CkoLogging" public="true">
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <argument key="$logger" type="service" id="monolog.logger.checkout_generic"/>
         </service>
         
     </services>

@@ -34,7 +34,6 @@ class Utilities
             return $body;
 
         } catch (Exception $e) {
-            // @todo catch and log error
             throw new RuntimeException('An error has occured ' . $e->getMessage());
         }
     }

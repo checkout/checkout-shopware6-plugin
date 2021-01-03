@@ -249,7 +249,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $method = 'POST';
         $url = Url::getCloudContextUrl();
 
-        $body = json_encode(['currenc' => $currencyCode, 'reference'=> $token ]);
+        $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
         $header = [
             'Authorization' => $publicKey,
             'x-correlation-id' => $uuid,
@@ -262,14 +262,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             $logMessage = Utilities::contructLogBody($e, "cko context", "checkout.context.error", $uuid);
             CkoLogging::log($logMessage);
 
-
-            // temporary store logging (Test)
-            $this->logger->error(
-                'Test',
-                ['ID' => $uuid]
-            );
-
-            throw new RuntimeException('cko context creation fail : ' . $e->getMessage());
+            throw new RuntimeException('cko getCkoContext : ' . $e->getMessage());
         }
         
         $session->set('cko_context', $ckoContext);
@@ -285,7 +278,16 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             'Authorization' => $this->config::secretKey()
         ];
 
-        $response = Utilities::postRequest('GET', $url, $header, false);
+        try {
+            $response = Utilities::postRequest('GET', $url, $header, false);
+        } catch (\Exception $e) {
+            
+            $logMessage = Utilities::contructLogBody($e, "cko payment instrument", "checkout.payment.instrument.error", $uuid);
+            CkoLogging::log($logMessage);
+
+            throw new RuntimeException('cko getPaymentInstrument fail : ' . $e->getMessage());
+        }
+        
         
         return $response;
     }

@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Service\PaymentService;
 use Checkoutcom\Helper\Url;
+use Checkoutcom\helper\CkoLogging;
 
 class ComponentsController extends StorefrontController
 {
@@ -242,8 +243,13 @@ class ComponentsController extends StorefrontController
         ];
 
         $url = Url::getDeleteInstrumentUrl($customerId, $card);
-
-        $deleteCardRequest = Utilities::postRequest( 'DELETE', $url, $header );
+        try {
+            $deleteCardRequest = Utilities::postRequest( 'DELETE', $url, $header );
+            
+        } catch (\Exception $e) {
+            $logMessage = Utilities::contructLogBody($e, "cko context", "checkout.context.error", $uuid);
+            CkoLogging::log($logMessage);
+        }
 
         return new Response(
             json_encode(

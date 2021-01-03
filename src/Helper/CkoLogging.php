@@ -13,6 +13,15 @@ class CkoLogging {
 
     public const SOURCE = '/shopware6';
     public const SPECVERSION = '1.0';
+
+    /**
+     * @var LoggerInterface
+     */
+    public static $logger;
+
+    function __construct(LoggerInterface $logger) {
+        self::$logger = $logger;
+    }
     
     /**
      * construct logging body for cloudEvent API
@@ -50,6 +59,7 @@ class CkoLogging {
      *  function to get message of the event
      */
     public function log($log) {
+
         // check if cloudEvent logging is enabled
         if (config::logcloudEvent() == true) {
             try {
@@ -60,11 +70,9 @@ class CkoLogging {
         }
     
         // log to shopware 6
-        
-        // $this->logger->error(
-        //         'Details missing in',
-        //         ['stateData' => "1"]
-        //     );
+        self::$logger->error(
+            json_encode($log)
+            );
     
     }
 
