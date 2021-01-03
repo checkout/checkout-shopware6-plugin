@@ -247,7 +247,7 @@ class ComponentsController extends StorefrontController
             $deleteCardRequest = Utilities::postRequest( 'DELETE', $url, $header );
             
         } catch (\Exception $e) {
-            $logMessage = Utilities::contructLogBody($e, "cko context", "checkout.context.error", $uuid);
+            $logMessage = Utilities::contructLogBody($e, "cko delete instrument", "checkout.intrument.delete.error", $uuid);
             CkoLogging::log($logMessage);
         }
 

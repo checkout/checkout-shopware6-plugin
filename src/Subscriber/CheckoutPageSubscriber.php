@@ -19,7 +19,6 @@ use Checkoutcom\Helper\Url;
 use Checkoutcom\Models\Address;
 use Checkoutcom\helper\CkoLogging;
 use RuntimeException;
-use Psr\Log\LoggerInterface;
 
 class CheckoutPageSubscriber implements EventSubscriberInterface
 {
@@ -29,11 +28,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      * @var EntityRepositoryInterface
      */
     private $paymentRepository;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
      *  GetSubscribedEvents
@@ -54,12 +48,11 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      *
      * @param Config $config config
      */
-    public function __construct(Config $config, EntityRepositoryInterface $paymentRepository, LoggerInterface $logger)
+    public function __construct(Config $config, EntityRepositoryInterface $paymentRepository)
     {
         $this->config = $config;
         $this->restClient = new Client();
         $this->paymentRepository =  $paymentRepository;
-        $this->logger = $logger;
     }
 
     /**
@@ -282,7 +275,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             $response = Utilities::postRequest('GET', $url, $header, false);
         } catch (\Exception $e) {
             
-            $logMessage = Utilities::contructLogBody($e, "cko payment instrument", "checkout.payment.instrument.error", $uuid);
+            $logMessage = Utilities::contructLogBody($e, "cko payment instrument", "checkout.payment.instrument.error", $customerId);
             CkoLogging::log($logMessage);
 
             throw new RuntimeException('cko getPaymentInstrument fail : ' . $e->getMessage());

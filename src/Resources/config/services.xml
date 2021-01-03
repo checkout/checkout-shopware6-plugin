@@ -26,7 +26,6 @@
         <service id="Checkoutcom\Subscriber\CheckoutPageSubscriber" class="Checkoutcom\Subscriber\CheckoutPageSubscriber">
             <argument type="service" id="Checkoutcom\Config\Config" />
             <argument type="service" id="payment_method.repository" />
-            <argument key="$logger" type="service" id="monolog.logger.checkout_generic"/>
             <tag name="kernel.event_subscriber" />
         </service>
 
