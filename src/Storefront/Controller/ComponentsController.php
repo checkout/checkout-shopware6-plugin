@@ -243,6 +243,7 @@ class ComponentsController extends StorefrontController
         ];
 
         $url = Url::getDeleteInstrumentUrl($customerId, $card);
+        
         try {
             $deleteCardRequest = Utilities::postRequest( 'DELETE', $url, $header );
 
