@@ -250,8 +250,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         ];
         try {
             $ckoContext = Utilities::postRequest($method, $url, $header, $body);
-        } catch (\Exception $e) {
             
+        } catch (\Exception $e) {
             $logMessage = Utilities::contructLogBody($e, "cko context", "checkout.context.error", $uuid);
             CkoLogging::log($logMessage);
 
@@ -273,8 +273,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         try {
             $response = Utilities::postRequest('GET', $url, $header, false);
+
         } catch (\Exception $e) {
-            
             $logMessage = Utilities::contructLogBody($e, "cko payment instrument", "checkout.payment.instrument.error", $customerId);
             CkoLogging::log($logMessage);
 
