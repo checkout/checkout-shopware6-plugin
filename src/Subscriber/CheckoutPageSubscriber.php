@@ -17,7 +17,7 @@ use Checkoutcom\Config\Config;
 use GuzzleHttp\Client;
 use Checkoutcom\Helper\Url;
 use Checkoutcom\Models\Address;
-use Checkoutcom\helper\CkoLogging;
+use Checkoutcom\Helper\CkoLogger;
 use RuntimeException;
 
 class CheckoutPageSubscriber implements EventSubscriberInterface
@@ -242,25 +242,26 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $method = 'POST';
         $url = Url::getCloudContextUrl();
 
-        $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
+        $body = json_encode(['currenc' => $currencyCode, 'reference'=> $token ]);
         $header = [
             'Authorization' => $publicKey,
             'x-correlation-id' => $uuid,
             'Content-Type' => 'application/json'
         ];
+        
         try {
             $ckoContext = Utilities::postRequest($method, $url, $header, $body);
+
+            $session->set('cko_context', $ckoContext);
+
+            return $ckoContext;
             
         } catch (\Exception $e) {
             $logMessage = Utilities::contructLogBody($e, "cko context", "checkout.context.error", $uuid);
-            CkoLogging::log($logMessage);
+            CkoLogger::log($logMessage);
 
-            throw new RuntimeException('cko getCkoContext : ' . $e->getMessage());
+            throw new RuntimeException('cko getCkoContext fail: ' . $e->getMessage());
         }
-        
-        $session->set('cko_context', $ckoContext);
-
-        return $ckoContext;
     }
 
     public function getPaymentInstrument(string $customerId)
@@ -274,15 +275,14 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         try {
             $response = Utilities::postRequest('GET', $url, $header, false);
 
+            return $response;
+
         } catch (\Exception $e) {
             $logMessage = Utilities::contructLogBody($e, "cko payment instrument", "checkout.payment.instrument.error", $customerId);
-            CkoLogging::log($logMessage);
+            CkoLogger::log($logMessage);
 
             throw new RuntimeException('cko getPaymentInstrument fail : ' . $e->getMessage());
         }
-        
-        
-        return $response;
     }
     
         

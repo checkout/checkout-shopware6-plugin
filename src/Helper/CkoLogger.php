@@ -9,7 +9,7 @@ use RuntimeException;
 use Checkoutcom\Helper\Utilities;
 use Psr\Log\LoggerInterface;
 
-class CkoLogging {
+class CkoLogger {
 
     public const SOURCE = '/shopware6';
     public const SPECVERSION = '1.0';

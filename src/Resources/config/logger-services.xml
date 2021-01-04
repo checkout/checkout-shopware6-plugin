@@ -11,7 +11,7 @@
         <monolog:channel>checkout_generic</monolog:channel>
         <monolog:handler name="checkout_generic"
                          type="stream"
-                         path="%kernel.logs_dir%/checkout/checkout.log">
+                         path="%kernel.logs_dir%/checkoutcom/checkoutcom.log">
             <monolog:channels>
                 <monolog:channel>checkout_generic</monolog:channel>
             </monolog:channels>

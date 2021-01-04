@@ -8,7 +8,7 @@ use Exception;
 use RuntimeException;
 use Checkoutcom\Helper\Url;
 use Checkoutcom\Helper\Utilities;
-use Checkoutcom\helper\CkoLogging;
+use Checkoutcom\Helper\CkoLogger;
 
 class PaymentService
 {
@@ -52,8 +52,6 @@ class PaymentService
             $paymentResponse = $this->restClient->send($request);
             $paymentResponsebody = json_decode($paymentResponse->getBody()->getContents(), true);
 
-            //@todo log response in cloud
-
             if ($paymentResponsebody['requiresRedirect'] === true) {
                 $response['state'] = self::PAYMENT_REDIRECT;
                 $response['url'] = $paymentResponsebody['redirectLink'];
@@ -72,7 +70,7 @@ class PaymentService
         } catch (Exception $e) {
             
             $logMessage = Utilities::contructLogBody($e, "cko create payment", "checkout.create.payment.error", $correlationId);
-            CkoLogging::log($logMessage);
+            CkoLogger::log($logMessage);
 
             $response['state'] = self::PAYMENT_ERROR;
             $response['message'] = "Error Processing Payment";
@@ -119,6 +117,9 @@ class PaymentService
                 if ($paymentResponsebody['source']['type'] === 'sofort' && $paymentResponsebody['status'] === 'Pending' || $paymentResponsebody['status'] == 'Captured') {
                     $response['state'] = self::PAYMENT_APPROVED;
                 }
+            } else {
+                $response['state'] = self::PAYMENT_ERROR;
+                $response['message'] = "An error has occured";
             }
 
             return $response;
@@ -126,7 +127,7 @@ class PaymentService
         } catch (Exception $e) {
 
             $logMessage = Utilities::contructLogBody($e, "cko verify payment", "checkout.payment.verify.error", $id);
-            CkoLogging::log($logMessage);
+            CkoLogger::log($logMessage);
 
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
@@ -160,6 +161,9 @@ class PaymentService
 
             if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
                 $response['state'] = self::PAYMENT_SUCCESS;
+            } else {
+                $response['state'] = self::PAYMENT_ERROR;
+                $response['message'] = "An error has occured";
             }
             
             return $response;
@@ -167,7 +171,7 @@ class PaymentService
         } catch (Exception $e) {
             
             $logMessage = Utilities::contructLogBody($e, "cko void payment", "checkout.void.transaction.error", $param['payment_id']);
-            CkoLogging::log($logMessage);
+            CkoLogger::log($logMessage);
 
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
@@ -199,6 +203,9 @@ class PaymentService
 
             if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
                 $response['state'] = self::PAYMENT_SUCCESS;
+            } else {
+                $response['state'] = self::PAYMENT_ERROR;
+                $response['message'] = "An error has occured";
             }
             
             return $response;
@@ -206,7 +213,7 @@ class PaymentService
         } catch (Exception $e) {
 
             $logMessage = Utilities::contructLogBody($e, "cko klarna void payment", "checkout.void.transaction.error", $param['payment_id']);
-            CkoLogging::log($logMessage);
+            CkoLogger::log($logMessage);
 
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
@@ -238,6 +245,9 @@ class PaymentService
 
             if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
                 $response['state'] = self::PAYMENT_SUCCESS;
+            } else {
+                $response['state'] = self::PAYMENT_ERROR;
+                $response['message'] = "An error has occured";
             }
 
             return $response;
@@ -245,7 +255,7 @@ class PaymentService
         } catch (Exception $e) {
             
             $logMessage = Utilities::contructLogBody($e, "cko capture payment", "checkout.capture.transaction.error",$param["payment_id"] );
-            CkoLogging::log($logMessage);
+            CkoLogger::log($logMessage);
 
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
@@ -279,6 +289,9 @@ class PaymentService
 
             if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
                 $response['state'] = self::PAYMENT_SUCCESS;
+            } else {
+                $response['state'] = self::PAYMENT_ERROR;
+                $response['message'] = "An error has occured";
             }
 
             return $response;
@@ -286,7 +299,7 @@ class PaymentService
         } catch (Exception $e) {
 
             $logMessage = Utilities::contructLogBody($e, "cko klarna capture payment", "checkout.capture.transaction.error",$param["payment_id"] );
-            CkoLogging::log($logMessage);
+            CkoLogger::log($logMessage);
 
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
@@ -318,6 +331,9 @@ class PaymentService
 
             if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
                 $response['state'] = self::PAYMENT_SUCCESS;
+            } else {
+                $response['state'] = self::PAYMENT_ERROR;
+                $response['message'] = "An error has occured";
             }
 
             return $response;
@@ -325,7 +341,7 @@ class PaymentService
         } catch (Exception $e) {
 
             $logMessage = Utilities::contructLogBody($e, "cko refund payment", "checkout.refund.transaction.error",$param["payment_id"] );
-            CkoLogging::log($logMessage);
+            CkoLogger::log($logMessage);
 
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;

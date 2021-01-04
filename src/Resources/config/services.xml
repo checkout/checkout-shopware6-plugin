@@ -38,7 +38,7 @@
         <service id="Checkoutcom\Service\PaymentService" class="Checkoutcom\Service\PaymentService">
             <argument type="service" id="Checkoutcom\Config\Config" />
             <argument type="service" id="Checkoutcom\Helper\Url" />
-            <argument type="service" id="Checkoutcom\Helper\CkoLogging" />
+            <argument type="service" id="Checkoutcom\Helper\CkoLogger" />
         </service>
 
         <!-- Components controller -->
@@ -94,7 +94,7 @@
         </service>
 
         <!-- Log service -->
-        <service id="Checkoutcom\Helper\CkoLogging" public="true">
+        <service id="Checkoutcom\Helper\CkoLogger" public="true">
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
             <argument key="$logger" type="service" id="monolog.logger.checkout_generic"/>
         </service>

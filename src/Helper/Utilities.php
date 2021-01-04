@@ -7,7 +7,7 @@ use Checkoutcom\Config\Config;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Client;
 use RuntimeException;
-use Checkoutcom\helper\Url;
+use Checkoutcom\Helper\Url;
 use PackageVersions\Versions;
 
 class Utilities
