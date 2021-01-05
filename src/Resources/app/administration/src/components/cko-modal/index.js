@@ -2,7 +2,6 @@ import template from "./cko-modal-html.twig";
 import "./cko-modal.scss";
 import getIndex from "../utilities";
 
-
 const { Component, Service } = Shopware;
 const HTTP_STATUS_CODE_202 = 202;
 const HTTP_STATUS_CODE_200 = 200;
@@ -149,13 +148,12 @@ Shopware.Component.register("cko-modal", {
     },
   },
   computed: {
-    voidAmount() {
+    Amount() {
       let customFields = this.orderInfo.customFields.ckoEvent;
-      const voidAmount =
-        customFields[getIndex(customFields, "event", "payment_approved")]
-          .amount * 1;
       return {
-        amount: voidAmount,
+        amount:
+          customFields[getIndex(customFields, "event", "payment_approved")]
+            .amount * 1,
       };
     },
   },
