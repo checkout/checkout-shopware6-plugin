@@ -66,11 +66,11 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $salesChannelContext = $args->getSalesChannelContext()->getContext();
         $context = $args->getSalesChannelContext();
-        $currency = $context->getCurrency();
-        $currencyCode = $currency->getIsoCode();
+     
+        $info = self::ckoContextBody($context, $token);
         
         // Get cko context
-        $ckoContext = $this->getCkoContext($token, $publicKey, $currencyCode);
+        $ckoContext = $this->getCkoContext($publicKey,$info);
         $apmData = $this->getApmData($ckoContext);
         
         // check if save card is available in context
@@ -105,6 +105,36 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
             ]
         );
+    }
+
+
+    /**
+     * get required fields from the customer object
+     */
+    public static function ckoContextBody($context, $token) {
+
+        $info = [];
+
+        $info["currency"] = $context->getCurrency()->getIsoCode();
+        $info["reference"] = $token;
+        $info["customerInfo"]["customer"]["email"] = $context->getCustomer()->getEmail();
+        $info["customerInfo"]["customer"]["name"] = $context->getCustomer()->getActiveBillingAddress()->getFirstName()." ".$context->getCustomer()->getActiveBillingAddress()->getLastName();
+        $info["customerInfo"]["shipping"]["address"]["address_line1"] = $context->getCustomer()->getActiveShippingAddress()->getStreet();
+        $info["customerInfo"]["shipping"]["address"]["city"] = $context->getCustomer()->getActiveShippingAddress()->getCity();
+        $info["customerInfo"]["shipping"]["address"]["state"] = $context->getCustomer()->getActiveShippingAddress()->getCountryState()->getName();
+        $info["customerInfo"]["shipping"]["address"]["zip"] = $context->getCustomer()->getActiveShippingAddress()->getZipCode();
+        $info["customerInfo"]["shipping"]["address"]["country"] = $context->getCustomer()->getActiveShippingAddress()->getCountry()->getIso();
+        $info["customerInfo"]["billing"]["address"]["address_line1"] = $context->getCustomer()->getActiveBillingAddress()->getStreet();
+        $info["customerInfo"]["billing"]["address"]["city"] = $context->getCustomer()->getActiveBillingAddress()->getCity();
+        $info["customerInfo"]["billing"]["address"]["state"] = $context->getCustomer()->getActiveBillingAddress()->getCountryState()->getName();
+        $info["customerInfo"]["billing"]["address"]["zip"] = $context->getCustomer()->getActiveBillingAddress()->getZipCode();
+        $info["customerInfo"]["billing"]["address"]["country"] = $context->getCustomer()->getActiveBillingAddress()->getCountry()->getIso();
+
+
+        print_r(json_encode($info));
+        die();
+        
+
     }
     
     /**
@@ -230,7 +260,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      * 
      * @return $ckoContext return context
      */
-    public function getCkoContext($token, $publicKey, $currencyCode)
+    public function getCkoContext($publicKey, $info)
     {
         $session = new Session();
 
@@ -240,12 +270,15 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $method = 'POST';
         $url = Url::getCloudContextUrl();
 
-        $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
+        $body = json_encode($info);
         $header = [
             'Authorization' => $publicKey,
             'x-correlation-id' => $uuid,
             'Content-Type' => 'application/json'
         ];
+
+        print_r(json_encode($info));
+        die();
 
         $ckoContext = Utilities::postRequest($method, $url, $header, $body);
 
