@@ -66,7 +66,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $salesChannelContext = $args->getSalesChannelContext()->getContext();
         $context = $args->getSalesChannelContext();
-     
+        
+        // get customer information from sw context
         $info = self::ckoContextBody($context, $token);
         
         // Get cko context
@@ -110,6 +111,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
     /**
      * get required fields from the customer object
+     * @param  mixed $context
+     * @param  $token reference
      */
     public static function ckoContextBody($context, $token) {
 
@@ -129,11 +132,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $info["customerInfo"]["billing"]["address"]["state"] = $context->getCustomer()->getActiveBillingAddress()->getCountryState()->getName();
         $info["customerInfo"]["billing"]["address"]["zip"] = $context->getCustomer()->getActiveBillingAddress()->getZipCode();
         $info["customerInfo"]["billing"]["address"]["country"] = $context->getCustomer()->getActiveBillingAddress()->getCountry()->getIso();
-
-
-        print_r(json_encode($info));
-        die();
-        
 
     }
     
@@ -276,9 +274,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             'x-correlation-id' => $uuid,
             'Content-Type' => 'application/json'
         ];
-
-        print_r(json_encode($info));
-        die();
 
         $ckoContext = Utilities::postRequest($method, $url, $header, $body);
 
