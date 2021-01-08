@@ -13,8 +13,7 @@ class Url {
      * url
      */
     public const CKO_IFRAME_URL = "https://cdn.checkout.com/js/framesv2.min.js";
-    public const CLOUDEVENT_QA_URL = "https://cloudevents.cko-qa.ckotech.co/logging";
-    public const CLOUDEVENT_LIVE_URL = "https://cloudevents.cko-prod.ckotech.co/logging";
+    public const CLOUDEVENT_LIVE_URL = "https://cloudevents.cko-qa.ckotech.co/logging";
 
     /**
      * cloud plugin create payment url
@@ -91,9 +90,8 @@ class Url {
     /**
      * cloudEvent logging url
      */
-    public function getCloudEventUrl(String $publicKey) {
-        $isLive = self::isLive($publicKey);
-        $url = $isLive ? self::CLOUDEVENT_LIVE_URL : self::CLOUDEVENT_QA_URL;
+    public function getCloudEventUrl() {
+        $url = self::CLOUDEVENT_LIVE_URL;
 
         return $url;
     }

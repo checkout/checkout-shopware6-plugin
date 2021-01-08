@@ -18,7 +18,9 @@ use GuzzleHttp\Client;
 use Checkoutcom\Helper\Url;
 use Checkoutcom\Models\Address;
 use Checkoutcom\Helper\CkoLogger;
+use Checkoutcom\Helper\ckoException;
 use RuntimeException;
+use Psr\Log\LoggerInterface;
 
 class CheckoutPageSubscriber implements EventSubscriberInterface
 {
@@ -242,7 +244,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $method = 'POST';
         $url = Url::getCloudContextUrl();
 
-        $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
+        $body = json_encode(['currenc' => $currencyCode, 'reference'=> $token ]);
         $header = [
             'Authorization' => $publicKey,
             'x-correlation-id' => $uuid,
@@ -257,10 +259,13 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             return $ckoContext;
             
         } catch (\Exception $e) {
-            $logMessage = Utilities::contructLogBody($e, "cko context", "checkout.context.error", $uuid);
-            CkoLogger::log($logMessage);
 
-            throw new RuntimeException('cko getCkoContext fail: ' . $e->getMessage());
+            throw new ckoException($e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error");
+
+            // $logMessage = Utilities::contructLogBody($e, "cko context", "checkout.context.error", $uuid);
+            // CkoLogger::log($logMessage);
+
+            // throw new RuntimeException('cko getCkoContext fail: ' . $e->getMessage());
         }
     }
 

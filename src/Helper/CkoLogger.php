@@ -44,7 +44,7 @@ class CkoLogger {
             'Content-Type' => 'application/cloudevents+json',
         ];
     
-        $url = Url::getCloudEventUrl(config::publicKey());
+        $url = Url::getCloudEventUrl();
         
         $loggingRequest = Utilities::postRequest(
             'POST',
@@ -65,7 +65,8 @@ class CkoLogger {
             try {
                 self::postLoggingRequest($log);
             } catch (Exception $e) {
-                return $e;
+                self::$logger->error('Logging API not available');
+                self::$logger->error(json_encode($e));
             }
         }
     
