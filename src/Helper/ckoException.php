@@ -43,29 +43,14 @@ class ckoException extends \Exception {
         self::$exceptionType = $type;
         self::$exceptionId = $id;
         self::$logLevel = $logLevel;
-
-    }
-
-    /**
-     *  get the exception message
-     */
-    public function getExceptionMessage() {
-        
-        return self::$exceptionMessage;
     }
 
      /**
-     *  build the body to be logged on cloudEvent and shopware 6
+     *  build the body to be logged on cloudEvent
      */
     public function getLogBody() {
-        
-        $logBody['error'] = self::$exceptionMessage;
-        $body = [
-            "scope" => self::$exceptionScope,
-            "message" => json_encode($logBody),
-            "id" => self::$exceptionId,
-            "type" => self::$exceptionType,
-        ];
+
+        $body = Utilities::contructLogBody(self::$exceptionMessage, self::$exceptionScope, self::$exceptionType, self::$exceptionId, self::$logLevel);
 
         return $body;
     }

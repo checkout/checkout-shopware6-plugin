@@ -35,8 +35,8 @@ class DatadogHandler extends AbstractProcessingHandler {
 
     protected function write(array $record): void
     {
-        
         $obj = json_decode($record["message"]);
+
         $logLevel = $this->logLevelName($this->level);
         $environment = Url::isLive(config::publicKey()) ? "PROD" : "SANDBOX";
 
@@ -48,7 +48,7 @@ class DatadogHandler extends AbstractProcessingHandler {
         $logBody['source'] = '/shopware6'. '/' . $_SERVER['SERVER_NAME'] . '/' . $environment;
         $logBody['data']['scope'] = $obj->scope;
         $logBody['data']['message'] = $obj->message;
-        $logBody['cko']['correlationId'] = $obj->id;
+        $logBody['cko']['correlationId'] =$obj->id;
         $logBody['cko']['loglevel'] = $logLevel;
 
         $header =  [

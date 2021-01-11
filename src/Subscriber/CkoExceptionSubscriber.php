@@ -13,7 +13,13 @@ use Checkoutcom\Handler\DatadogHandler;
 use Checkoutcom\Helper\Url;
 use Checkoutcom\Helper\ckoException;
 use Checkoutcom\Config\Config;
+use Checkoutcom\Helper\CkoLogger;
 
+/**
+ * This class is subscribed to the exception event and is invoked when
+ * a ckoException is thrown
+ * 
+ */
 class CkoExceptionSubscriber implements EventSubscriberInterface {
 
     protected $config;
@@ -47,7 +53,7 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
 
         // check if exception is an instance of ckoException
         if ($exception instanceof ckoException) {
-            
+    
             $body = $exception->getLogBody();
             $logLevel = $exception->getLogLevel();
             $url = Url::getCloudEventUrl();
@@ -61,10 +67,7 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
             // log event
             self::$logger->$logLevel(
                 json_encode($body)
-                );
-                
+                );       
         }
     }
-
-    
 }

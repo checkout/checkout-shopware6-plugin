@@ -243,7 +243,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $method = 'POST';
         $url = Url::getCloudContextUrl();
 
-        $body = json_encode(['currenc' => $currencyCode, 'reference'=> $token ]);
+        $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
         $header = [
             'Authorization' => $publicKey,
             'x-correlation-id' => $uuid,
@@ -258,9 +258,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             return $ckoContext;
             
         } catch (\Exception $e) {
-
             throw new ckoException($e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error");
-        
+            throw new RuntimeException('cko context creation fail : ' . $e->getMessage());
         }
     }
 
