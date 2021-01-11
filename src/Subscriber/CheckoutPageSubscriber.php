@@ -17,7 +17,6 @@ use Checkoutcom\Config\Config;
 use GuzzleHttp\Client;
 use Checkoutcom\Helper\Url;
 use Checkoutcom\Models\Address;
-use Checkoutcom\Helper\CkoLogger;
 use Checkoutcom\Helper\ckoException;
 use RuntimeException;
 use Psr\Log\LoggerInterface;
@@ -261,11 +260,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         } catch (\Exception $e) {
 
             throw new ckoException($e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error");
-
-            // $logMessage = Utilities::contructLogBody($e, "cko context", "checkout.context.error", $uuid);
-            // CkoLogger::log($logMessage);
-
-            // throw new RuntimeException('cko getCkoContext fail: ' . $e->getMessage());
+        
         }
     }
 
@@ -283,9 +278,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             return $response;
 
         } catch (\Exception $e) {
-            $logMessage = Utilities::contructLogBody($e, "cko payment instrument", "checkout.payment.instrument.error", $customerId);
-            CkoLogger::log($logMessage);
-
+            throw new ckoException($e->getMessage(), "cko payment instrument", "checkout.payment.instrument.error", $customerId, "Error");
             throw new RuntimeException('cko getPaymentInstrument fail : ' . $e->getMessage());
         }
     }

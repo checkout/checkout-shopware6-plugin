@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Service\PaymentService;
 use Checkoutcom\Helper\Url;
-use Checkoutcom\Helper\CkoLogger;
 
 class ComponentsController extends StorefrontController
 {
@@ -254,8 +253,7 @@ class ComponentsController extends StorefrontController
             );
             
         } catch (\Exception $e) {
-            $logMessage = Utilities::contructLogBody($e, "cko delete instrument", "checkout.intrument.delete.error", $uuid);
-            CkoLogger::log($logMessage);
+            throw new ckoException($e->getMessage(), "cko delete instrument", "checkout.intrument.delete.error", $uuid, "Error");
         }
     }
 }

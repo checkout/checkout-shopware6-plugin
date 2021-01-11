@@ -28,7 +28,6 @@ class Utilities
         
         try {
             $response = $restClient->send($request);
-            
             $body = json_decode($response->getBody()->getContents(), true);
 
             return $body;

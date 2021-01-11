@@ -37,6 +37,7 @@ class ckoException extends \Exception {
     public static $logLevel;
 
     public function __construct($message, $scope, $type, $id = false, $logLevel) {
+
         self::$exceptionMessage = $message;
         self::$exceptionScope = $scope;
         self::$exceptionType = $type;

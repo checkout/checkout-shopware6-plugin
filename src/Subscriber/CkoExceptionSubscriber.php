@@ -51,20 +51,18 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
             $body = $exception->getLogBody();
             $logLevel = $exception->getLogLevel();
             $url = Url::getCloudEventUrl();
-
-            // print_r($body);
-            // die();
             $formatter = new JsonFormatter();
+
+            // create instance of the datadog handler to log on cloudEvent
             $datadogLogs = new DatadogHandler($url, $logLevel, true);
             $datadogLogs->setFormatter($formatter);
-
             self::$logger->pushHandler($datadogLogs);
-
+            
+            // log event
             self::$logger->$logLevel(
                 json_encode($body)
                 );
-
-                throw new RuntimeException('cko getCkoContext fail: ' . json_encode($body));
+                
         }
     }
 
