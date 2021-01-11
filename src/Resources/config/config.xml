@@ -7,13 +7,13 @@
         <title lang="nl-NL">Checkout.com</title>
 
         <input-field>
-            <name>publicKey</name>
-            <label>Public Key</label>
+            <name>secretKey</name>
+            <label>Secret Key</label>
         </input-field>
 
         <input-field>
-            <name>secretKey</name>
-            <label>Secret Key</label>
+            <name>publicKey</name>
+            <label>Public Key</label>
         </input-field>
 
         <input-field type="url">
