@@ -19,15 +19,5 @@
                 <monolog:channel>checkout_generic</monolog:channel>
             </monolog:channels>
         </monolog:handler>
-
-        <monolog:handler
-            name="checkout_generic_datadog"
-            type="service"
-            id="Checkoutcom\Handler\DatadogHandler">
-            <monolog:channels>
-                <monolog:channel>checkout_generic_datadog</monolog:channel>
-            </monolog:channels>
-        </monolog:handler>
-    
     </monolog:config>
 </container>

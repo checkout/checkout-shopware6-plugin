@@ -7,6 +7,7 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Psr\Log\LoggerInterface;
 use monolog\Logger;
+use Monolog\Formatter\JsonFormatter;
 use RuntimeException;
 use Checkoutcom\Handler\DatadogHandler;
 use Checkoutcom\Helper\Url;
@@ -51,7 +52,13 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
             $logLevel = $exception->getLogLevel();
             $url = Url::getCloudEventUrl();
 
+            // print_r($body);
+            // die();
+            $formatter = new JsonFormatter();
             $datadogLogs = new DatadogHandler($url, $logLevel, true);
+            $datadogLogs->setFormatter($formatter);
+
+            self::$logger->pushHandler($datadogLogs);
 
             self::$logger->$logLevel(
                 json_encode($body)

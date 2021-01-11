@@ -10,6 +10,7 @@ use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Helper\ckoException;
+use Checkoutcom\Config\Config;
 
 class DatadogHandler extends AbstractProcessingHandler {
 
@@ -36,22 +37,23 @@ class DatadogHandler extends AbstractProcessingHandler {
 
     protected function write(array $record): void
     {
+        
+        $obj = json_decode($record["message"]);
+
         $logBody = [];
     
         $logBody['specversion'] = self::SPECVERSION;
-        $logBody['id'] = $record['id'];
-        $logBody['type'] = $record['type'];
+        $logBody['id'] = $obj->id;
+        $logBody['type'] =$obj->type;
         $logBody['source'] = self::SOURCE;
-        $logBody['data']['scope'] = $record['scope'];
-        $logBody['data']['message'] = $record['message'];
-        $logBody['cko']['correlationId'] = $record['id'];
-        $logBody['cko']['loglevel'] = $this->level;
+        $logBody['data']['scope'] = $obj->scope;
+        $logBody['data']['message'] = $obj->message;
+        $logBody['cko']['correlationId'] = $obj->id;
+        $logBody['cko']['loglevel'] = "error";
         
         $header =  [
             'Content-Type' => 'application/cloudevents+json',
         ];
-    
-        $url = Url::getCloudEventUrl();
 
         if (config::logcloudEvent() == true) {
             $loggingRequest = Utilities::postRequest(
