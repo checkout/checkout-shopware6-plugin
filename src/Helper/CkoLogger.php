@@ -9,7 +9,7 @@ use RuntimeException;
 use Checkoutcom\Helper\Utilities;
 use Psr\Log\LoggerInterface;
 use Monolog\Formatter\JsonFormatter;
-use Checkoutcom\Handler\DatadogHandler;
+use Checkoutcom\Handler\CloudEventsHandler;
 
 
 /**
@@ -26,6 +26,12 @@ class CkoLogger {
 
     function __construct(LoggerInterface $logger) {
         self::$logger = $logger;
+
+        if (config::logcloudEvent() == true) {
+            self::$logger->pushHandler(new CloudEventsHandler(
+                Url::getCloudEventUrl(), "error", true
+            ));
+        }
     }
     
     /**
@@ -34,18 +40,15 @@ class CkoLogger {
     public function log($message, $scope, $type, $id = false, $logLevel) {
 
         $body = Utilities::contructLogBody($message, $scope, $type, $id, $logLevel);
-        
-        $url = Url::getCloudEventUrl();
-        $formatter = new JsonFormatter();
-        
-        // create instance of the datadog handler to log on cloudEvent
-        $datadogLogs = new DatadogHandler($url, $logLevel, true);
-        $datadogLogs->setFormatter($formatter);
-        self::$logger->pushHandler($datadogLogs);
     
         self::$logger->$logLevel(
             json_encode($body)
             );
+    }
+
+    public static function logger() {
+
+        return self::$logger;
     }
 
 }

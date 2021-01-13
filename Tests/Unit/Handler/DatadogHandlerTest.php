@@ -1,13 +1,13 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Checkoutcom\Handler\DatadogHandler;
+use Checkoutcom\Handler\CloudEventsHandler;
 
-class DatadogHandlerTest extends TestCase {
+class CloudEventsHandlerTest extends TestCase {
 
     public function testLogLevelName() {
         
-        $name = DatadogHandler::logLevelName(100);
+        $name = CloudEventsHandler::logLevelName(100);
         $this->assertEquals($name, "debug");
 
     } 

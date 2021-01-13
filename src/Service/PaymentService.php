@@ -72,7 +72,14 @@ class PaymentService
             
         } catch (Exception $e) {
 
-            CkoLogger::log($e->getMessage(), "cko create payment", "checkout.create.payment.error", $correlationId, "Error");
+            CkoLogger::logger()->Error(
+                array(
+                    "type" => "checkout.create.payment.error",
+                    "scope" => "cko create payment",
+                    "message" => $e->getMessage()
+                ));
+
+            // CkoLogger::log($e->getMessage(), "cko create payment", "checkout.create.payment.error", $correlationId, "Error");
 
             $response['state'] = self::PAYMENT_ERROR;
             $response['message'] = "Error Processing Payment";

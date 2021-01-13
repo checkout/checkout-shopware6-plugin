@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 use monolog\Logger;
 use Monolog\Formatter\JsonFormatter;
 use RuntimeException;
-use Checkoutcom\Handler\DatadogHandler;
+use Checkoutcom\Handler\CloudEventsHandler;
 use Checkoutcom\Helper\Url;
 use Checkoutcom\Helper\ckoException;
 use Checkoutcom\Config\Config;
@@ -60,9 +60,9 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
             $formatter = new JsonFormatter();
 
             // create instance of the datadog handler to log on cloudEvent
-            $datadogLogs = new DatadogHandler($url, $logLevel, true);
-            $datadogLogs->setFormatter($formatter);
-            self::$logger->pushHandler($datadogLogs);
+            $cloudEventLogs = new CloudEventsHandler($url, $logLevel, true);
+            $cloudEventLogs->setFormatter($formatter);
+            self::$logger->pushHandler($cloudEventLogs);
             
             // log event
             self::$logger->$logLevel(
