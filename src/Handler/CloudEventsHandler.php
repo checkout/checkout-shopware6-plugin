@@ -11,6 +11,8 @@ use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Helper\ckoException;
 use Checkoutcom\Config\Config;
 use Checkoutcom\Helper\Url;
+use RuntimeException;
+use Checkoutcom\Helper\CkoLogger;
 
 class CloudEventsHandler extends AbstractProcessingHandler {
     
@@ -27,29 +29,28 @@ class CloudEventsHandler extends AbstractProcessingHandler {
     protected $level;
 
 
-    public function __construct($endpoint, $level, $bubble = true) {
-        $this->endpoint = $endpoint;
+    public function __construct($level, $bubble = true) {
 
         parent::__construct($level, $bubble);
     }
 
     protected function write(array $record): void
     {
-        $obj = json_decode($record["message"]);
-
-        // $logLevel = $this->logLevelName($this->level);
         $environment = Url::isLive(config::publicKey()) ? "PROD" : "SANDBOX";
+        $data = json_decode($record["message"]);
 
-        $logBody = [];
-    
-        $logBody['specversion'] = self::SPECVERSION;
-        $logBody['id'] = $obj->id;
-        $logBody['type'] =$obj->type;
-        $logBody['source'] = '/shopware6'. '/' . $_SERVER['SERVER_NAME'] . '/' . $environment;
-        $logBody['data']['scope'] = $obj->scope;
-        $logBody['data']['message'] = $obj->message;
-        $logBody['cko']['correlationId'] =$obj->id;
-        $logBody['cko']['loglevel'] = $this->level;
+        echo '<pre>';
+        print_r($data);
+        die();
+        
+        $obj = (object)[];
+        $obj->specversion = self::SPECVERSION;
+        $obj->id = Utilities::uuid();
+        $obj->type = $data->type;
+        $obj->source = '/shopware6'. '/' . $_SERVER['SERVER_NAME'] . '/' . $environment;
+        $obj->data = $data;
+        $obj->cko['correlationId'] = $data->id ?? Utilities::uuid();
+        $obj->cko['loglevel'] = self::logLevelName($this->level);
 
         $header =  [
             'Content-Type' => 'application/cloudevents+json',
@@ -58,13 +59,17 @@ class CloudEventsHandler extends AbstractProcessingHandler {
         try {
             $loggingRequest = Utilities::postRequest(
                 'POST',
-                $this->endpoint,
+                Url::getCloudEventUrl(),
                 $header,
-                json_encode($logBody)
+                json_encode($obj)
             );
         } catch (\Exception $e) {
             
-            throw new ckoException($e->getMessage(), "Datadog handler log", "Datadog.log.error", "Error");
+            // CkoLogger::log(
+            //     $e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error"
+            // );
+
+            throw new RuntimeException('Log to cloud event api failed : ' . $e->getMessage());
         }
         
     }

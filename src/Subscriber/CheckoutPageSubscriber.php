@@ -20,6 +20,7 @@ use Checkoutcom\Models\Address;
 use Checkoutcom\Helper\ckoException;
 use RuntimeException;
 use Psr\Log\LoggerInterface;
+use Checkoutcom\Helper\CkoLogger;
 
 class CheckoutPageSubscriber implements EventSubscriberInterface
 {
@@ -78,7 +79,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         
         // check if save card is available in context
         // and save in session, this will be used when payment failed
-        $isSaveCard = in_array('saveCard', $apmData->apmName);
+        $isSaveCard = in_array('id', $apmData->apmName);
         $session->set('saveCard', $isSaveCard);
 
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
@@ -245,7 +246,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
         $header = [
-            'Authorization' => $publicKey,
+            'Authorizatio' => $publicKey,
             'x-correlation-id' => $uuid,
             'Content-Type' => 'application/json'
         ];
@@ -258,8 +259,13 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             return $ckoContext;
             
         } catch (\Exception $e) {
-            throw new ckoException($e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error");
-            throw new RuntimeException('cko context creation fail : ' . $e->getMessage());
+
+            // Logging works in both sw and cloudevent
+            // CkoLogger::log(
+            //     $e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error"
+            // );
+
+            throw new ckoException($e->getMessage(), "cko context", "checkout.context.error", $uuid, "info");
         }
     }
 

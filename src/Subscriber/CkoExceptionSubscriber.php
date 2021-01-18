@@ -10,7 +10,6 @@ use monolog\Logger;
 use Monolog\Formatter\JsonFormatter;
 use RuntimeException;
 use Checkoutcom\Handler\CloudEventsHandler;
-use Checkoutcom\Helper\Url;
 use Checkoutcom\Helper\ckoException;
 use Checkoutcom\Config\Config;
 use Checkoutcom\Helper\CkoLogger;
@@ -53,21 +52,13 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
 
         // check if exception is an instance of ckoException
         if ($exception instanceof ckoException) {
-    
             $body = $exception->getLogBody();
-            $logLevel = $exception->getLogLevel();
-            $url = Url::getCloudEventUrl();
-            $formatter = new JsonFormatter();
-
-            // create instance of the datadog handler to log on cloudEvent
-            $cloudEventLogs = new CloudEventsHandler($url, $logLevel, true);
-            $cloudEventLogs->setFormatter($formatter);
-            self::$logger->pushHandler($cloudEventLogs);
             
-            // log event
-            self::$logger->$logLevel(
-                json_encode($body)
-                );       
+            CkoLogger::log(
+                $body['message'], $body['scope'], $body['type'], $body['id'], "Error"
+            );
+
+            throw new RuntimeException($body['message']['error']);
         }
     }
 }
