@@ -61,8 +61,7 @@ class CloudEventsHandler extends AbstractProcessingHandler {
             );
         } catch (\Exception $e) {
             
-            // @todo log to sw
-
+            throw new ckoException($e->getMessage(), "cko cloudEvent", "checkout.cloudEvent.logging.error", Utilities::uuid(), "Error", true);
             throw new RuntimeException('Log to cloud event api failed : ' . $e->getMessage());
         }
         

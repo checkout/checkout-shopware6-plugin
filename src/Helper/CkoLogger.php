@@ -11,11 +11,6 @@ use Psr\Log\LoggerInterface;
 use Monolog\Formatter\JsonFormatter;
 use Checkoutcom\Handler\CloudEventsHandler;
 
-/**
- * This class is used to log on clouEvent and shopware 6 without
- * throwing an exception
- * 
- */
 class CkoLogger {
 
     protected $config;
@@ -33,18 +28,5 @@ class CkoLogger {
     public static function logger() {
 
         return self::$logger;
-    }
-    
-    public function log($message, $scope, $type, $id = false, $logLevel) {
-
-        $body = Utilities::contructLogBody(
-            $message,
-            $scope,
-            $type,
-            $id,
-            $logLevel
-        );
-        
-        self::$logger->$logLevel(json_encode($body));
     }
 }

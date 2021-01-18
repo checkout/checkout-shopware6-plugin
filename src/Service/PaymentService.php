@@ -35,7 +35,7 @@ class PaymentService
 
         $errorMessage = '';
         $response = [];
-
+        
         $url = Url::createPaymentUrl();
 
         $request =  new Request(
@@ -73,13 +73,13 @@ class PaymentService
         } catch (Exception $e) {
 
             CkoLogger::logger()->Error(
-                array(
-                    "type" => "checkout.create.payment.error",
+                json_encode ([
                     "scope" => "cko create payment",
-                    "message" => $e->getMessage()
-                ));
-
-            // CkoLogger::log($e->getMessage(), "cko create payment", "checkout.create.payment.error", $correlationId, "Error");
+                    "message" =>  $e->getMessage(),
+                    "id" => $correlationId,
+                    "type" => "checkout.create.payment.error"
+                ])
+            );
 
             $response['state'] = self::PAYMENT_ERROR;
             $response['message'] = "Error Processing Payment";
@@ -134,7 +134,14 @@ class PaymentService
             
         } catch (Exception $e) {
 
-            CkoLogger::log($e->getMessage(), "cko verify payment", "checkout.payment.verify.error", $id, "error");
+            CkoLogger::logger()->Error(
+                json_encode ([
+                    "scope" => "cko verify payment",
+                    "message" =>  $e->getMessage(),
+                    "id" => $id,
+                    "type" => "checkout.payment.verify.error"
+                ])
+            );
         
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
@@ -175,7 +182,15 @@ class PaymentService
             return $response;
             
         } catch (Exception $e) {
-            CkoLogger::log($e->getMessage(), "cko void payment", "checkout.void.transaction.error", $param['payment_id'], "Error");
+
+            CkoLogger::logger()->Error(
+                json_encode ([
+                    "scope" => "cko void payment",
+                    "message" =>  $e->getMessage(),
+                    "id" => $param['payment_id'],
+                    "type" => "checkout.void.transaction.error"
+                ])
+            );
        
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
@@ -215,7 +230,15 @@ class PaymentService
             return $response;
             
         } catch (Exception $e) {
-            CkoLogger::log($e->getMessage(), "cko klarna void payment", "checkout.void.transaction.error", $param['payment_id'], "Error");
+
+            CkoLogger::logger()->Error(
+                json_encode ([
+                    "scope" => "cko klarna void payment",
+                    "message" =>  $e->getMessage(),
+                    "id" => $param['payment_id'],
+                    "type" => "checkout.void.transaction.error"
+                ])
+            );
      
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
@@ -255,7 +278,15 @@ class PaymentService
             return $response;
             
         } catch (Exception $e) {
-            CkoLogger::log($e->getMessage(), "cko capture payment", "checkout.capture.transaction.error", $param['payment_id'], "Error");
+
+            CkoLogger::logger()->Error(
+                json_encode ([
+                    "scope" => "cko capture payment",
+                    "message" =>  $e->getMessage(),
+                    "id" => $param['payment_id'],
+                    "type" => "checkout.capture.transaction.error"
+                ])
+            );
        
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
@@ -297,7 +328,15 @@ class PaymentService
             return $response;
             
         } catch (Exception $e) {
-            CkoLogger::log($e->getMessage(), "cko klarna capture payment", "checkout.capture.transaction.error", $param['payment_id'], "Error");
+
+            CkoLogger::logger()->Error(
+                json_encode ([
+                    "scope" => "cko klarna capture payment",
+                    "message" =>  $e->getMessage(),
+                    "id" => $param['payment_id'],
+                    "type" => "checkout.capture.transaction.error"
+                ])
+            );
        
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
@@ -337,7 +376,15 @@ class PaymentService
             return $response;
             
         } catch (Exception $e) {
-            CkoLogger::log($e->getMessage(), "cko refund payment", "checkout.refund.transaction.error", $param['payment_id'], "Error");
+
+            CkoLogger::logger()->Error(
+                json_encode ([
+                    "scope" => "cko refund payment",
+                    "message" =>  $e->getMessage(),
+                    "id" => $param['payment_id'],
+                    "type" => "checkout.refund.transaction.error"
+                ])
+            );
       
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;

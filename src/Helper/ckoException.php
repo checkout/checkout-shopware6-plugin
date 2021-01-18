@@ -36,35 +36,17 @@ class ckoException extends \Exception {
      */
     public static $logLevel;
 
-    public function __construct($message, $scope, $type, $id = false, $logLevel) {
+    /**
+     *  log only to shopware if error occurs while logging in cloudEvent
+     */
+    public static $cloudEventError;
 
+    public function __construct($message, $scope, $type, $id = false, $logLevel, $cloudEventError = false) {
         self::$exceptionMessage = $message;
         self::$exceptionScope = $scope;
         self::$exceptionType = $type;
         self::$exceptionId = $id;
         self::$logLevel = $logLevel;
+        self::$cloudEventError = $cloudEventError;
     }
-
-     /**
-     *  build the body to be logged on cloudEvent
-     */
-    public function getLogBody() {
-        $body = Utilities::contructLogBody(
-            self::$exceptionMessage,
-            self::$exceptionScope,
-            self::$exceptionType,
-            self::$exceptionId,
-            self::$logLevel
-        );
-
-        return $body;
-    }
-
-    /**
-     *  get the log level
-     */
-    // public function getLogLevel() {
-    //     return self::$logLevel;
-    // }
-
 }

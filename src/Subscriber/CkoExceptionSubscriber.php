@@ -14,11 +14,6 @@ use Checkoutcom\Helper\ckoException;
 use Checkoutcom\Config\Config;
 use Checkoutcom\Helper\CkoLogger;
 
-/**
- * This class is subscribed to the exception event and is invoked when
- * a ckoException is thrown
- * 
- */
 class CkoExceptionSubscriber implements EventSubscriberInterface {
 
     protected $config;
@@ -54,12 +49,6 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
         if ($exception instanceof ckoException) {
 
             $logLevel = $exception::$logLevel;
-
-            // $body = $exception->getLogBody();
-            
-            // CkoLogger::log(
-            //     $body['message'], $body['scope'], $body['type'], $body['id'], "Error"
-            // );
 
             CkoLogger::logger()->$logLevel(
                 json_encode ([

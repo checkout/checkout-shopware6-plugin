@@ -145,20 +145,4 @@ class Utilities
 
         return $price;
     }
-
-    /**
-     * build log body
-     */
-    public function contructLogBody($message, $scope, $type, $id = false, $logLevel) {
-
-        $logBody[$logLevel] = $message;
-        $body = [
-            "scope" => $scope,
-            "message" => $logBody,
-            "id" => $id,
-            "type" => $type
-        ];
-
-        return $body;
-    }
 }

@@ -244,7 +244,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $method = 'POST';
         $url = Url::getCloudContextUrl();
 
-        $body = json_encode(['currenc' => $currencyCode, 'reference'=> $token ]);
+        $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
         $header = [
             'Authorization' => $publicKey,
             'x-correlation-id' => $uuid,
@@ -259,23 +259,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             return $ckoContext;
             
         } catch (\Exception $e) {
-
-            // CkoLogger::logger()->Error(
-            //     json_encode ([
-            //         "scope" => "cko create payment",
-            //         "message" =>  $e->getMessage(),
-            //         "id" => $uuid,
-            //         "type" => "checkout.create.payment.error"
-            //     ])
-            // );
-
             
-            // CkoLogger::log(
-            //     $e->getMessage(), "cko context", "checkout.context.error", $uuid, "info"
-            // );
-
-            // throw new RuntimeException("test");
-
             throw new ckoException($e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error");
         }
     }
@@ -294,8 +278,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             return $response;
 
         } catch (\Exception $e) {
+            
             throw new ckoException($e->getMessage(), "cko payment instrument", "checkout.payment.instrument.error", $customerId, "Error");
-            throw new RuntimeException('cko getPaymentInstrument fail : ' . $e->getMessage());
         }
     }
     
