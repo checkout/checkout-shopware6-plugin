@@ -151,10 +151,10 @@ class Utilities
      */
     public function contructLogBody($message, $scope, $type, $id = false, $logLevel) {
 
-        $logBody['error'] = $message;
+        $logBody[$logLevel] = $message;
         $body = [
             "scope" => $scope,
-            "message" => json_encode($logBody),
+            "message" => $logBody,
             "id" => $id,
             "type" => $type,
         ];

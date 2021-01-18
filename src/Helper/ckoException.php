@@ -49,8 +49,13 @@ class ckoException extends \Exception {
      *  build the body to be logged on cloudEvent
      */
     public function getLogBody() {
-
-        $body = Utilities::contructLogBody(self::$exceptionMessage, self::$exceptionScope, self::$exceptionType, self::$exceptionId, self::$logLevel);
+        $body = Utilities::contructLogBody(
+            self::$exceptionMessage,
+            self::$exceptionScope,
+            self::$exceptionType,
+            self::$exceptionId,
+            self::$logLevel
+        );
 
         return $body;
     }
@@ -58,8 +63,8 @@ class ckoException extends \Exception {
     /**
      *  get the log level
      */
-    public function getLogLevel() {
-        return self::$logLevel;
-    }
+    // public function getLogLevel() {
+    //     return self::$logLevel;
+    // }
 
 }
