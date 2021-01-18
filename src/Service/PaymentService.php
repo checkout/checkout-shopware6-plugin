@@ -134,7 +134,7 @@ class PaymentService
             
         } catch (Exception $e) {
 
-            CkoLogger::log($e->getMessage(), "cko verify payment", "checkout.payment.verify.error", $id, "Error");
+            CkoLogger::log($e->getMessage(), "cko verify payment", "checkout.payment.verify.error", $id, "error");
         
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;

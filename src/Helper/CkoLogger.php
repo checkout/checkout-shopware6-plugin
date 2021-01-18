@@ -26,10 +26,13 @@ class CkoLogger {
         $this->config = $config;
 
         if ($this->config::logcloudEvent()) {
-            self::$logger->pushHandler(new CloudEventsHandler(
-                "info", true
-            ));
+            self::$logger->pushHandler(new CloudEventsHandler(true));
         }
+    }
+
+    public static function logger() {
+
+        return self::$logger;
     }
     
     public function log($message, $scope, $type, $id = false, $logLevel) {

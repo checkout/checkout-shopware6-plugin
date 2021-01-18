@@ -52,13 +52,25 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
 
         // check if exception is an instance of ckoException
         if ($exception instanceof ckoException) {
-            $body = $exception->getLogBody();
+
+            $logLevel = $exception::$logLevel;
+
+            // $body = $exception->getLogBody();
             
-            CkoLogger::log(
-                $body['message'], $body['scope'], $body['type'], $body['id'], "Error"
+            // CkoLogger::log(
+            //     $body['message'], $body['scope'], $body['type'], $body['id'], "Error"
+            // );
+
+            CkoLogger::logger()->$logLevel(
+                json_encode ([
+                    "scope" => $exception::$exceptionScope,
+                    "message" =>  $exception::$exceptionMessage,
+                    "id" => $exception::$exceptionId,
+                    "type" => $exception::$exceptionType
+                ])
             );
 
-            throw new RuntimeException($body['message']['error']);
+            throw new RuntimeException($exception::$exceptionMessage);
         }
     }
 }

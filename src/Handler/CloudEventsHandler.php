@@ -29,19 +29,15 @@ class CloudEventsHandler extends AbstractProcessingHandler {
     protected $level;
 
 
-    public function __construct($level, $bubble = true) {
+    public function __construct($bubble = true) {
 
-        parent::__construct($level, $bubble);
+        parent::__construct($bubble);
     }
 
     protected function write(array $record): void
     {
         $environment = Url::isLive(config::publicKey()) ? "PROD" : "SANDBOX";
         $data = json_decode($record["message"]);
-
-        echo '<pre>';
-        print_r($data);
-        die();
         
         $obj = (object)[];
         $obj->specversion = self::SPECVERSION;
@@ -50,7 +46,7 @@ class CloudEventsHandler extends AbstractProcessingHandler {
         $obj->source = '/shopware6'. '/' . $_SERVER['SERVER_NAME'] . '/' . $environment;
         $obj->data = $data;
         $obj->cko['correlationId'] = $data->id ?? Utilities::uuid();
-        $obj->cko['loglevel'] = self::logLevelName($this->level);
+        $obj->cko['loglevel'] = self::logLevelName($record['level']);
 
         $header =  [
             'Content-Type' => 'application/cloudevents+json',
@@ -65,9 +61,7 @@ class CloudEventsHandler extends AbstractProcessingHandler {
             );
         } catch (\Exception $e) {
             
-            // CkoLogger::log(
-            //     $e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error"
-            // );
+            // @todo log to sw
 
             throw new RuntimeException('Log to cloud event api failed : ' . $e->getMessage());
         }

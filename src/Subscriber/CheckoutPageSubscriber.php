@@ -244,9 +244,9 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $method = 'POST';
         $url = Url::getCloudContextUrl();
 
-        $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
+        $body = json_encode(['currenc' => $currencyCode, 'reference'=> $token ]);
         $header = [
-            'Authorizatio' => $publicKey,
+            'Authorization' => $publicKey,
             'x-correlation-id' => $uuid,
             'Content-Type' => 'application/json'
         ];
@@ -260,12 +260,23 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             
         } catch (\Exception $e) {
 
-            // Logging works in both sw and cloudevent
-            // CkoLogger::log(
-            //     $e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error"
+            // CkoLogger::logger()->Error(
+            //     json_encode ([
+            //         "scope" => "cko create payment",
+            //         "message" =>  $e->getMessage(),
+            //         "id" => $uuid,
+            //         "type" => "checkout.create.payment.error"
+            //     ])
             // );
 
-            throw new ckoException($e->getMessage(), "cko context", "checkout.context.error", $uuid, "info");
+            
+            // CkoLogger::log(
+            //     $e->getMessage(), "cko context", "checkout.context.error", $uuid, "info"
+            // );
+
+            // throw new RuntimeException("test");
+
+            throw new ckoException($e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error");
         }
     }
 

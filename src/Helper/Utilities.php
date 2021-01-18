@@ -156,7 +156,7 @@ class Utilities
             "scope" => $scope,
             "message" => $logBody,
             "id" => $id,
-            "type" => $type,
+            "type" => $type
         ];
 
         return $body;

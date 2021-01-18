@@ -9,12 +9,11 @@
 
     <monolog:config>
         <monolog:channel>checkout_generic</monolog:channel>
-        <monolog:channel>checkout_generic_datadog</monolog:channel>
         
         <monolog:handler name="checkout_generic"
                          type="stream"
                          path="%kernel.logs_dir%/checkoutcom/checkoutcom.log"
-                         handler="checkout_generic_datadog">
+                         handler="checkout_generic">
             <monolog:channels>
                 <monolog:channel>checkout_generic</monolog:channel>
             </monolog:channels>
