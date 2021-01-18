@@ -71,12 +71,14 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         
         // Get cko context
         $ckoContext = $this->getCkoContext($token, $publicKey, $currencyCode);
+
         $apmData = $this->getApmData($ckoContext);
         
         // check if save card is available in context
         // and save in session, this will be used when payment failed
-        $isSaveCard = in_array('saveCard', $apmData->apmName);
-        $session->set('saveCard', $isSaveCard);
+        $isSaveCard = in_array('id', $apmData->apmName);
+
+        $session->set('id', $isSaveCard);
 
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
         $name = $customerInfo->getFirstName()." ".$customerInfo->getLastName();
@@ -119,7 +121,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $context = $arg->getSalesChannelContext();
         $ckoContext = $session->get('cko_context');
-        $isSaveCard = $session->get('saveCard');
+        $isSaveCard = $session->get('id');
         $apmData = $this->getApmData($ckoContext);
 
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
@@ -131,7 +133,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $customField = $context->getCustomer()->getCustomFields();
 
         // Remove session variable
-        $session->remove('saveCard');
+        $session->remove('id');
         $session->remove('ckoContext');
 
         $arg->getPage()->assign(
