@@ -72,7 +72,7 @@ class PaymentService
             
         } catch (Exception $e) {
 
-            CkoLogger::logger()->Error(
+            CkoLogger::log()->Error(
                 json_encode ([
                     "scope" => "cko create payment",
                     "message" =>  $e->getMessage(),
@@ -134,7 +134,7 @@ class PaymentService
             
         } catch (Exception $e) {
 
-            CkoLogger::logger()->Error(
+            CkoLogger::log()->Error(
                 json_encode ([
                     "scope" => "cko verify payment",
                     "message" =>  $e->getMessage(),
@@ -183,7 +183,7 @@ class PaymentService
             
         } catch (Exception $e) {
 
-            CkoLogger::logger()->Error(
+            CkoLogger::log()->Error(
                 json_encode ([
                     "scope" => "cko void payment",
                     "message" =>  $e->getMessage(),
@@ -231,7 +231,7 @@ class PaymentService
             
         } catch (Exception $e) {
 
-            CkoLogger::logger()->Error(
+            CkoLogger::log()->Error(
                 json_encode ([
                     "scope" => "cko klarna void payment",
                     "message" =>  $e->getMessage(),
@@ -279,7 +279,7 @@ class PaymentService
             
         } catch (Exception $e) {
 
-            CkoLogger::logger()->Error(
+            CkoLogger::log()->Error(
                 json_encode ([
                     "scope" => "cko capture payment",
                     "message" =>  $e->getMessage(),
@@ -329,7 +329,7 @@ class PaymentService
             
         } catch (Exception $e) {
 
-            CkoLogger::logger()->Error(
+            CkoLogger::log()->Error(
                 json_encode ([
                     "scope" => "cko klarna capture payment",
                     "message" =>  $e->getMessage(),
@@ -377,7 +377,7 @@ class PaymentService
             
         } catch (Exception $e) {
 
-            CkoLogger::logger()->Error(
+            CkoLogger::log()->Error(
                 json_encode ([
                     "scope" => "cko refund payment",
                     "message" =>  $e->getMessage(),

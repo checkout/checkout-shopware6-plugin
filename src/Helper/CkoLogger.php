@@ -25,8 +25,7 @@ class CkoLogger {
         }
     }
 
-    public static function logger() {
-
+    public static function log() {
         return self::$logger;
     }
 }

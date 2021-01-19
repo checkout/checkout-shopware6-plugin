@@ -47,7 +47,6 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
 
         // check if exception is an instance of ckoException
         if ($exception instanceof ckoException) {
-
             $logLevel = $exception::$logLevel;
 
             CkoLogger::logger()->$logLevel(
@@ -55,7 +54,8 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
                     "scope" => $exception::$exceptionScope,
                     "message" =>  $exception::$exceptionMessage,
                     "id" => $exception::$exceptionId,
-                    "type" => $exception::$exceptionType
+                    "type" => $exception::$exceptionType,
+                    "logToCloudApi" => $exception::$logToCloudApi
                 ])
             );
 

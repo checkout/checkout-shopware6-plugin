@@ -39,14 +39,14 @@ class ckoException extends \Exception {
     /**
      *  log only to shopware if error occurs while logging in cloudEvent
      */
-    public static $cloudEventError;
+    public static $logToCloudApi;
 
-    public function __construct($message, $scope, $type, $id = false, $logLevel, $cloudEventError = false) {
+    public function __construct($message, $scope, $type, $id = false, $logLevel, $logToCloudApi = true) {
         self::$exceptionMessage = $message;
         self::$exceptionScope = $scope;
         self::$exceptionType = $type;
         self::$exceptionId = $id;
         self::$logLevel = $logLevel;
-        self::$cloudEventError = $cloudEventError;
+        self::$logToCloudApi = $logToCloudApi;
     }
 }

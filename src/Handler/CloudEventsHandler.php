@@ -30,12 +30,38 @@ class CloudEventsHandler extends AbstractProcessingHandler {
 
 
     public function __construct($bubble = true) {
-
         parent::__construct($bubble);
     }
 
     protected function write(array $record): void
-    {
+    {   
+        $data = json_decode($record["message"]);
+        
+        if (isset($data->logToCloudApi) 
+            && $data->logToCloudApi
+            || !isset($data->logToCloudApi) ) {
+
+            self::logToCloudEvent($record);
+        }
+        
+    }
+
+    public function logLevelName($logLevel) {
+        $errorMapping = array();
+
+        $errorMapping[100] = 'debug';
+        $errorMapping[200] = 'info';
+        $errorMapping[250] = 'notice';
+        $errorMapping[300] = 'warning';
+        $errorMapping[400] = 'error';
+        $errorMapping[500] = 'critical';
+        $errorMapping[550] = 'alert';
+        $errorMapping[600] = 'emergency';
+
+        return  $errorMapping[$logLevel];
+    }
+
+    public function logToCloudEvent($record) {
         $environment = Url::isLive(config::publicKey()) ? "PROD" : "SANDBOX";
         $data = json_decode($record["message"]);
         
@@ -60,26 +86,17 @@ class CloudEventsHandler extends AbstractProcessingHandler {
                 json_encode($obj)
             );
         } catch (\Exception $e) {
-            
-            throw new ckoException($e->getMessage(), "cko cloudEvent", "checkout.cloudEvent.logging.error", Utilities::uuid(), "Error", true);
+            CkoLogger::logger()->Error(
+                json_encode ([
+                    "scope" => "checkout.cloudEvent.logging.error",
+                    "message" =>  $e->getMessage(),
+                    "id" => Utilities::uuid(),
+                    "type" => "checkout.create.payment.error",
+                    "logToCloudApi" => false
+                ])
+            );
+
             throw new RuntimeException('Log to cloud event api failed : ' . $e->getMessage());
         }
-        
-    }
-
-    public function logLevelName($logLevel) {
-
-        $errorMapping = array();
-
-        $errorMapping[100] = 'debug';
-        $errorMapping[200] = 'info';
-        $errorMapping[250] = 'notice';
-        $errorMapping[300] = 'warning';
-        $errorMapping[400] = 'error';
-        $errorMapping[500] = 'critical';
-        $errorMapping[550] = 'alert';
-        $errorMapping[600] = 'emergency';
-
-        return  $errorMapping[$logLevel];
     }
 }

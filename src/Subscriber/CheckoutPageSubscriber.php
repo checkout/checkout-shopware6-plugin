@@ -259,7 +259,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             return $ckoContext;
             
         } catch (\Exception $e) {
-            
             throw new ckoException($e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error");
         }
     }
