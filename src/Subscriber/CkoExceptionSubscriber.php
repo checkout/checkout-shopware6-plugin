@@ -7,12 +7,11 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Psr\Log\LoggerInterface;
 use monolog\Logger;
-use Monolog\Formatter\JsonFormatter;
 use RuntimeException;
 use Checkoutcom\Handler\CloudEventsHandler;
-use Checkoutcom\Helper\ckoException;
 use Checkoutcom\Config\Config;
 use Checkoutcom\Helper\CkoLogger;
+use Checkoutcom\Helper\LogFields;
 
 class CkoExceptionSubscriber implements EventSubscriberInterface {
 
@@ -31,7 +30,7 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
         // return the subscribed events, their methods and priorities
         return [
             KernelEvents::EXCEPTION => [
-                ['logCkoException', 10]
+                ['logException']
             ],
         ];
     }
@@ -41,25 +40,17 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
         self::$logger = $logger;
     }
 
-    public function logCkoException(ExceptionEvent $event)
+    public function logException(ExceptionEvent $event)
     {
+
         $exception = $event->getException();
 
-        // check if exception is an instance of ckoException
-        if ($exception instanceof ckoException) {
-            $logLevel = $exception::$logLevel;
-
-            CkoLogger::logger()->$logLevel(
-                json_encode ([
-                    "scope" => $exception::$exceptionScope,
-                    "message" =>  $exception::$exceptionMessage,
-                    "id" => $exception::$exceptionId,
-                    "type" => $exception::$exceptionType,
-                    "logToCloudApi" => $exception::$logToCloudApi
-                ])
+        if (!$exception instanceof RuntimeException)
+            CkoLogger::log()->Error(
+                "Unhandled Exception",
+                [
+                    LogFields::MESSAGE => $exception->getMessage()
+                ]
             );
-
-            throw new RuntimeException($exception::$exceptionMessage);
-        }
     }
 }

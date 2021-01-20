@@ -100,14 +100,13 @@
         <service id="Checkoutcom\Helper\payloadHandler" public="true">
         </service>
 
-        <!-- Log service without throwing exception-->
+        <!-- Log service -->
         <service id="Checkoutcom\Helper\CkoLogger" public="true">
-            <!-- <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" /> -->
             <argument type="service" id="Checkoutcom\Config\Config" />
             <argument key="$logger" type="service" id="monolog.logger.checkout_generic"/>
         </service>
 
-        <!-- datadog handler for monolog logging -->
+        <!-- cloudEvent handler for monolog logging -->
         <service id="Checkoutcom\Handler\CloudEventsHandler" public="true">
         </service>
         

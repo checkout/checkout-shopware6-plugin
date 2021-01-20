@@ -253,7 +253,17 @@ class ComponentsController extends StorefrontController
             );
             
         } catch (\Exception $e) {
-            throw new ckoException($e->getMessage(), "cko delete instrument", "checkout.intrument.delete.error", $uuid, "Error");
+
+            CkoLogger::log()->Error(
+                "Error deleting cko instrument",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.intrument.delete",
+                    LogFields::DATA => [ "id" => $uuid ]
+                ]
+            );
+
+            throw new RuntimeException($e->getMessage());
         }
     }
 }

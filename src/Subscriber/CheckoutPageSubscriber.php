@@ -17,10 +17,10 @@ use Checkoutcom\Config\Config;
 use GuzzleHttp\Client;
 use Checkoutcom\Helper\Url;
 use Checkoutcom\Models\Address;
-use Checkoutcom\Helper\ckoException;
 use RuntimeException;
 use Psr\Log\LoggerInterface;
 use Checkoutcom\Helper\CkoLogger;
+use Checkoutcom\Helper\LogFields;
 
 class CheckoutPageSubscriber implements EventSubscriberInterface
 {
@@ -259,7 +259,17 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             return $ckoContext;
             
         } catch (\Exception $e) {
-            throw new ckoException($e->getMessage(), "cko context", "checkout.context.error", $uuid, "Error");
+
+            CkoLogger::log()->Error(
+                "Error creating cko context",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.create.context",
+                    LogFields::DATA => [ "id" => $uuid ]
+                ]
+            );
+
+            throw new RuntimeException($e->getMessage());
         }
     }
 
@@ -277,8 +287,17 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             return $response;
 
         } catch (\Exception $e) {
-            
-            throw new ckoException($e->getMessage(), "cko payment instrument", "checkout.payment.instrument.error", $customerId, "Error");
+
+            CkoLogger::log()->Error(
+                "Error getting cko cko payment instrument",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.payment.instrument",
+                    LogFields::DATA => [ "id" => $customerId ]
+                ]
+            );
+
+            throw new RuntimeException($e->getMessage());
         }
     }
     

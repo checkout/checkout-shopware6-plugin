@@ -3,12 +3,7 @@
 namespace Checkoutcom\Helper;
 
 use Checkoutcom\Config\Config;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Client;
-use RuntimeException;
-use Checkoutcom\Helper\Utilities;
 use Psr\Log\LoggerInterface;
-use Monolog\Formatter\JsonFormatter;
 use Checkoutcom\Handler\CloudEventsHandler;
 
 class CkoLogger {
