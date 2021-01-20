@@ -22,7 +22,7 @@
             <label class="paymentLabel">{{ $tc('checkoutcom.ModalMessageVoid.paymentAmount') }}<label><br>
         </div>
         <div>
-            <label class="voidAmount">{{voidAmount.amount}} </label>
+            <label class="voidAmount">{{Amount.amount}} </label>
             <span class="input-group-addon">{{(orderInfo.currency.translated.shortName)}}</span>
         </div>
         </template>
@@ -55,7 +55,7 @@
         </div>
         <div>
             <span class="currency">{{(orderInfo.currency.translated.shortName)}}</span>
-            <label class="captureAmount"  id="amount">{{orderInfo.customFields["payment_approved"].amount }} </label>
+            <label class="captureAmount"  id="amount">{{Amount.amount}} </label>
         </div>
         <div>
             <label id="captureError" style="color: red"></label>
