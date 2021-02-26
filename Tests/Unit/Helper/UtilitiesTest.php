@@ -10,7 +10,7 @@ class UtilitiesTest extends TestCase
      */
     public function testIsValidResponseTrue()
     {
-        $isValid = Utilities->isValidResponse(200);
+        $isValid = Utilities::isValidResponse(200);
         
         $this->assertTrue($isValid);
     }
