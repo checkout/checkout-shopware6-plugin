@@ -27,6 +27,41 @@
             <label>Cloud Plugin Url</label>
             <defaultValue>https://shopware6.cko-qa.ckotech.co/</defaultValue>
         </input-field>
+    </card>
+    <card>
+        <title>Google Pay</title>
+        <title lang="de-DE">Google Pay</title>
+        <title lang="nl-NL">Google Pay</title>
 
+        <input-field type="bool">
+            <name>enableGpay</name>
+            <label>Enable</label>
+            <defaultValue>false</defaultValue>
+        </input-field>
+
+        <input-field>
+            <name>gpayMerchantId</name>
+            <label>Merchant Identifier</label>
+            <helpText>
+                Your production merchant identifier.
+                
+                For testing use the following value: 01234567890123456789
+            </helpText>
+        </input-field>
+
+        <input-field type="single-select">
+            <name>gpayButtonStyle</name>
+            <options>
+                <option>
+                    <id>black</id>
+                    <name>Black</name>
+                </option>
+                <option>
+                    <id>white</id>
+                    <name>White</name>
+                </option>
+            </options>
+            <label>Button Style</label>
+        </input-field>
     </card>
 </config>

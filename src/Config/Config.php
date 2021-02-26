@@ -60,4 +60,25 @@ class Config
         );
     }
 
+    public static function enableGpay() : bool
+    {
+        return (bool) self::$systemConfigService->get(
+            self::SYSTEM_CONFIG_DOMAIN. 'enableGpay'
+        );
+    }
+
+    public static function gpayMerchantId() : string
+    {
+        return (string) self::$systemConfigService->get(
+            self::SYSTEM_CONFIG_DOMAIN. 'gpayMerchantId'
+        );
+    }
+
+    public static function gpayButtonStyle() : string
+    {
+        return (string) self::$systemConfigService->get(
+            self::SYSTEM_CONFIG_DOMAIN. 'gpayButtonStyle'
+        );
+    }
+
 }
