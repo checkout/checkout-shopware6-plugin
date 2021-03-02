@@ -18,6 +18,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
+
+      - name : Check php version
         run: php -v
 
       - name: Composer install
@@ -25,7 +27,6 @@ jobs:
 
       - name: Unit Tests
         uses: php-actions/phpunit@v8
-        run: php -v
         with:
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
