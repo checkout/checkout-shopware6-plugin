@@ -19,9 +19,6 @@ jobs:
         with:
           php-version: '7.4'
 
-      - name : Check php version
-        run: php -v
-
       - name: Composer install
         run: composer install
 
