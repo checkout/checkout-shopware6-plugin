@@ -73,6 +73,10 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $ckoContext = $this->getCkoContext($token, $publicKey, $currencyCode);
 
         $apmData = $this->getApmData($ckoContext);
+
+        if($this->config::enableGpay()) { 
+            array_push($apmData->apmName, 'gpay');
+        }
         
         // check if save card is available in context
         // and save in session, this will be used when payment failed
