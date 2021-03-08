@@ -49,7 +49,7 @@ class payloadHandler {
         $paymentParam['metadata']['order_transaction_id'] = $orderTransactionId;
         $paymentParam['metadata']['order_id'] = $orderId;
         $paymentParam['metadata']['public_key'] = config::publicKey();
-        $paymentParam['metadata']['is_save_card_check'] = $isSaveCardCheck;
+        $paymentParam['metadata']['is_save_card_check'] = $isSaveCardCheck ===  true ? "true" : "false";
         $paymentParam['metadata']['customer_id'] = $order->getOrderCustomer()->getCustomerId();
         $paymentParam['metadata']['payment_method'] = self::CREDITCARD;
         $paymentParam['metadata']['udf5'] = self::getIntegrationData();;
@@ -99,7 +99,7 @@ class payloadHandler {
         $paymentParam['metadata']['order_transaction_id'] = $orderTransactionId;
         $paymentParam['metadata']['order_id'] = $orderId;
         $paymentParam['metadata']['public_key'] = config::publicKey();
-        $paymentParam['metadata']['is_save_card_check'] = $isSaveCardCheck;
+        $paymentParam['metadata']['is_save_card_check'] = $isSaveCardCheck ===  true ? "true" : "false";
         $paymentParam['metadata']['customer_id'] = $order->getOrderCustomer()->getCustomerId();
         $paymentParam['metadata']['udf5'] = self::getIntegrationData();;
 

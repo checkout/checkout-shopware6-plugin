@@ -1,0 +1,29 @@
+{% sw_extends '@Storefront/storefront/page/checkout/confirm/index.html.twig' %}
+
+{% if page.googlePayData is not null %}
+    {% block page_checkout_confirm_form_submit %}
+        {{ parent() }}
+
+        {% block cko_gpay_button %}
+            <div class="cko-google-pay-area" id="cko-google-pay-area">
+                <input type="hidden" id="cko_pk" name="cko_pk" value="{{ page.ckoPublicKey }}" />
+                <input type="hidden" id="gpay_merchant_id" name="gpay_currency" value = "{{page.googlePayData.gPayMerchantId}}" />
+                <input type="hidden" name="cko_payment_methodId" id="cko_payment_methodId" value="{{page.ckoPaymentMethodId}}" />
+
+                <script>
+                    /**
+                    * Setting these info as global variable as we need them in Gpay script
+                    * These are only used for display purposes and will not affect the payment processing
+                    */
+                    window.display_currency = "{{page.googlePayData.currency}}"
+                    window.display_total = "{{page.googlePayData.totalPrice}}"
+                    window.display_cuntry = "{{page.googlePayData.billingCountry}}"
+                </script>
+
+                <script src="{{ path('frontend.cko.googlepay.js')}}"></script>
+                <script type="text/javascript" src="https://pay.google.com/gp/p/js/pay.js" onload="CheckoutcomGooglePay();"></script>
+            </div>
+        {% endblock %}
+    {% endblock %}
+{% endif %}
+

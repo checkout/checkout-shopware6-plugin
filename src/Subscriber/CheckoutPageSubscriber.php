@@ -68,20 +68,20 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $context = $args->getSalesChannelContext();
         $currency = $context->getCurrency();
         $currencyCode = $currency->getIsoCode();
-        
+
         // Get cko context
         $ckoContext = $this->getCkoContext($token, $publicKey, $currencyCode);
-
         $apmData = $this->getApmData($ckoContext);
 
         if($this->config::enableGpay()) { 
             array_push($apmData->apmName, 'gpay');
+
+            $googlePayData = $this->getGooglePayData($context, $args);
         }
-        
+
         // check if save card is available in context
         // and save in session, this will be used when payment failed
         $isSaveCard = in_array('id', $apmData->apmName);
-
         $session->set('id', $isSaveCard);
 
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
@@ -107,8 +107,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'clientToken' => $apmData->clientToken ?? null,
                 'sessionData' => $apmData->sessionData ?? null,
                 'sepaCreditor' => $apmData->sepaCreditor ?? null,
-                'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null
-
+                'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null,
+                'googlePayData' => $googlePayData ?? null
             ]
         );
     }
@@ -247,6 +247,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $url = Url::getCloudContextUrl();
 
         $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
+
         $header = [
             'Authorization' => $publicKey,
             'x-correlation-id' => $uuid,
@@ -324,6 +325,20 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         }
 
         return $paymentMethodCategory;
+    }
+
+    public function getGooglePayData($context, $args) {
+        $currency = $context->getCurrency();
+        $price = $args->getPage()->getCart()->getPrice();
+        $customerInfo = $context->getCustomer()->getActiveBillingAddress();
+
+        return [
+            "currency" => $currency->getIsoCode(),
+            "totalPrice" => $price->getTotalPrice(),
+            "gPayMerchantId" => $this->config::gpayMerchantId(),
+            "billingCountry" => $customerInfo->getCountry()->getIso()
+        ];
+        
     }
 
 }
