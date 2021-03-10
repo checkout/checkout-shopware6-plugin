@@ -76,7 +76,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         if($this->config::enableGpay()) { 
             array_push($apmData->apmName, 'gpay');
 
-            $googlePayData = $this->getGooglePayData($context, $args);
+            $googlePayData = $this->getGooglePayData('checkout', $context, $args);
         }
 
         // check if save card is available in context
@@ -127,6 +127,12 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $ckoContext = $session->get('cko_context');
         $isSaveCard = $session->get('id');
         $apmData = $this->getApmData($ckoContext);
+
+        if($this->config::enableGpay()) {
+            array_push($apmData->apmName, 'gpay');
+
+            $googlePayData = $this->getGooglePayData('order', $context, $arg);
+        }
 
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
         $name = $customerInfo->getFirstName()." ".$customerInfo->getLastName();
@@ -327,9 +333,9 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         return $paymentMethodCategory;
     }
 
-    public function getGooglePayData($context, $args) {
+    public function getGooglePayData($page, $context, $args) { 
         $currency = $context->getCurrency();
-        $price = $args->getPage()->getCart()->getPrice();
+        $price =  $page === 'checkout' ? $args->getPage()->getCart()->getPrice() : $args->getPage()->getOrder()->getPrice();
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
 
         return [
@@ -338,7 +344,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             "gPayMerchantId" => $this->config::gpayMerchantId(),
             "billingCountry" => $customerInfo->getCountry()->getIso()
         ];
-        
     }
 
 }

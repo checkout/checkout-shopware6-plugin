@@ -126,7 +126,7 @@ class CheckoutcomCard implements AsynchronousPaymentHandlerInterface
         /**
          *  create payload depending on payment method
          */
-        if ($ckoApmSelected == 'undefined') {
+        if ($ckoApmSelected == 'undefined' || $ckoApmSelected === 'gpay') {
             $paymentParam = payloadHandler::creditCardPayload($transaction, $customFields, $type, $token, $correlationId);
         } else {
             $paymentParam = payloadHandler::apmPayload($transaction, $customFields, $correlationId);
