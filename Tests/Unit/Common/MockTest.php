@@ -140,9 +140,9 @@ class MockTest {
                     }
                 },
                 {
-                    "name": "saveCard",
-                    "schema": "https://cko-meia-sbox-data.s3-eu-west-1.amazonaws.com/apms/saveCard.json",
-                    "logoUrl": "https://cko-meia-sbox-data.s3-eu-west-1.amazonaws.com/apms/logos/saveCard.svg",
+                    "name": "id",
+                    "schema": "https://cko-meia-sbox-data.s3-eu-west-1.amazonaws.com/apms/id.json",
+                    "logoUrl": "https://cko-meia-sbox-data.s3-eu-west-1.amazonaws.com/apms/logos/id.svg",
                     "show": true
                 }
             ],

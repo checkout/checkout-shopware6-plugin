@@ -114,7 +114,7 @@ class Utilities
     /**
      * Validate status code
      */
-    public function isValidResponse($statusCode)
+    public static function isValidResponse($statusCode)
     {
         $isValid = false;
 
@@ -128,7 +128,7 @@ class Utilities
     /**
      * Convert the decimal amount to inte or vice versa
      */
-    public function fixAmount($amount, $currency = '', $reverse = false)
+    public static function fixAmount($amount, $currency = '', $reverse = false)
     {
         $multiplier = 100;
         $full = array('BYN', 'BIF', 'DJF', 'GNF', 'ISK', 'KMF', 'XAF', 'CLF', 'XPF', 'JPY', 'PYG', 'RWF', 'KRW', 'VUV', 'VND', 'XOF');
