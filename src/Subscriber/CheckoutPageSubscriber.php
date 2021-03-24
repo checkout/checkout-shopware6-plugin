@@ -17,6 +17,10 @@ use Checkoutcom\Config\Config;
 use GuzzleHttp\Client;
 use Checkoutcom\Helper\Url;
 use Checkoutcom\Models\Address;
+use RuntimeException;
+use Psr\Log\LoggerInterface;
+use Checkoutcom\Helper\CkoLogger;
+use Checkoutcom\Helper\LogFields;
 
 class CheckoutPageSubscriber implements EventSubscriberInterface
 {
@@ -253,12 +257,27 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             'x-correlation-id' => $uuid,
             'Content-Type' => 'application/json'
         ];
+        
+        try {
+            $ckoContext = Utilities::postRequest($method, $url, $header, $body);
 
-        $ckoContext = Utilities::postRequest($method, $url, $header, $body);
+            $session->set('cko_context', $ckoContext);
 
-        $session->set('cko_context', $ckoContext);
+            return $ckoContext;
+            
+        } catch (\Exception $e) {
 
-        return $ckoContext;
+            CkoLogger::log()->Error(
+                "Error creating cko context",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.create.context",
+                    LogFields::DATA => [ "id" => $uuid ]
+                ]
+            );
+
+            throw new RuntimeException($e->getMessage());
+        }
     }
 
     public function getPaymentInstrument(string $customerId)
@@ -269,9 +288,24 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             'Authorization' => $this->config::secretKey()
         ];
 
-        $response = Utilities::postRequest('GET', $url, $header, false);
-        
-        return $response;
+        try {
+            $response = Utilities::postRequest('GET', $url, $header, false);
+
+            return $response;
+
+        } catch (\Exception $e) {
+
+            CkoLogger::log()->Error(
+                "Error getting cko cko payment instrument",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.payment.instrument",
+                    LogFields::DATA => [ "id" => $customerId ]
+                ]
+            );
+
+            throw new RuntimeException($e->getMessage());
+        }
     }
     
         

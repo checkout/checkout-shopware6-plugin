@@ -27,6 +27,10 @@
             <label>Cloud Plugin Url</label>
             <defaultValue>https://shopware6.cko-qa.ckotech.co/</defaultValue>
         </input-field>
+        <input-field type="bool">
+            <name>cloudEventLog</name>
+            <label>Log to CloudEvent</label>
+        </input-field>
     </card>
     <card>
         <title>Google Pay</title>
