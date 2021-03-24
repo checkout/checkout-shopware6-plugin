@@ -1,9 +1,9 @@
-{% sw_extends '@Storefront/storefront/page/checkout/confirm/index.html.twig' %}
+{% sw_extends '@Storefront/storefront/page/account/order/index.html.twig' %}
 
-{% if page.googlePayData is not null %}
-    {% block page_checkout_confirm_form_submit %}
-        {{ parent() }}
+{% block page_checkout_confirm_form_submit %}
+    {{ parent() }}
 
+    {% if page.googlePayData is not null %}
         {% block cko_gpay_button %}
             <div class="cko-google-pay-area" id="cko-google-pay-area">
                 <input type="hidden" id="cko_pk" name="cko_pk" value="{{ page.ckoPublicKey }}" />
@@ -24,6 +24,5 @@
                 <script type="text/javascript" src="https://pay.google.com/gp/p/js/pay.js" onload="CheckoutcomGooglePay();"></script>
             </div>
         {% endblock %}
-    {% endblock %}
-{% endif %}
-
+    {% endif %}
+{% endblock %}

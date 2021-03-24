@@ -182,7 +182,8 @@ function CheckoutcomGooglePay() {
 			.then(res => res.json())
 			.then(response => {
 				if(response.success) {
-					$form.submit();
+					jQuery('#confirmOrderForm > .btn').click();
+					document.getElementsByClassName('gpay-card-info-container')[0].disabled = true
 				} else {
 					write('Error while saving card token');
 				}
