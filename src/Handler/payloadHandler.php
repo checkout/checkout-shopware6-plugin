@@ -53,7 +53,6 @@ class payloadHandler {
         $paymentParam['metadata']['customer_id'] = $order->getOrderCustomer()->getCustomerId();
         $paymentParam['metadata']['payment_method'] = self::CREDITCARD;
         $paymentParam['metadata']['udf5'] = self::getIntegrationData();;
-       
         
         return $paymentParam;
     }
@@ -67,8 +66,6 @@ class payloadHandler {
         $isSaveCardCheck = false;
         $ckoContextId = '';
         $redirectionUrl = Utilities::getRedirectionUrl($_SERVER);
-        
-
 
         if ($session->get('AuthorizationToken')) {
             $klarnaAuthorizationToken = $session->get('AuthorizationToken');

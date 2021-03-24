@@ -97,6 +97,13 @@
 
         {% endif %}
 
+        {% if "gpay" in page.apms %}
+            <label>
+                <input  class="cko-apm" type="radio" id="cko-apm-gpay" name="cko-saved-card" value="gpay"/>
+                <img class="cko-apm-logo" src="{{ asset('bundles/checkoutcom/images/gpay.svg') }}">
+            </label>
+        {% endif %}
+
     </ul>
 </div>
 
