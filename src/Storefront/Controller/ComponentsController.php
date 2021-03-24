@@ -242,13 +242,28 @@ class ComponentsController extends StorefrontController
         ];
 
         $url = Url::getDeleteInstrumentUrl($customerId, $card);
+        
+        try {
+            $deleteCardRequest = Utilities::postRequest( 'DELETE', $url, $header );
 
-        $deleteCardRequest = Utilities::postRequest( 'DELETE', $url, $header );
+            return new Response(
+                json_encode(
+                    []
+                ), 200, ['Content-Type' => 'text/javascript']
+            );
+            
+        } catch (\Exception $e) {
 
-        return new Response(
-            json_encode(
-                []
-            ), 200, ['Content-Type' => 'text/javascript']
-        );
+            CkoLogger::log()->Error(
+                "Error deleting cko instrument",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.intrument.delete",
+                    LogFields::DATA => [ "id" => $uuid ]
+                ]
+            );
+
+            throw new RuntimeException($e->getMessage());
+        }
     }
 }

@@ -60,4 +60,11 @@ class Config
         );
     }
 
+    public static function logcloudEvent() : string
+    {
+        return (string) self::$systemConfigService->get(
+            self::SYSTEM_CONFIG_DOMAIN. 'cloudEventLog'
+        );
+    }
+
 }
