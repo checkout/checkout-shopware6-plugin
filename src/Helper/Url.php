@@ -13,6 +13,7 @@ class Url {
      * url
      */
     public const CKO_IFRAME_URL = "https://cdn.checkout.com/js/framesv2.min.js";
+    public const CLOUDEVENT_LIVE_URL = "https://cloudevents.integration.checkout.com";
 
     /**
      * cloud plugin create payment url
@@ -84,6 +85,15 @@ class Url {
      */
     public function getRetrieveInstrumentUrl(string $customerId) {
         return self::checkUrlSlash(config::cloudPluginUrl()).'customer/' . $customerId;
+    }
+
+    /**
+     * cloudEvent logging url
+     */
+    public function getCloudEventUrl() {
+        $url = self::CLOUDEVENT_LIVE_URL;
+
+        return $url;
     }
 
     /**
