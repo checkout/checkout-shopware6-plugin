@@ -285,7 +285,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         try {
             $response = Utilities::postRequest('GET', $url, $header, false);
 
-            return $response->payment_instruments;
+            return $response['payment_instruments'];
 
         } catch (\Exception $e) {
 
