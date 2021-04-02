@@ -70,21 +70,21 @@ class Url {
      * cloud plugin create context url
      */
     public function getCloudContextUrl() {
-        return self::checkUrlSlash(config::cloudPluginUrl())."context";
+        return self::checkUrlSlash(config::cloudPluginUrl())."contexts";
     }
 
     /**
      * cloud plugin delete card url
      */
     public function getDeleteInstrumentUrl(String $customerId, String $cardId) {
-        return self::checkUrlSlash(config::cloudPluginUrl()) . 'customer'. '/'. $customerId. '/payment-instruments'. '/'. $cardId;
+        return self::checkUrlSlash(config::cloudPluginUrl()) . 'customers'. '/'. $customerId. '/payment-instruments'. '/'. $cardId;
     }
 
     /**
      * cloud plugin retrieve instrument url
      */
     public function getRetrieveInstrumentUrl(string $customerId) {
-        return self::checkUrlSlash(config::cloudPluginUrl()).'customer/' . $customerId;
+        return self::checkUrlSlash(config::cloudPluginUrl()).'customers/' . $customerId;
     }
 
     /**
