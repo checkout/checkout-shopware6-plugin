@@ -101,36 +101,19 @@ class payloadHandler {
         $paymentParam['customer_id'] = $order->getOrderCustomer()->getCustomerId();
         $paymentParam['metadata']['udf5'] = self::getIntegrationData();;
 
-        //  payload for paypal
-        if ($ckoApmSelected == 'paypal') {
-            // $paymentParam['metadata']['payment_method'] = "Paypal";
-
-            return $paymentParam;
-        }
-
-        //  payload for sofort
-        if ($ckoApmSelected == 'sofort') {
-            // $paymentParam['metadata']['payment_method'] = "Sofort";
-
-            return $paymentParam;
-        }
-
         //  payload for klarna
         if ($ckoApmSelected == 'klarna') {
             $paymentParam['token'] = $klarnaAuthorizationToken;
             $paymentParam['capture'] = false;
-            // $paymentParam['metadata']['payment_method'] = "Klarna";
 
-            return $paymentParam;
         }
 
         // payload for sepa
         if ($ckoApmSelected == 'sepa') {
             $paymentParam['banking']['iban'] = $iban;
-            // $paymentParam['metadata']['payment_method'] = "Sepa";
-
-            return $paymentParam;
         }
+
+        return $paymentParam;
     }
   
     public function getIntegrationData() {
