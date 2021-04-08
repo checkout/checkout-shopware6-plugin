@@ -55,16 +55,16 @@ class PaymentService
             $paymentResponse = $this->restClient->send($request);
             $paymentResponsebody = json_decode($paymentResponse->getBody()->getContents(), true);
 
-            if ($paymentResponsebody['requiresRedirect'] === true) {
+            if (isset($paymentResponsebody['redirect_url'])) {
                 $response['state'] = self::PAYMENT_REDIRECT;
-                $response['url'] = $paymentResponsebody['redirectLink'];
+                $response['url'] = $paymentResponsebody['redirect_url'];
             } else {
-                if ($paymentResponsebody['approved'] === true) {
-                    $response['state'] = self::PAYMENT_SUCCESS;
-                    $response['message'] = $paymentResponsebody['status'];
-                } else {
+                if (isset($paymentResponsebody['error_type'])) {
                     $response['state'] = self::PAYMENT_ERROR;
-                    $response['message'] = $paymentResponsebody['status'];
+                    $response['message'] = self::PAYMENT_ERROR;
+                } else {
+                    $response['state'] = self::PAYMENT_SUCCESS;
+                    $response['message'] = self::PAYMENT_SUCCESS;
                 }
             }
 
