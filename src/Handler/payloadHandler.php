@@ -38,18 +38,18 @@ class payloadHandler {
         $isSaveCardCheck = $customFields['cko_payment']['cko_save_card_check'] == 'true' ? true : false ;
         
         // Payment request payload
+        $paymentParam['context_id'] = $ckoContextId;
         $paymentParam['type'] = $type;
         $paymentParam['token'] = $token;
-        $paymentParam['context'] = $ckoContextId;
-        $paymentParam['reference'] = $orderNumber;
         $paymentParam['success_url'] = $redirectionUrl['success'];
         $paymentParam['failure_url'] = $redirectionUrl['fail'];
         $paymentParam['3ds']['enabled'] = true;
+        $paymentParam['metadata']['reference'] = $orderNumber;
         $paymentParam['metadata']['correlation_id'] = $correlationId;
-        $paymentParam['order_transaction_id'] = $orderTransactionId;
-        $paymentParam['order_id'] = $orderId;
-        $paymentParam['save_payment_instrument'] = $isSaveCardCheck;
-        $paymentParam['customer_id'] = $order->getOrderCustomer()->getCustomerId();
+        $paymentParam['metadata']['order_transaction_id'] = $orderTransactionId;
+        $paymentParam['metadata']['order_id'] = $orderId;
+        $paymentParam['metadata']['save_payment_instrument'] = $isSaveCardCheck;
+        $paymentParam['metadata']['customer_id'] = $order->getOrderCustomer()->getCustomerId();
         $paymentParam['metadata']['udf5'] = self::getIntegrationData();;
        
         
@@ -89,16 +89,16 @@ class payloadHandler {
          */
         $ckoApmSelected = $customFields['cko_payment']['cko_apm'];
 
-        $paymentParam['context'] = $ckoContextId;
+        $paymentParam['context_id'] = $ckoContextId;
         $paymentParam['type'] = $ckoApmSelected;
-        $paymentParam['reference'] = $orderNumber;
         $paymentParam['success_url'] = $redirectionUrl['success'];
         $paymentParam['failure_url'] = $redirectionUrl['fail'];
+        $paymentParam['metadata']['reference'] = $orderNumber;
         $paymentParam['metadata']['correlation_id'] = $correlationId;
-        $paymentParam['order_transaction_id'] = $orderTransactionId;
-        $paymentParam['order_id'] = $orderId;
-        $paymentParam['save_payment_instrument'] = $isSaveCardCheck;
-        $paymentParam['customer_id'] = $order->getOrderCustomer()->getCustomerId();
+        $paymentParam['metadata']['order_transaction_id'] = $orderTransactionId;
+        $paymentParam['metadata']['order_id'] = $orderId;
+        $paymentParam['metadata']['save_payment_instrument'] = $isSaveCardCheck;
+        $paymentParam['metadata']['customer_id'] = $order->getOrderCustomer()->getCustomerId();
         $paymentParam['metadata']['udf5'] = self::getIntegrationData();;
 
         //  payload for klarna
