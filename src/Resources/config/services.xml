@@ -3,6 +3,11 @@
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    
+    <imports>
+        <import resource="logger-services.xml"/>
+    </imports>
+    
     <services>
         <!-- Handle payment-->
         <service id="Checkoutcom\Handler\CheckoutcomCard">
@@ -18,10 +23,17 @@
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
         </service>
 
+        <!-- checkout page subscriber -->
         <service id="Checkoutcom\Subscriber\CheckoutPageSubscriber" class="Checkoutcom\Subscriber\CheckoutPageSubscriber">
             <argument type="service" id="Checkoutcom\Config\Config" />
             <argument type="service" id="payment_method.repository" />
             <tag name="kernel.event_subscriber" />
+        </service>
+
+        <!-- cko exception subsciber -->
+        <service id="Checkoutcom\Subscriber\CkoExceptionSubscriber" class="Checkoutcom\Subscriber\CkoExceptionSubscriber">
+            <argument key="$logger" type="service" id="monolog.logger.checkout_generic"/>
+            <tag name="kernel.event_subscriber" event="kernel.exception" />
         </service>
 
         <!-- Customer Services -->
@@ -33,6 +45,7 @@
         <service id="Checkoutcom\Service\PaymentService" class="Checkoutcom\Service\PaymentService">
             <argument type="service" id="Checkoutcom\Config\Config" />
             <argument type="service" id="Checkoutcom\Helper\Url" />
+            <argument type="service" id="Checkoutcom\Helper\CkoLogger" />
         </service>
 
         <!-- Components controller -->
@@ -85,6 +98,16 @@
 
         <!-- payload service -->
         <service id="Checkoutcom\Helper\payloadHandler" public="true">
+        </service>
+
+        <!-- Log service -->
+        <service id="Checkoutcom\Helper\CkoLogger" public="true">
+            <argument type="service" id="Checkoutcom\Config\Config" />
+            <argument key="$logger" type="service" id="monolog.logger.checkout_generic"/>
+        </service>
+
+        <!-- cloudEvent handler for monolog logging -->
+        <service id="Checkoutcom\Handler\CloudEventsHandler" public="true">
         </service>
         
     </services>

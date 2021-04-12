@@ -7,7 +7,7 @@ use Checkoutcom\Config\Config;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Client;
 use RuntimeException;
-use Checkoutcom\helper\Url;
+use Checkoutcom\Helper\Url;
 use PackageVersions\Versions;
 
 class Utilities
@@ -28,14 +28,11 @@ class Utilities
         
         try {
             $response = $restClient->send($request);
-            
             $body = json_decode($response->getBody()->getContents(), true);
 
             return $body;
 
         } catch (Exception $e) {
-
-            // @todo catch and log error
             throw new RuntimeException('An error has occured ' . $e->getMessage());
         }
     }

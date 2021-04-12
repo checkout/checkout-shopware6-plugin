@@ -8,6 +8,8 @@ use Exception;
 use RuntimeException;
 use Checkoutcom\Helper\Url;
 use Checkoutcom\Helper\Utilities;
+use Checkoutcom\Helper\CkoLogger;
+use Checkoutcom\Helper\LogFields;
 
 class PaymentService
 {
@@ -30,8 +32,10 @@ class PaymentService
      */
     public function create($param, $correlationId)
     {
-        $response = [];
 
+        $errorMessage = '';
+        $response = [];
+        
         $url = Url::createPaymentUrl();
 
         $request =  new Request(
@@ -51,32 +55,36 @@ class PaymentService
             $paymentResponse = $this->restClient->send($request);
             $paymentResponsebody = json_decode($paymentResponse->getBody()->getContents(), true);
 
-            //@todo log response in cloud
-
-            if ($paymentResponsebody['requiresRedirect'] === true) {
+            if (isset($paymentResponsebody['redirect_url'])) {
                 $response['state'] = self::PAYMENT_REDIRECT;
-                $response['url'] = $paymentResponsebody['redirectLink'];
+                $response['url'] = $paymentResponsebody['redirect_url'];
             } else {
-                if ($paymentResponsebody['approved'] === true) {
-                    $response['state'] = self::PAYMENT_SUCCESS;
-                    $response['message'] = $paymentResponsebody['status'];
-                } else {
+                if (isset($paymentResponsebody['error_type'])) {
                     $response['state'] = self::PAYMENT_ERROR;
-                    $response['message'] = $paymentResponsebody['status'];
+                    $response['message'] = self::PAYMENT_ERROR;
+                } else {
+                    $response['state'] = self::PAYMENT_SUCCESS;
+                    $response['message'] = self::PAYMENT_SUCCESS;
                 }
             }
 
             return $response;
             
         } catch (Exception $e) {
-            // @todo catch and log error
-            // return http status code
-            // throw new RuntimeException('cko Payment error : ' . $e->getMessage());
+            
+            CkoLogger::log()->Error(
+                "Error creating cko payment",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.create.payment",
+                    LogFields::DATA => [ "id" => $correlationId ]
+                ]
+            );
+
             $response['state'] = self::PAYMENT_ERROR;
             $response['message'] = "Error Processing Payment";
 
-            return $response;
-
+            return  $response;
         }
     }
 
@@ -117,25 +125,30 @@ class PaymentService
                 if ($paymentResponsebody['source']['type'] === 'sofort' && $paymentResponsebody['status'] === 'Pending' || $paymentResponsebody['status'] == 'Captured') {
                     $response['state'] = self::PAYMENT_APPROVED;
                 }
-                
-                
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
-                $response['message'] = "An error has occured"; // @todo give proper error message to frontstore
+                $response['message'] = "An error has occured";
             }
 
             return $response;
             
         } catch (Exception $e) {
-            // @todo catch and log error
 
+            CkoLogger::log()->Error(
+                "Error verifying cko payment",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.payment.verify",
+                    LogFields::DATA => [ "id" => $id ]
+                ]
+            );
+        
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
             $response['message'] = $e->getMessage();
 
             return $response;
         }
-
     }
 
     public function void($param)
@@ -163,14 +176,22 @@ class PaymentService
                 $response['state'] = self::PAYMENT_SUCCESS;
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
-                $response['message'] = "An error has occured"; // @todo give proper error message to frontstore
+                $response['message'] = "An error has occured";
             }
             
             return $response;
             
         } catch (Exception $e) {
-            // @todo catch and log error
-
+            
+            CkoLogger::log()->Error(
+                "Error voiding payment",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.void.transaction",
+                    LogFields::DATA => [ "id" => $param['payment_id'] ]
+                ]
+            );
+       
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
             $response['message'] = $e->getMessage();
@@ -203,14 +224,22 @@ class PaymentService
                 $response['state'] = self::PAYMENT_SUCCESS;
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
-                $response['message'] = "An error has occured"; // @todo give proper error message to frontstore
+                $response['message'] = "An error has occured";
             }
             
             return $response;
             
         } catch (Exception $e) {
-            // @todo catch and log error
 
+            CkoLogger::log()->Error(
+                "Error voiding klarna payment",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.klarna.void.transaction",
+                    LogFields::DATA => [ "id" => $param['payment_id'] ]
+                ]
+            );
+     
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
             $response['message'] = $e->getMessage();
@@ -243,14 +272,22 @@ class PaymentService
                 $response['state'] = self::PAYMENT_SUCCESS;
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
-                $response['message'] = "An error has occured"; // @todo give proper error message to frontstore
+                $response['message'] = "An error has occured";
             }
 
             return $response;
             
         } catch (Exception $e) {
-            // @todo catch and log error
 
+            CkoLogger::log()->Error(
+                "Error capturing payment",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.capture.transaction",
+                    LogFields::DATA => [ "id" => $param['payment_id'] ]
+                ]
+            );
+       
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
             $response['message'] = $e->getMessage();
@@ -285,14 +322,22 @@ class PaymentService
                 $response['state'] = self::PAYMENT_SUCCESS;
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
-                $response['message'] = "An error has occured"; // @todo give proper error message to frontstore
+                $response['message'] = "An error has occured";
             }
 
             return $response;
             
         } catch (Exception $e) {
-            // @todo catch and log error
 
+            CkoLogger::log()->Error(
+                "Error capturing klarna transaction",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.capture.klarna.transaction",
+                    LogFields::DATA => [ "id" => $param['payment_id'] ]
+                ]
+            );
+       
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
             $response['message'] = $e->getMessage();
@@ -325,14 +370,22 @@ class PaymentService
                 $response['state'] = self::PAYMENT_SUCCESS;
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
-                $response['message'] = "An error has occured"; // @todo give proper error message to frontstore
+                $response['message'] = "An error has occured";
             }
 
             return $response;
             
         } catch (Exception $e) {
-            // @todo catch and log error
 
+            CkoLogger::log()->Error(
+                "Error refunding transaction",
+                [
+                    LogFields::MESSAGE => $e->getMessage(),
+                    LogFields::TYPE => "checkout.refund.transaction",
+                    LogFields::DATA => [ "id" => $param['payment_id'] ]
+                ]
+            );
+      
             $response['statusCode'] = 500;
             $response['state'] = self::PAYMENT_ERROR;
             $response['message'] = $e->getMessage();
