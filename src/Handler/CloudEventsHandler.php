@@ -2,8 +2,6 @@
 
 namespace Checkoutcom\Handler;
 
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
 use Monolog\Handler\AbstractProcessingHandler;
 use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Config\Config;
@@ -27,11 +25,21 @@ class CloudEventsHandler extends AbstractProcessingHandler {
      */
     protected $level;
 
-
+    
+    /**
+     * __construct
+     *
+     * @return void
+     */
     public function __construct($bubble = true) {
-        parent::__construct($bubble);
+        parent::__construct((int) $bubble);
     }
-
+    
+    /**
+     * write
+     *
+     * @return void
+     */
     protected function write(array $record): void
     {   
         $environment = Url::isLive(config::publicKey()) ? "PROD" : "SANDBOX";

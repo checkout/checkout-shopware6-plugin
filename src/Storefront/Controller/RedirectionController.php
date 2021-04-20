@@ -18,7 +18,8 @@ use Checkoutcom\Helper\Utilities;
  */
 class RedirectionController extends StorefrontController
 {
-
+    public $paymentService;
+    
     public function __construct(PaymentService $paymentService)
     {
         $this->paymentService = $paymentService;
@@ -67,11 +68,10 @@ class RedirectionController extends StorefrontController
      * check the response
      */
     public function checkResponse() {
-
         if (isset($_GET['cko-session-id'])) {
             $ckoSessionID = $_GET['cko-session-id'];
             $paymentResponse = $this->paymentService->checkPayment($ckoSessionID);
         }
-        return $paymentResponse;
+        return $paymentResponse ?? null;
     }
 }

@@ -3,10 +3,10 @@
 namespace Checkoutcom\Helper;
 
 use Checkoutcom\Config\Config;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Client;
-use RuntimeException;
 
+/**
+ * Url
+ */
 class Url {
     
     /**
@@ -18,21 +18,21 @@ class Url {
     /**
      * cloud plugin create payment url
      */ 
-    public function createPaymentUrl(): string {
+    public static function createPaymentUrl(): string {
         return  self::checkUrlSlash(config::cloudPluginUrl())."payments";
     }
 
     /**
      * cko verify payment url
      */
-    public function checkPaymentUrl(String $paymentId): string {
+    public static function checkPaymentUrl(String $paymentId): string {
         return self::checkUrlSlash(config::ckoUrl()). 'payments/'. $paymentId;
     }
 
     /**
      * cko void payment url
      */
-    public function voidPaymentUrl($param, string $key) {
+    public static function voidPaymentUrl($param, string $key) {
         $isLive = self::isLive($key);
         
         if($param['payment_method'] === "klarna") {
@@ -47,14 +47,14 @@ class Url {
     /**
      * cko refund payment url
      */
-    public function refundPaymentUrl(String $paymentId) {
+    public static function refundPaymentUrl(String $paymentId) {
         return self::checkUrlSlash(config::ckoUrl()). 'payments/'. $paymentId . '/refunds';
     }
 
     /**
      * cko capture payment url
      */
-    public function capturePaymentUrl($param, String $key) {
+    public static function capturePaymentUrl($param, String $key) {
         $isLive = self::isLive($key);
         
         if($param['payment_method'] === "klarna") {
@@ -69,28 +69,30 @@ class Url {
     /**
      * cloud plugin create context url
      */
-    public function getCloudContextUrl() {
+    public static function getCloudContextUrl() {
         return self::checkUrlSlash(config::cloudPluginUrl())."contexts";
     }
 
     /**
      * cloud plugin delete card url
      */
-    public function getDeleteInstrumentUrl(String $customerId, String $cardId) {
+    public static function getDeleteInstrumentUrl(String $customerId, String $cardId) {
         return self::checkUrlSlash(config::cloudPluginUrl()) . 'customers'. '/'. $customerId. '/payment-instruments'. '/'. $cardId;
     }
 
     /**
      * cloud plugin retrieve instrument url
      */
-    public function getRetrieveInstrumentUrl(string $customerId) {
+    public static function getRetrieveInstrumentUrl(string $customerId) {
         return self::checkUrlSlash(config::cloudPluginUrl()).'customers/' . $customerId;
     }
 
+       
     /**
-     * cloudEvent logging url
+     * getCloudEventUrl
+     *
      */
-    public function getCloudEventUrl() {
+    public static function getCloudEventUrl(): string {
         $url = self::CLOUDEVENT_LIVE_URL;
 
         return $url;
@@ -107,6 +109,6 @@ class Url {
      * check slash in the configured url 
      */
     public static function checkUrlSlash($url) {
-        return rtrim($url,"/").'/';
+        return rtrim($url, "/").'/';
     }
 }

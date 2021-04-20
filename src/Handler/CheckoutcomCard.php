@@ -16,36 +16,24 @@ use Symfony\Component\HttpFoundation\Request;
 use Checkoutcom\Service\CustomerService;
 use Checkoutcom\Service\PaymentService;
 use Checkoutcom\Config\Config;
-use Checkoutcom\Helper\Utilities;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Checkoutcom\Handler\payloadHandler;
+use Checkoutcom\Helper\CkoLogger;
 
+/**
+ * CheckoutcomCard
+ */
 class CheckoutcomCard implements AsynchronousPaymentHandlerInterface
 {
-    /**
-     * @var OrderTransactionStateHandler
-     */
-    private $transactionStateHandler;
-
-    /**
-     * @var customerService
-     */
     private $customerService;
-
-    /**
-     * @var config
-     */
     protected $config;
-
-    /** @var TranslatorInterface */
-    private $translator;
-
     private $paymentService;
+    private $transactionStateHandler;
 
     const TYPE_TOKEN = 'token';
     const TYPE_ID = 'id';
 
+        
     /**
      * __construct
      *
@@ -60,13 +48,15 @@ class CheckoutcomCard implements AsynchronousPaymentHandlerInterface
         $this->transactionStateHandler = $transactionStateHandler;
         $this->customerService = $customerService;
         $this->config = $config;
-        // $this->client = HttpClient::create();
         $this->paymentService = $paymentService;
 
     }
 
+        
     /**
-     * @throws AsyncPaymentProcessException
+     * pay
+     *
+     * @return RedirectResponse
      */
     public function pay(
         AsyncPaymentTransactionStruct $transaction,
@@ -112,20 +102,20 @@ class CheckoutcomCard implements AsynchronousPaymentHandlerInterface
          * Throw exception if cko card token is empty
          */
         if (empty($token) || empty($ckoContextId)) {
-            // @todo log error in cloud plugin
+            
+            CkoLogger::log()->Error(
+                "Cko card token empty"
+            );
+            
             throw new AsyncPaymentProcessException(
                 $transaction->getOrderTransaction()->getId(),
                 'Empty cko card token'
             );
-
-            return new RedirectResponse($transaction->getReturnUrl());
         }
 
         $correlationId = $session->get('cko_uuid');
 
-        /**
-         *  create payload depending on payment method
-         */
+        // create payload depending on payment method
         if ($ckoApmSelected == 'undefined') {
             $paymentParam = payloadHandler::creditCardPayload($transaction, $customFields, $type, $token, $correlationId);
         } else {
@@ -135,7 +125,7 @@ class CheckoutcomCard implements AsynchronousPaymentHandlerInterface
         $session->set('Redirection', $transaction->getReturnUrl());
         
         $paymentResponse = $this->paymentService->create($paymentParam, $correlationId);
-
+        
         if ($paymentResponse['state'] == 'ERROR' || $paymentResponse['state'] == PaymentService::PAYMENT_REDIRECT) {
             /**
              * set cko context id in a session if payment failed
@@ -160,7 +150,12 @@ class CheckoutcomCard implements AsynchronousPaymentHandlerInterface
         // return to finalize method using redirect
         return new RedirectResponse($redirectUrl);
     }
-
+    
+    /**
+     * finalize
+     *
+     * @return void
+     */
     public function finalize(AsyncPaymentTransactionStruct $transaction, Request $request, SalesChannelContext $salesChannelContext): void
     {
         $paymentState = $request->query->get('state');
