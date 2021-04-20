@@ -47,7 +47,7 @@ Shopware.Component.register("cko-card", {
     displaylogo(method, scheme) {
       this.paymentMethod = method;
 
-      if (method === "cc") {
+      if (method === "token" || method === "id") {
         this.paymentMethod = scheme;
       }
     },
@@ -289,12 +289,13 @@ Shopware.Component.register("cko-card", {
       let paymentScheme = "";
       let mandateReference;
 
-      if (
-        customFields[0].event === PAYMENT_APPROVED &&
-        paymentMethod === "cc"
-      ) {
+      let isCard =
+        paymentMethod === "token" || paymentMethod === "id" ? true : false;
+
+      if (customFields[0].event === PAYMENT_APPROVED && isCard) {
         paymentScheme = customFields[0].scheme;
       }
+
       this.displaylogo(paymentMethod, paymentScheme);
 
       if (this.currentOrder.customFields.mandate) {

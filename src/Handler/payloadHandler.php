@@ -38,20 +38,18 @@ class payloadHandler {
         $isSaveCardCheck = $customFields['cko_payment']['cko_save_card_check'] == 'true' ? true : false ;
         
         // Payment request payload
+        $paymentParam['context_id'] = $ckoContextId;
         $paymentParam['type'] = $type;
         $paymentParam['token'] = $token;
-        $paymentParam['context'] = $ckoContextId;
-        $paymentParam['reference'] = $orderNumber;
         $paymentParam['success_url'] = $redirectionUrl['success'];
         $paymentParam['failure_url'] = $redirectionUrl['fail'];
         $paymentParam['3ds']['enabled'] = true;
+        $paymentParam['metadata']['reference'] = $orderNumber;
         $paymentParam['metadata']['correlation_id'] = $correlationId;
         $paymentParam['metadata']['order_transaction_id'] = $orderTransactionId;
         $paymentParam['metadata']['order_id'] = $orderId;
-        $paymentParam['metadata']['public_key'] = config::publicKey();
-        $paymentParam['metadata']['is_save_card_check'] = $isSaveCardCheck === true ? 'True' : 'False';
+        $paymentParam['metadata']['save_payment_instrument'] = $isSaveCardCheck;
         $paymentParam['metadata']['customer_id'] = $order->getOrderCustomer()->getCustomerId();
-        $paymentParam['metadata']['payment_method'] = self::CREDITCARD;
         $paymentParam['metadata']['udf5'] = self::getIntegrationData();;
         
         return $paymentParam;
@@ -88,52 +86,31 @@ class payloadHandler {
          */
         $ckoApmSelected = $customFields['cko_payment']['cko_apm'];
 
-        $paymentParam['context'] = $ckoContextId;
-        $paymentParam['reference'] = $orderNumber;
+        $paymentParam['context_id'] = $ckoContextId;
+        $paymentParam['type'] = $ckoApmSelected;
         $paymentParam['success_url'] = $redirectionUrl['success'];
         $paymentParam['failure_url'] = $redirectionUrl['fail'];
+        $paymentParam['metadata']['reference'] = $orderNumber;
         $paymentParam['metadata']['correlation_id'] = $correlationId;
         $paymentParam['metadata']['order_transaction_id'] = $orderTransactionId;
         $paymentParam['metadata']['order_id'] = $orderId;
-        $paymentParam['metadata']['public_key'] = config::publicKey();
-        $paymentParam['metadata']['is_save_card_check'] = $isSaveCardCheck === true ? 'True' : 'False';
+        $paymentParam['metadata']['save_payment_instrument'] = $isSaveCardCheck;
         $paymentParam['metadata']['customer_id'] = $order->getOrderCustomer()->getCustomerId();
         $paymentParam['metadata']['udf5'] = self::getIntegrationData();;
 
-        //  payload for paypal
-        if ($ckoApmSelected == 'paypal') {
-            $paymentParam['type'] = $ckoApmSelected;
-            $paymentParam['metadata']['payment_method'] = "Paypal";
-
-            return $paymentParam;
-        }
-
-        //  payload for sofort
-        if ($ckoApmSelected == 'sofort') {
-            $paymentParam['type'] = $ckoApmSelected;
-            $paymentParam['metadata']['payment_method'] = "Sofort";
-
-            return $paymentParam;
-        }
-
         //  payload for klarna
         if ($ckoApmSelected == 'klarna') {
-            $paymentParam['type'] = $ckoApmSelected;
             $paymentParam['token'] = $klarnaAuthorizationToken;
             $paymentParam['capture'] = false;
-            $paymentParam['metadata']['payment_method'] = "Klarna";
 
-            return $paymentParam;
         }
 
         // payload for sepa
         if ($ckoApmSelected == 'sepa') {
-            $paymentParam['type'] = "sepa";
             $paymentParam['banking']['iban'] = $iban;
-            $paymentParam['metadata']['payment_method'] = "Sepa";
-
-            return $paymentParam;
         }
+
+        return $paymentParam;
     }
   
     public function getIntegrationData() {

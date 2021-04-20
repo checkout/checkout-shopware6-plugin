@@ -70,11 +70,10 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $salesChannelContext = $args->getSalesChannelContext()->getContext();
         $context = $args->getSalesChannelContext();
-        $currency = $context->getCurrency();
-        $currencyCode = $currency->getIsoCode();
-
+        
         // Get cko context
-        $ckoContext = $this->getCkoContext($token, $publicKey, $currencyCode);
+        $ckoContext = $this->getCkoContext($token, $publicKey);
+
         $apmData = $this->getApmData($ckoContext);
 
         if($this->config::enableGpay()) { 
@@ -246,7 +245,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
      * 
      * @return $ckoContext return context
      */
-    public function getCkoContext($token, $publicKey, $currencyCode)
+    public function getCkoContext($token, $publicKey)
     {
         $session = new Session();
 
@@ -256,8 +255,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $method = 'POST';
         $url = Url::getCloudContextUrl();
 
-        $body = json_encode(['currency' => $currencyCode, 'reference'=> $token ]);
-
+        $body = json_encode(['reference'=> $token ]);
         $header = [
             'Authorization' => $publicKey,
             'x-correlation-id' => $uuid,
@@ -297,7 +295,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         try {
             $response = Utilities::postRequest('GET', $url, $header, false);
 
-            return $response;
+            return $response['payment_instruments'];
 
         } catch (\Exception $e) {
 
