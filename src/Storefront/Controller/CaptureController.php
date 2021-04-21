@@ -12,7 +12,8 @@ use Checkoutcom\Service\PaymentService;
 
 class CaptureController extends StorefrontController
 {
-
+    public $paymentService;
+    
     public function __construct(PaymentService $paymentService)
     {
         $this->paymentService = $paymentService;

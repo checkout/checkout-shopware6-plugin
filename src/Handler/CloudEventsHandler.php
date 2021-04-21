@@ -2,8 +2,6 @@
 
 namespace Checkoutcom\Handler;
 
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
 use Monolog\Handler\AbstractProcessingHandler;
 use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Config\Config;
@@ -27,11 +25,21 @@ class CloudEventsHandler extends AbstractProcessingHandler {
      */
     protected $level;
 
-
+    
+    /**
+     * __construct
+     *
+     * @return void
+     */
     public function __construct($bubble = true) {
-        parent::__construct($bubble);
+        parent::__construct((int) $bubble);
     }
-
+    
+    /**
+     * write
+     *
+     * @return void
+     */
     protected function write(array $record): void
     {   
         $environment = Url::isLive(config::publicKey()) ? "PROD" : "SANDBOX";
@@ -41,17 +49,19 @@ class CloudEventsHandler extends AbstractProcessingHandler {
         $obj->specversion = self::SPECVERSION;
         $obj->id = Utilities::uuid();
         $obj->type = $data["type"] ?? $record["message"];
-        $obj->source = '/shopware6'. '/' . $_SERVER['SERVER_NAME'] . '/' . $environment;
-        $obj->data = $data["message"];
+        $obj->source = '/shopware6';
+        $obj->data->scope = $data["type"];
+        $obj->data->message = $data["message"];
         $obj->cko['correlationId'] = $data["data"]["id"] ?? Utilities::uuid();
         $obj->cko['loglevel'] = strtolower($record['level_name']);
+        $obj->cko['ddTags'] = "shop:{$environment}";
 
         $header =  [
             'Content-Type' => 'application/cloudevents+json',
         ];
 
         try {
-            $loggingRequest = Utilities::postRequest(
+            Utilities::postRequest(
                 'POST',
                 Url::getCloudEventUrl(),
                 $header,
@@ -61,5 +71,6 @@ class CloudEventsHandler extends AbstractProcessingHandler {
 
             throw new RuntimeException('Log to cloud event api failed : ' . $e->getMessage());
         }
+
     }
 }
