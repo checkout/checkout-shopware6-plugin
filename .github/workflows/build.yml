@@ -5,7 +5,7 @@ on:
     branches:
       - "*/*"
       - "*"
-      - "!master"
+      - "!Release"
 
 jobs:
   build:
@@ -21,6 +21,11 @@ jobs:
 
       - name: Composer install
         run: composer install
+
+      - name: PHPStan
+        uses: docker://oskarstark/phpstan-ga
+        with:
+          args: analyse src/ --level 5
 
       - name: Unit Tests
         uses: php-actions/phpunit@v8

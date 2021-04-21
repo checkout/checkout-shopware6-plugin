@@ -2,11 +2,12 @@
 
 namespace Checkoutcom\Handler;
 
-use Checkoutcom\Service\CustomerService;
 use Checkoutcom\Helper\Utilities;
-use Checkoutcom\Config\Config;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+/**
+ * payloadHandler
+ */
 class payloadHandler {
 
     const CREDITCARD = 'cc';
@@ -14,7 +15,7 @@ class payloadHandler {
     /**
      *  create payment payload for credit card
      */
-    public function creditCardPayload($transaction, $customFields, $type, $token, $correlationId) {
+    public static function creditCardPayload($transaction, $customFields, $type, $token, $correlationId) {
 
         $isSaveCardCheck = false;
         $ckoContextId = '';
@@ -58,12 +59,14 @@ class payloadHandler {
     /**
      *  create payment payload for apms
      */
-    public function apmPayload($transaction, $customFields, $correlationId) {
+    public static function apmPayload($transaction, $customFields, $correlationId) {
         $session = new Session();
         $paymentParam = [];
         $isSaveCardCheck = false;
         $ckoContextId = '';
         $redirectionUrl = Utilities::getRedirectionUrl($_SERVER);
+        $klarnaAuthorizationToken = '';
+        $iban = '';
 
         if ($session->get('AuthorizationToken')) {
             $klarnaAuthorizationToken = $session->get('AuthorizationToken');
@@ -102,7 +105,6 @@ class payloadHandler {
         if ($ckoApmSelected == 'klarna') {
             $paymentParam['token'] = $klarnaAuthorizationToken;
             $paymentParam['capture'] = false;
-
         }
 
         // payload for sepa
@@ -113,7 +115,7 @@ class payloadHandler {
         return $paymentParam;
     }
   
-    public function getIntegrationData() {
+    public static function getIntegrationData() {
         $redirectionUrl = Utilities::getRedirectionUrl($_SERVER);
         $platformVersion = Utilities::getVersions();
 

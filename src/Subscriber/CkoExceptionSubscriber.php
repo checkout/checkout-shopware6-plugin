@@ -6,17 +6,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Psr\Log\LoggerInterface;
-use monolog\Logger;
 use RuntimeException;
-use Checkoutcom\Handler\CloudEventsHandler;
-use Checkoutcom\Config\Config;
 use Checkoutcom\Helper\CkoLogger;
 use Checkoutcom\Helper\LogFields;
 
 class CkoExceptionSubscriber implements EventSubscriberInterface {
-
-    protected $config;
-    
     /**
      *  @var LoggerInterface
      */

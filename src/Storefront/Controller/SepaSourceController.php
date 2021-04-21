@@ -19,7 +19,8 @@ use Checkoutcom\Helper\Utilities;
  */
 class SepaSourceController extends StorefrontController
 {
-
+    public $paymentService;
+    
     public function __construct(PaymentService $paymentService)
     {
         $this->paymentService = $paymentService;

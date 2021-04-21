@@ -19,13 +19,11 @@
         <input-field type="url">
             <name>ckoUrl</name>
             <label>Checkout.com Url</label>
-            <defaultValue>https://api.checkout.com/</defaultValue>
         </input-field>
 
         <input-field type="url">
             <name>cloudPluginUrl</name>
             <label>Cloud Plugin Url</label>
-            <defaultValue>https://shopware6.cko-qa.ckotech.co/</defaultValue>
         </input-field>
         <input-field type="bool">
             <name>cloudEventLog</name>

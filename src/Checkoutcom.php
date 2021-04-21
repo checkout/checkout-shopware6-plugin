@@ -6,7 +6,6 @@ namespace Checkoutcom;
 
 use Exception;
 use Checkoutcom\Handler\CheckoutcomCard;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Plugin\Context\ActivateContext;
@@ -17,21 +16,17 @@ use Shopware\Core\Framework\Plugin\Context\UpdateContext;
 use Shopware\Core\Framework\Plugin\Util\PluginIdProvider;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
-use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
 /**
- * Class Checkoutcom
+ * Checkoutcom
  */
 class Checkoutcom extends Plugin
 {
     /**
      * Build
-     *
-     * @param mixed $container 
-     * 
      * @return void
      */
     public function build(ContainerBuilder $container): void
@@ -57,21 +52,16 @@ class Checkoutcom extends Plugin
     /**
      * Install CKO Plugin
      *
-     * @param mixed $context 
-     * 
      * @return void
      */
     public function install(InstallContext $context): void
     {
-        // parent::install($context);
         $this->_addPaymentMethod($context->getContext());
     }
     
     /**
      * Function _addPaymentMethod
      *
-     * @param mixed $context 
-     * 
      * @return void
      */
     private function _addPaymentMethod(Context $context): void
@@ -106,12 +96,13 @@ class Checkoutcom extends Plugin
     }
 
         
+        
     /**
-     * Function _getPaymentMethodId
+     * _getPaymentMethodId
      *
      * @return string
      */
-    public function _getPaymentMethodId(): ?string
+    private function _getPaymentMethodId(): ?string
     {
         $paymentRepository = $this->container->get('payment_method.repository');
 
@@ -135,8 +126,6 @@ class Checkoutcom extends Plugin
     /**
      * Update CKO Plugin
      *
-     * @param mixed $context 
-     * 
      * @return void
      */
     public function update(UpdateContext $context): void
@@ -147,8 +136,6 @@ class Checkoutcom extends Plugin
     /**
      * Activate CKO Plugin
      *
-     * @param mixed $context 
-     * 
      * @return void
      */
     public function activate(ActivateContext $context): void
@@ -159,8 +146,6 @@ class Checkoutcom extends Plugin
     /**
      * Deactivate CKO Plugin
      *
-     * @param mixed $context 
-     * 
      * @return void
      */
     public function deactivate(DeactivateContext $context): void
@@ -171,8 +156,6 @@ class Checkoutcom extends Plugin
     /**
      * Uninstall CKO Plugin
      *
-     * @param mixed $context 
-     * 
      * @return void
      */
     public function uninstall(UninstallContext $context): void

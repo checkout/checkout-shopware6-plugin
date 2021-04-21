@@ -11,6 +11,7 @@ use Checkoutcom\Service\PaymentService;
 
 class VoidController extends StorefrontController
 {
+    public $paymentService;
 
     public function __construct(PaymentService $paymentService)
     {

@@ -9,46 +9,37 @@ use Symfony\Component\Routing\Annotation\Route;
 use Shopware\Core\Framework\Routing\Annotation\RouteScope;
 use Checkoutcom\Service\CustomerService;
 use Checkoutcom\Config\Config;
-use Shopware\Core\Checkout\Cart\SalesChannel\CartService;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Service\PaymentService;
 use Checkoutcom\Helper\Url;
+use Checkoutcom\Helper\CkoLogger;
+use Checkoutcom\Helper\LogFields;
 
+/**
+ * ComponentsController
+ */
 class ComponentsController extends StorefrontController
 {
-    
-    /** @var CustomerService */
     protected $customerService;
-
-     /** @var PaymentService */
-     protected $paymentService;
-    
-    /** @var CartService */
-    private $cartService;
-
-    /** @var Config */
+    protected $paymentService;
     protected $config;
-
+    
+    /**
+     * __construct
+     *
+     */
     public function __construct(
         CustomerService $customerService,
-        Config $config,
-        CartService $cartService
-        //PaymentService $paymentService
+        Config $config
     ) {
         $this->customerService = $customerService;
         $this->config = $config;
-        $this->cartService = $cartService;
-        //$this->paymentService = $paymentService;
     }
 
      /**
      * @RouteScope(scopes={"storefront"})
      * @Route("/cko/components/css/",name="frontend.cko.components.css", options={"seo"="false"}, methods={"GET"})
-     *
-     * @param SalesChannelContext $context param
-     * @param string $type param
-     * @return Response response
      */
     public function componentsCss(SalesChannelContext $context): Response
     {
@@ -71,10 +62,6 @@ class ComponentsController extends StorefrontController
      /**
      * @RouteScope(scopes={"storefront"})
      * @Route("/cko/components/js/",name="frontend.cko.components.js", options={"seo"="false"}, methods={"GET"})
-     *
-     * @param SalesChannelContext $context param
-     * @param string $type param
-     * @return Response response
      */
     public function componentsJs(SalesChannelContext $context): Response
     {
@@ -98,11 +85,6 @@ class ComponentsController extends StorefrontController
      * @RouteScope(scopes={"storefront"})
      * @Route("/cko/components/store-card-token/{customerId}/{cardToken}/{ckoContextId}/{ckoPaymentType}/{isSaveCardCheck}", 
      * name="frontend.cko.components.storeCardToken", options={"seo"="false"}, methods={"GET"})
-     *
-     * @param SalesChannelContext $context
-     * @param string $customerId
-     * @param string $cardToken
-     * @return Response
      */
     public function storeCardToken(
         SalesChannelContext $context,
@@ -114,7 +96,6 @@ class ComponentsController extends StorefrontController
     ): Response {
         $result = null;
 
-        /** @var CustomerEntity $customer */
         $customer = $this->customerService->getCustomer($customerId, $context->getContext());
 
         if ($customer !== null) {
@@ -143,9 +124,6 @@ class ComponentsController extends StorefrontController
      * @RouteScope(scopes={"storefront"})
      * @Route("/cko/components/store-authorization-token/{AuthorizationToken}", 
      * name="frontend.cko.components.storeAuthToken", options={"seo"="false"}, methods={"GET"})
-     * 
-     * @param string $AuthorizationToken
-     * 
      */
     public function setKlarnaAuthorizationToken(string $AuthorizationToken): Response {
 
@@ -167,11 +145,6 @@ class ComponentsController extends StorefrontController
      * @RouteScope(scopes={"storefront"})
      * @Route("/cko/components/store-apm-selected/{customerId}/{ckoContextId}/{ckoApm}", 
      * name="frontend.cko.components.storeApm", options={"seo"="false"}, methods={"GET"})
-     *
-     * @param SalesChannelContext $context
-     * @param string $customerId
-     * @param string $ckoApm
-     * @return Response
      */
     public function storeApmSelected(
         SalesChannelContext $context,
@@ -179,8 +152,7 @@ class ComponentsController extends StorefrontController
         string $ckoContextId,
         string $ckoApm
     ): Response {
-
-        /** @var CustomerEntity $customer */
+        $result = null;
         $customer = $this->customerService->getCustomer($customerId, $context->getContext());
 
         if ($customer !== null) {
@@ -244,7 +216,7 @@ class ComponentsController extends StorefrontController
         $url = Url::getDeleteInstrumentUrl($customerId, $card);
         
         try {
-            $deleteCardRequest = Utilities::postRequest( 'DELETE', $url, $header );
+            $deleteCardRequest = Utilities::postRequest('DELETE', $url, $header);
 
             return new Response(
                 json_encode(
@@ -263,7 +235,7 @@ class ComponentsController extends StorefrontController
                 ]
             );
 
-            throw new RuntimeException($e->getMessage());
+            throw new \RuntimeException($e->getMessage());
         }
     }
 }

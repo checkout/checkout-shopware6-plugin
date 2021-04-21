@@ -16,25 +16,21 @@ use Checkoutcom\Helper\Utilities;
 use Checkoutcom\Config\Config;
 use GuzzleHttp\Client;
 use Checkoutcom\Helper\Url;
-use Checkoutcom\Models\Address;
 use RuntimeException;
-use Psr\Log\LoggerInterface;
 use Checkoutcom\Helper\CkoLogger;
 use Checkoutcom\Helper\LogFields;
 
+/**
+ * CheckoutPageSubscriber
+ */
 class CheckoutPageSubscriber implements EventSubscriberInterface
 {
     protected $config;
-
-    /**
-     * @var EntityRepositoryInterface
-     */
     private $paymentRepository;
+    public $restClient;
 
     /**
      *  GetSubscribedEvents
-     *
-     * @return void
      */
     public static function getSubscribedEvents()
     {
@@ -47,8 +43,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
     /**
      * Creates a new instance of the checkout confirm page subscriber.
-     *
-     * @param Config $config config
      */
     public function __construct(Config $config, EntityRepositoryInterface $paymentRepository)
     {
@@ -59,8 +53,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
     /**
      * Adds the components variable to the storefront.
-     *
-     * @param CheckoutConfirmPageLoadedEvent $args
      */
     public function addComponentsVariable( $args)
     {
@@ -118,8 +110,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
     
     /**
      * Adds the components variable to the storefront.
-     *
-     * @param accountPageLoadedEvent $arg
      */
     public function accountPageLoadedEvent( $arg)
     {
@@ -170,8 +160,9 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         );
     }
 
+        
     /**
-     *  @param AccountPaymentMethodPageLoadedEvent $arg
+     * paymentMethodPageLoadedEvent
      */
     public function paymentMethodPageLoadedEvent($arg)
     {
@@ -190,11 +181,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
     /**
      * validateCutomerInfo
-     *
-     * @param  mixed $customerInfo
-     * @return void
      */
-    public function setCutomerInfo($customerInfo)
+    public function setCutomerInfo($customerInfo): Array
     {
         $info = [];
 
@@ -222,13 +210,13 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
     }
 
+        
     /**
-     * Get cko payment id
+     * getPaymentMethodId
+     *
      */
     private function getPaymentMethodId(Context $context): ?string
     {
-        /** @var EntityRepositoryInterface $paymentRepository */
-        
         $criteria = new Criteria();
         $criteria->addFilter(new EqualsFilter('handlerIdentifier', CheckoutcomCard::class));
         $paymentMethod = $this->paymentRepository->search($criteria, $context)->first();
@@ -238,12 +226,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
     /**
      * Get Context from shopware cloud plugin
-     * 
-     * @param $token        Card token
-     * @param $publicKey    Cko Pubic Key
-     * @param $currencyCode Iso code from shopware
-     * 
-     * @return $ckoContext return context
      */
     public function getCkoContext($token, $publicKey)
     {
@@ -283,7 +265,10 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
             throw new RuntimeException($e->getMessage());
         }
     }
-
+    
+    /**
+     * getPaymentInstrument
+     */
     public function getPaymentInstrument(string $customerId)
     {
         $url = Url::getRetrieveInstrumentUrl($customerId);
@@ -315,9 +300,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         
     /**
      * getApms
-     *
-     * @param  mixed $ckoContext
-     * @return void
      */
     public static function getApmData($ckoContext) : object
     {
@@ -348,11 +330,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
     /**
      * getPaymentMethodCategory
-     *
-     * @param  mixed $apms
-     * @return void
      */
-    public static function getPaymentMethodCategory($paymentMethodAvailable)
+    public static function getPaymentMethodCategory($paymentMethodAvailable): Array
     {
         $paymentMethodCategory = [];
 
