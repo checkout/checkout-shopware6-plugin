@@ -22,5 +22,9 @@
       "de-DE": "Checkout.com",
       "en-GB": "Checkout.com"
     }
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^0.12.84",
+    "shopware/storefront": "6.3.5.4"
   }
 }

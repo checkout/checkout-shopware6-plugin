@@ -20,6 +20,7 @@ class PaymentService
     public const PAYMENT_APPROVED = 'APPROVED';
 
     private $config;
+    public $restClient;
 
     public function __construct(Config $config)
     {
@@ -127,7 +128,7 @@ class PaymentService
                 }
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
-                $response['message'] = "An error has occured";
+                $response['message'] = "An error has occurred";
             }
 
             return $response;
@@ -172,7 +173,7 @@ class PaymentService
 
             $response['statusCode'] = $paymentResponse->getStatusCode();
 
-            if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
+            if (Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))) {
                 $response['state'] = self::PAYMENT_SUCCESS;
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
@@ -220,11 +221,11 @@ class PaymentService
 
             $response['statusCode'] = $paymentResponse->getStatusCode();
 
-            if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
+            if (Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))) {
                 $response['state'] = self::PAYMENT_SUCCESS;
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
-                $response['message'] = "An error has occured";
+                $response['message'] = "An error has occurred";
             }
             
             return $response;
@@ -268,7 +269,7 @@ class PaymentService
             $paymentResponse = $this->restClient->send($request);
             $response['statusCode'] = $paymentResponse->getStatusCode();
 
-            if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
+            if (Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))) {
                 $response['state'] = self::PAYMENT_SUCCESS;
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
@@ -311,14 +312,14 @@ class PaymentService
                 'Authorization' => $publicKey,
                 'Content-Type' => 'application/json',
             ],
-            json_encode($body,JSON_FORCE_OBJECT)
+            json_encode($body, JSON_FORCE_OBJECT)
         );
 
         try {
             $paymentResponse = $this->restClient->send($request);
             $response['statusCode'] = $paymentResponse->getStatusCode();
 
-            if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
+            if (Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))) {
                 $response['state'] = self::PAYMENT_SUCCESS;
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
@@ -366,11 +367,11 @@ class PaymentService
             $paymentResponse = $this->restClient->send($request);
             $response['statusCode'] = $paymentResponse->getStatusCode();
 
-            if(Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))){
+            if (Utilities::isValidResponse(json_decode($paymentResponse->getStatusCode()))) {
                 $response['state'] = self::PAYMENT_SUCCESS;
             } else {
                 $response['state'] = self::PAYMENT_ERROR;
-                $response['message'] = "An error has occured";
+                $response['message'] = "An error has occurred";
             }
 
             return $response;

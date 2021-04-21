@@ -2,28 +2,22 @@
 
 namespace Checkoutcom\Helper;
 
-use Shopware\Core\System\SystemConfig\SystemConfigService;
-use Checkoutcom\Config\Config;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Client;
 use RuntimeException;
-use Checkoutcom\Helper\Url;
 use PackageVersions\Versions;
 
+/**
+ * Utilities
+ */
 class Utilities
 {
-    public function __construct(
-        SystemConfigService $systemConfigService
-    ) {
-        $this->systemConfigService = $systemConfigService;
-    }
-
     /**
      * Create post request
      */
-    public function postRequest( $method, $url, $header, $body = false)
+    public static function postRequest($method, $url, $header, $body = false)
     {
-        $request =  new Request( $method, $url, $header, $body );
+        $request =  new Request($method, $url, $header, $body);
         $restClient = new Client();
         
         try {
@@ -32,15 +26,16 @@ class Utilities
 
             return $body;
 
-        } catch (Exception $e) {
-            throw new RuntimeException('An error has occured ' . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new RuntimeException('An error has occurred ' . $e->getMessage());
         }
+        
     }
 
     /**
-     * Get redirection urls success-fail
+     * Get redirection urls success-fails
      */
-    public function getRedirectionUrl($server)
+    public static function getRedirectionUrl($server)
     {
         // checking $protocol in HTTP or HTTPS
         if (isset($server['HTTPS']) && $server['HTTPS'] != 'off') {
@@ -66,7 +61,7 @@ class Utilities
     /**
      * Get version of platform and plugin
      */
-    public function getVersions() {
+    public static function getVersions() {
         
         $pluginRootPath = dirname(__DIR__, 2);
         $pluginVersion = '';
@@ -86,7 +81,7 @@ class Utilities
      * Generate UUID
      * https://www.php.net/manual/en/function.uniqid.php
      */
-    public function uuid() {
+    public static function uuid() {
         return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
             mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
