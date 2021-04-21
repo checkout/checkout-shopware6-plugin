@@ -7,11 +7,17 @@ use Psr\Log\LoggerInterface;
 use Checkoutcom\Handler\CloudEventsHandler;
 use Monolog\Logger;
 
+/**
+ * CkoLogger
+ */
 class CkoLogger {
 
     protected $config;
     public static $logger;
-
+    
+    /**
+     * __construct
+     */
     public function __construct(Config $config, LoggerInterface $logger) {
         self::$logger = $logger;
         $this->config = $config;
