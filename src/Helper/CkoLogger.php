@@ -5,6 +5,7 @@ namespace Checkoutcom\Helper;
 use Checkoutcom\Config\Config;
 use Psr\Log\LoggerInterface;
 use Checkoutcom\Handler\CloudEventsHandler;
+use Monolog\Logger;
 
 class CkoLogger {
 
@@ -16,6 +17,7 @@ class CkoLogger {
         $this->config = $config;
 
         if ($this->config::logcloudEvent()) {
+            self::$logger = new Logger('cko-logger');
             self::$logger->pushHandler(new CloudEventsHandler(true));
         }
     }

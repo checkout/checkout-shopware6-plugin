@@ -49,17 +49,19 @@ class CloudEventsHandler extends AbstractProcessingHandler {
         $obj->specversion = self::SPECVERSION;
         $obj->id = Utilities::uuid();
         $obj->type = $data["type"] ?? $record["message"];
-        $obj->source = '/shopware6'. '/' . $_SERVER['SERVER_NAME'] . '/' . $environment;
-        $obj->data = $data["message"];
+        $obj->source = '/shopware6';
+        $obj->data->scope = $data["type"];
+        $obj->data->message = $data["message"];
         $obj->cko['correlationId'] = $data["data"]["id"] ?? Utilities::uuid();
         $obj->cko['loglevel'] = strtolower($record['level_name']);
+        $obj->cko['ddTags'] = "shop:{$environment}";
 
         $header =  [
             'Content-Type' => 'application/cloudevents+json',
         ];
 
         try {
-            $loggingRequest = Utilities::postRequest(
+            Utilities::postRequest(
                 'POST',
                 Url::getCloudEventUrl(),
                 $header,
@@ -69,5 +71,6 @@ class CloudEventsHandler extends AbstractProcessingHandler {
 
             throw new RuntimeException('Log to cloud event api failed : ' . $e->getMessage());
         }
+
     }
 }
