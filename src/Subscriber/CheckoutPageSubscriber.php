@@ -219,8 +219,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
     {
         $session = new Session();
 
-        $secretKey = $this->config::secretKey();
-
         $uuid = Utilities::uuid();
         $session->set('cko_uuid', $uuid);
 
@@ -229,7 +227,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $body = json_encode(['reference'=> $token ]);
         $header = [
-            'Authorization' => $secretKey,
+            'Authorization' => $this->config::secretKey(),
             'x-correlation-id' => $uuid,
             'Content-Type' => 'application/json'
         ];
