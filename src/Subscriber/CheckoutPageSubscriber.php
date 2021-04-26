@@ -64,7 +64,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $context = $args->getSalesChannelContext();
         
         // Get cko context
-        $ckoContext = $this->getCkoContext($token, $publicKey);
+        $ckoContext = $this->getCkoContext($token);
 
         $apmData = $this->getApmData($ckoContext);
         
@@ -215,9 +215,11 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
     /**
      * Get Context from shopware cloud plugin
      */
-    public function getCkoContext($token, $publicKey)
+    public function getCkoContext($token)
     {
         $session = new Session();
+
+        $secretKey = $this->config::secretKey();
 
         $uuid = Utilities::uuid();
         $session->set('cko_uuid', $uuid);
@@ -227,7 +229,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $body = json_encode(['reference'=> $token ]);
         $header = [
-            'Authorization' => $publicKey,
+            'Authorization' => $secretKey,
             'x-correlation-id' => $uuid,
             'Content-Type' => 'application/json'
         ];
