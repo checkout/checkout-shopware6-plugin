@@ -16,16 +16,6 @@
             <label>Public Key</label>
         </input-field>
 
-        <input-field type="url">
-            <name>ckoUrl</name>
-            <label>Checkout.com Url</label>
-        </input-field>
-
-        <input-field type="url">
-            <name>cloudPluginUrl</name>
-            <label>Cloud Plugin Url</label>
-        </input-field>
-
         <input-field type="bool">
             <name>cloudEventLog</name>
             <label>Log to CloudEvent</label>
