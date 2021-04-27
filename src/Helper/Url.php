@@ -16,8 +16,8 @@ class Url {
     public const CLOUDEVENT_LIVE_URL = "https://cloudevents.integration.checkout.com/logging";
     public const CKOURL_SBOX = "https://api.sandbox.checkout.com/";
     public const CKOURL_PROD = "https://api.checkout.com/";
-    public const CLOUDPLUGINURL_SBOX = "https://shopware6.cko-dev.ckotech.co/"; // change to sandbox url
-    public const CLOUDPLUGINURL_PROD = "https://shopware6.cko-dev.ckotech.co/"; // change to live url
+    public const CLOUDPLUGINURL_SBOX = "https://shopware6.integrations.sandbox.checkout.com/";
+    public const CLOUDPLUGINURL_PROD = "https://shopware6.integrations.checkout.com/";
     
     /**
      * cloudPluginUrl
