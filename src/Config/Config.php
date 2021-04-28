@@ -48,18 +48,4 @@ class Config
             self::SYSTEM_CONFIG_DOMAIN. 'secretKey'
         );
     }
-    
-    
-    /**
-     * logcloudEvent
-     *
-     * @return string
-     */
-    public static function logcloudEvent() : string
-    {
-        return (string) self::$systemConfigService->get(
-            self::SYSTEM_CONFIG_DOMAIN. 'cloudEventLog'
-        );
-    }
-
 }
