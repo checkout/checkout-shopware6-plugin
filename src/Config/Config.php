@@ -48,41 +48,4 @@ class Config
             self::SYSTEM_CONFIG_DOMAIN. 'secretKey'
         );
     }
-    
-    /**
-     * ckoUrl
-     *
-     * @return string
-     */
-    public static function ckoUrl() : string
-    {
-        return (string) self::$systemConfigService->get(
-            self::SYSTEM_CONFIG_DOMAIN. 'ckoUrl'
-        );
-    }
-    
-    /**
-     * cloudPluginUrl
-     *
-     * @return string
-     */
-    public static function cloudPluginUrl() : string
-    {
-        return (string) self::$systemConfigService->get(
-            self::SYSTEM_CONFIG_DOMAIN. 'cloudPluginUrl'
-        );
-    }
-    
-    /**
-     * logcloudEvent
-     *
-     * @return string
-     */
-    public static function logcloudEvent() : string
-    {
-        return (string) self::$systemConfigService->get(
-            self::SYSTEM_CONFIG_DOMAIN. 'cloudEventLog'
-        );
-    }
-
 }

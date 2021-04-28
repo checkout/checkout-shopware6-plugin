@@ -43,7 +43,7 @@ class PaymentService
             'POST',
             $url,
             [
-                'Authorization' => $this->config::publicKey(),
+                'Authorization' => $this->config::secretKey(),
                 'Content-Type' => 'application/json',
                 'Access-Control-Allow-Origin' => '*',
                 'x-correlation-id' => $correlationId
