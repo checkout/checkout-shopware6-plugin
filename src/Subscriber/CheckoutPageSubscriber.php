@@ -76,7 +76,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
         $name = $customerInfo->getFirstName()." ".$customerInfo->getLastName();
         $billingAddress = $this->setCutomerInfo($customerInfo);
-        
         $isLoggedIn = $context->getCustomer()->getGuest() == true ? false : true;
         $customField = $context->getCustomer()->getCustomFields();
         
@@ -89,7 +88,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'isLoggedIn' => $isLoggedIn,
                 'ckoPaymentMethodId' => $this->getPaymentMethodId($salesChannelContext),
                 'framesUrl' => Url::CKO_IFRAME_URL,
-                'activeToken' => $this->getPaymentInstrument($customerInfo->getCustomerId()),
+                'activeToken' => $this->getPaymentInstrument($context),
                 'isSaveCard' => $isSaveCard,
                 'customerBillingAddress' => $billingAddress,
                 'apms' => $apmData->apmName,
@@ -137,7 +136,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'isLoggedIn' => $isLoggedIn,
                 'ckoPaymentMethodId' => $this->getPaymentMethodId($salesChannelContext),
                 'framesUrl' => Url::CKO_IFRAME_URL,
-                'activeToken' => $this->getPaymentInstrument($customerInfo->getCustomerId()),
+                'activeToken' => $this->getPaymentInstrument($context),
                 'apms' => $apmData->apmName,
                 'clientToken' => $apmData->clientToken ?? null,
                 'sessionData' => $apmData->sessionData ?? null,
@@ -161,7 +160,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $arg->getPage()->assign(
             [
                 'isLoggedIn' => $isLoggedIn,
-                'activeToken' => $this->getPaymentInstrument($customerInfo->getCustomerId()),
+                'activeToken' => $this->getPaymentInstrument($context),
                 'current_page' => 'paymentMethodPageLoadedEvent'
             ]
         );
@@ -218,7 +217,6 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
     public function getCkoContext($token)
     {
         $session = new Session();
-
         $uuid = Utilities::uuid();
         $session->set('cko_uuid', $uuid);
 
@@ -257,8 +255,15 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
     /**
      * getPaymentInstrument
      */
-    public function getPaymentInstrument(string $customerId)
+    public function getPaymentInstrument($context)
     {
+        if ($context->getCustomer()->getGuest()) {
+           return false;
+        }
+
+        $customerInfo = $context->getCustomer()->getActiveBillingAddress();
+        $customerId = $customerInfo->getCustomerId();
+
         $url = Url::getRetrieveInstrumentUrl($customerId);
 
         $header = [

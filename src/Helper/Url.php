@@ -14,19 +14,43 @@ class Url {
      */
     public const CKO_IFRAME_URL = "https://cdn.checkout.com/js/framesv2.min.js";
     public const CLOUDEVENT_LIVE_URL = "https://cloudevents.integration.checkout.com/logging";
+    public const CKOURL_SBOX = "https://api.sandbox.checkout.com/";
+    public const CKOURL_PROD = "https://api.checkout.com/";
+    public const CLOUDPLUGINURL_SBOX = "https://shopware6.integration.sandbox.checkout.com/";
+    public const CLOUDPLUGINURL_PROD = "https://shopware6.integration.checkout.com/";
+    
+    /**
+     * cloudPluginUrl
+     *
+     */
+    private static function cloudPluginUrl(): string {
+        $url = self::isLive(config::secretKey()) === true ? self::CLOUDPLUGINURL_PROD : self::CLOUDPLUGINURL_SBOX;
+
+        return $url;
+    }
+    
+    /**
+     * ckoUrl
+     *
+     */
+    private static function ckoUrl(): string {
+        $url = self::isLive(config::secretKey()) === true ? self::CKOURL_PROD : self::CKOURL_SBOX;
+
+        return $url;
+    }
 
     /**
      * cloud plugin create payment url
      */ 
     public static function createPaymentUrl(): string {
-        return  self::checkUrlSlash(config::cloudPluginUrl())."payments";
+        return  self::cloudPluginUrl()."payments";
     }
 
     /**
      * cko verify payment url
      */
     public static function checkPaymentUrl(String $paymentId): string {
-        return self::checkUrlSlash(config::ckoUrl()). 'payments/'. $paymentId;
+        return self::ckoUrl(). 'payments/'. $paymentId;
     }
 
     /**
@@ -36,9 +60,9 @@ class Url {
         $isLive = self::isLive($key);
         
         if($param['payment_method'] === "klarna") {
-            $url = $isLive ? self::checkUrlSlash(config::ckoUrl()). 'klarna/'. 'orders/'. $param['payment_id']. '/voids' : self::checkUrlSlash(config::ckoUrl()). 'klarna-external/'. 'orders/'. $param['payment_id']. '/voids' ;
+            $url = $isLive ? self::checkUrlSlash(self::ckoUrl()). 'klarna/'. 'orders/'. $param['payment_id']. '/voids' : self::checkUrlSlash(self::ckoUrl()). 'klarna-external/'. 'orders/'. $param['payment_id']. '/voids' ;
         } else {
-            $url = self::checkUrlSlash(config::ckoUrl()). 'payments/'. $param['payment_id']. '/voids';
+            $url = self::checkUrlSlash(self::ckoUrl()). 'payments/'. $param['payment_id']. '/voids';
         }
 
         return $url;
@@ -48,7 +72,7 @@ class Url {
      * cko refund payment url
      */
     public static function refundPaymentUrl(String $paymentId) {
-        return self::checkUrlSlash(config::ckoUrl()). 'payments/'. $paymentId . '/refunds';
+        return self::ckoUrl(). 'payments/'. $paymentId . '/refunds';
     }
 
     /**
@@ -58,9 +82,9 @@ class Url {
         $isLive = self::isLive($key);
         
         if($param['payment_method'] === "klarna") {
-            $url = $isLive ? self::checkUrlSlash(config::ckoUrl()). 'klarna/'. 'orders/'. $param['payment_id']. '/captures' : self::checkUrlSlash(config::ckoUrl()). 'klarna-external/'. 'orders/'. $param['payment_id']. '/captures' ;
+            $url = $isLive ? self::checkUrlSlash(self::ckoUrl()). 'klarna/'. 'orders/'. $param['payment_id']. '/captures' : self::checkUrlSlash(self::ckoUrl()). 'klarna-external/'. 'orders/'. $param['payment_id']. '/captures' ;
         } else {
-            $url = self::checkUrlSlash(config::ckoUrl()). 'payments/'. $param['payment_id']. '/captures';
+            $url = self::checkUrlSlash(self::ckoUrl()). 'payments/'. $param['payment_id']. '/captures';
         }
 
         return $url;
@@ -70,21 +94,21 @@ class Url {
      * cloud plugin create context url
      */
     public static function getCloudContextUrl() {
-        return self::checkUrlSlash(config::cloudPluginUrl())."contexts";
+        return self::cloudPluginUrl()."contexts";
     }
 
     /**
      * cloud plugin delete card url
      */
     public static function getDeleteInstrumentUrl(String $customerId, String $cardId) {
-        return self::checkUrlSlash(config::cloudPluginUrl()) . 'customers'. '/'. $customerId. '/payment-instruments'. '/'. $cardId;
+        return self::cloudPluginUrl().'customers'.'/'.$customerId.'/payment-instruments'.'/'.$cardId;
     }
 
     /**
      * cloud plugin retrieve instrument url
      */
     public static function getRetrieveInstrumentUrl(string $customerId) {
-        return self::checkUrlSlash(config::cloudPluginUrl()).'customers/' . $customerId;
+        return self::cloudPluginUrl().'customers/'.$customerId;
     }
 
        

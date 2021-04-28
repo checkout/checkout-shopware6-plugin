@@ -49,29 +49,6 @@ class Config
         );
     }
     
-    /**
-     * ckoUrl
-     *
-     * @return string
-     */
-    public static function ckoUrl() : string
-    {
-        return (string) self::$systemConfigService->get(
-            self::SYSTEM_CONFIG_DOMAIN. 'ckoUrl'
-        );
-    }
-    
-    /**
-     * cloudPluginUrl
-     *
-     * @return string
-     */
-    public static function cloudPluginUrl() : string
-    {
-        return (string) self::$systemConfigService->get(
-            self::SYSTEM_CONFIG_DOMAIN. 'cloudPluginUrl'
-        );
-    }
     
     /**
      * logcloudEvent
