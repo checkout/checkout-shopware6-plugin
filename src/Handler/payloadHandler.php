@@ -68,6 +68,7 @@ class payloadHandler {
         $redirectionUrl = Utilities::getRedirectionUrl($_SERVER);
         $klarnaAuthorizationToken = '';
         $iban = '';
+        $sepaCreditorId = '';
 
 
         if ($session->get('AuthorizationToken')) {
