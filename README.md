@@ -24,7 +24,7 @@ By inserting the checkout.com iframe called Frames.js for card payments and othe
 
 # Installation
 
-You can find a full installation guide [here](https://github.com/checkout/checkout-shopware6-plugin/wiki/Installation)
+You can find a full installation guide [here](https://github.com/checkout/checkout-shopware6-plugin/wiki/Installation).
 
 # Initial Setup
 
