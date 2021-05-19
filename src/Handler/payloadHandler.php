@@ -68,10 +68,15 @@ class payloadHandler {
         $redirectionUrl = Utilities::getRedirectionUrl($_SERVER);
         $klarnaAuthorizationToken = '';
         $iban = '';
+        $sepaCreditorId = '';
 
 
         if ($session->get('AuthorizationToken')) {
             $klarnaAuthorizationToken = $session->get('AuthorizationToken');
+        }
+
+        if ($session->get('cko_sepa_creditor_id')) {
+            $sepaCreditorId = $session->get('cko_sepa_creditor_id');
         }
 
         if ($session->get('iban')) {
@@ -111,6 +116,7 @@ class payloadHandler {
 
         // payload for sepa
         if ($ckoApmSelected == 'sepa') {
+            $paymentParam['metadata']['sepa_creditor_id'] = $sepaCreditorId;
             $paymentParam['banking']['iban'] = $iban;
         }
 
