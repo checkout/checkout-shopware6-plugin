@@ -73,6 +73,9 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $isSaveCard = in_array('id', $apmData->apmName);
         $session->set('id', $isSaveCard);
 
+        $sepaCreditorId = isset($apmData->sepaCreditor['id']) ? $apmData->sepaCreditor['id'] : null;
+        $session->set('cko_sepa_creditor_id', $sepaCreditorId);
+
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
         $name = $customerInfo->getFirstName()." ".$customerInfo->getLastName();
         $billingAddress = $this->setCutomerInfo($customerInfo);
