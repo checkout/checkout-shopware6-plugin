@@ -80,6 +80,7 @@ function CheckoutcomGooglePay() {
 	 */
 	function insertButton() {
 		const button = paymentsClient.createButton({
+			buttonColor: window.gpay_button_color,
 			buttonSizeMode: 'fill',
 			onClick: handleClick
 		});
