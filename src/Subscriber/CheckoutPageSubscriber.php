@@ -19,6 +19,7 @@ use Checkoutcom\Helper\Url;
 use RuntimeException;
 use Checkoutcom\Helper\CkoLogger;
 use Checkoutcom\Helper\LogFields;
+use Checkoutcom\Service\MerchantService;
 
 /**
  * CheckoutPageSubscriber
@@ -27,6 +28,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 {
     protected $config;
     private $paymentRepository;
+    private $merchantService;
     public $restClient;
 
     /**
@@ -44,11 +46,12 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
     /**
      * Creates a new instance of the checkout confirm page subscriber.
      */
-    public function __construct(Config $config, EntityRepositoryInterface $paymentRepository)
+    public function __construct(Config $config, EntityRepositoryInterface $paymentRepository, MerchantService $merchantService)
     {
         $this->config = $config;
         $this->restClient = new Client();
-        $this->paymentRepository =  $paymentRepository;
+        $this->paymentRepository = $paymentRepository;
+        $this->merchantService = $merchantService;
     }
 
     /**
@@ -68,7 +71,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 
         $apmData = $this->getApmData($ckoContext);
 
-        if($this->config::enableGpay()) { 
+        if($this->merchantService->isGPayEnabled()) {
             array_push($apmData->apmName, 'gpay');
 
             $googlePayData = $this->getGooglePayData('checkout', $context, $args);
@@ -123,7 +126,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $isSaveCard = $session->get('id');
         $apmData = $this->getApmData($ckoContext);
 
-        if($this->config::enableGpay()) {
+        if($this->merchantService->isGPayEnabled()) {
             array_push($apmData->apmName, 'gpay');
 
             $googlePayData = $this->getGooglePayData('order', $context, $arg);
@@ -360,7 +363,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         return [
             "currency" => $currency->getIsoCode(),
             "totalPrice" => $price->getTotalPrice(),
-            "gPayMerchantId" => $this->config::gpayMerchantId(),
+            "gPayMerchantId" => $this->merchantService->getGPayMerchantId(),
+            "gpayButtonStyle" => $this->merchantService->getGPayButtonStyle(),
             "billingCountry" => $customerInfo->getCountry()->getIso()
         ];
     }
