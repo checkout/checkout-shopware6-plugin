@@ -26,8 +26,13 @@
         <!-- checkout page subscriber -->
         <service id="Checkoutcom\Subscriber\CheckoutPageSubscriber" class="Checkoutcom\Subscriber\CheckoutPageSubscriber">
             <argument type="service" id="Checkoutcom\Config\Config" />
+            <argument type="service" id="Checkoutcom\Service\MerchantService" />
             <argument type="service" id="payment_method.repository" />
             <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Checkoutcom\Service\MerchantService" class="Checkoutcom\Service\MerchantService">
+            <argument type="service" id="Checkoutcom\Config\Config" />
         </service>
 
         <!-- cko exception subsciber -->
