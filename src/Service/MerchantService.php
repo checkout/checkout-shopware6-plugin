@@ -36,9 +36,9 @@ class MerchantService
 
             $merchants = Utilities::postRequest($method, $url, $header);
 
-            if(count($merchants) > 0) {
+            if(count($merchants['platform']) > 0) {
 
-            	$this->merchant = $merchants[0];
+            	$this->merchant = $merchants['platform'][0];
 
             }
 
