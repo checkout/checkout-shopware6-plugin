@@ -52,7 +52,6 @@ class payloadHandler {
         $paymentParam['metadata']['save_payment_instrument'] = $isSaveCardCheck;
         $paymentParam['metadata']['customer_id'] = $order->getOrderCustomer()->getCustomerId();
         $paymentParam['metadata']['udf5'] = self::getIntegrationData();;
-       
         
         return $paymentParam;
     }
@@ -69,7 +68,6 @@ class payloadHandler {
         $klarnaAuthorizationToken = '';
         $iban = '';
         $sepaCreditorId = '';
-
 
         if ($session->get('AuthorizationToken')) {
             $klarnaAuthorizationToken = $session->get('AuthorizationToken');
