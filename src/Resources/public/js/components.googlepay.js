@@ -9,6 +9,7 @@ function CheckoutcomGooglePay() {
 	const $form = document.getElementById('confirmOrderForm');
 	const $buttonArea = document.getElementById('cko-google-pay-area');
 	const $publicKey = document.getElementById('cko_pk').value;
+	const $googlePayEnv = document.getElementById('gpay_env').value;
 	const $merchantId = document.getElementById('gpay_merchant_id').value;
 	const $ckoPaymentMethodId = document.getElementById('cko_payment_methodId').value;
 	const $defaultPaymentMethod = document.querySelectorAll('input[name="paymentMethodId"]:checked');
@@ -39,7 +40,7 @@ function CheckoutcomGooglePay() {
 			}
 	},
 		cardPaymentMethod = Object.assign({tokenizationSpecification: tokenizationSpecification}, baseCardPaymentMethod),
-		paymentsClient = new window.google.payments.api.PaymentsClient({environment:  'TEST'}),
+		paymentsClient = new window.google.payments.api.PaymentsClient({environment:  $googlePayEnv}),
 		isReadyToPayRequest = Object.assign({}, baseRequest),
 		$input = document.getElementById('checkoutcom-google-token');
 	var self = this;

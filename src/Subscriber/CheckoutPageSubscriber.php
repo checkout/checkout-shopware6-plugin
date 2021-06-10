@@ -108,7 +108,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'sessionData' => $apmData->sessionData ?? null,
                 'sepaCreditor' => $apmData->sepaCreditor ?? null,
                 'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null,
-                'googlePayData' => $googlePayData ?? null
+                'googlePayData' => $googlePayData ?? null,
+                'googlePayEnv' => Url::isLive($publicKey) ? 'PRODUCTION' : 'TEST'
             ]
         );
     }
