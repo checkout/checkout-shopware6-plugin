@@ -98,6 +98,13 @@ class Url {
     }
 
     /**
+     * cloud plugin merchant configuration url
+     */
+    public static function getCloudMerchantUrl() {
+        return self::cloudPluginUrl()."merchant/configuration";
+    }
+
+    /**
      * cloud plugin delete card url
      */
     public static function getDeleteInstrumentUrl(String $customerId, String $cardId) {

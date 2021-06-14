@@ -83,6 +83,28 @@ class ComponentsController extends StorefrontController
 
     /**
      * @RouteScope(scopes={"storefront"})
+     * @Route("/cko/components/js/googlepay/",name="frontend.cko.components.googlepay", options={"seo"="false"}, methods={"GET"})
+     */
+    public function componentsGooglePay(SalesChannelContext $context): Response
+    {
+        /**
+         * Get Google Pay JS
+         */
+        $googlepay = file_get_contents(
+            __DIR__ . '/../../Resources/public/js/components.googlepay.js'
+        );
+
+        /**
+         * Output the js.
+         */
+        return new Response($googlepay, 200, [
+                'Content-Type' => 'text/javascript'
+            ]
+        );
+    }
+
+    /**
+     * @RouteScope(scopes={"storefront"})
      * @Route("/cko/components/store-card-token/{customerId}/{cardToken}/{ckoContextId}/{ckoPaymentType}/{isSaveCardCheck}", 
      * name="frontend.cko.components.storeCardToken", options={"seo"="false"}, methods={"GET"})
      */

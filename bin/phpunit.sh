@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-./vendor/bin/phpunit
+php7.4 ./vendor/bin/phpunit

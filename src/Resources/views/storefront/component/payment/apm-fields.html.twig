@@ -84,6 +84,7 @@
                 <img class="cko-apm-logo" src="{{ asset('bundles/checkoutcom/images/sepa.svg') }}">
                 <label type="hidden" id="sepa-validation" style="color: red"></label>
             </label>
+            <br>
 
             {# display sepa fields #}
 
@@ -95,6 +96,14 @@
                 {% sw_include '@Storefront/storefront/component/payment/sepa-modal.html.twig' %}
             </div>
 
+        {% endif %}
+
+        {% if "gpay" in page.apms %}
+            <label>
+                <input  class="cko-apm" type="radio" id="cko-apm-gpay" name="cko-saved-card" value="gpay"/>
+                <img class="cko-apm-logo" src="{{ asset('bundles/checkoutcom/images/gpay.svg') }}">
+            </label>
+            <br>
         {% endif %}
 
     </ul>

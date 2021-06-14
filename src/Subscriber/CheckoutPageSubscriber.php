@@ -19,6 +19,7 @@ use Checkoutcom\Helper\Url;
 use RuntimeException;
 use Checkoutcom\Helper\CkoLogger;
 use Checkoutcom\Helper\LogFields;
+use Checkoutcom\Service\MerchantService;
 
 /**
  * CheckoutPageSubscriber
@@ -27,6 +28,7 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
 {
     protected $config;
     private $paymentRepository;
+    private $merchantService;
     public $restClient;
 
     /**
@@ -44,11 +46,12 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
     /**
      * Creates a new instance of the checkout confirm page subscriber.
      */
-    public function __construct(Config $config, EntityRepositoryInterface $paymentRepository)
+    public function __construct(Config $config, EntityRepositoryInterface $paymentRepository, MerchantService $merchantService)
     {
         $this->config = $config;
         $this->restClient = new Client();
-        $this->paymentRepository =  $paymentRepository;
+        $this->paymentRepository = $paymentRepository;
+        $this->merchantService = $merchantService;
     }
 
     /**
@@ -67,7 +70,13 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $ckoContext = $this->getCkoContext($token);
 
         $apmData = $this->getApmData($ckoContext);
-        
+
+        if($this->merchantService->isGPayEnabled()) {
+            array_push($apmData->apmName, 'gpay');
+
+            $googlePayData = $this->getGooglePayData('checkout', $context, $args);
+        }
+
         // check if save card is available in context
         // and save in session, this will be used when payment failed
         $isSaveCard = in_array('id', $apmData->apmName);
@@ -98,8 +107,9 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'clientToken' => $apmData->clientToken ?? null,
                 'sessionData' => $apmData->sessionData ?? null,
                 'sepaCreditor' => $apmData->sepaCreditor ?? null,
-                'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null
-
+                'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null,
+                'googlePayData' => $googlePayData ?? null,
+                'googlePayEnv' => Url::isLive($publicKey) ? 'PRODUCTION' : 'TEST'
             ]
         );
     }
@@ -116,6 +126,12 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         $ckoContext = $session->get('cko_context');
         $isSaveCard = $session->get('id');
         $apmData = $this->getApmData($ckoContext);
+
+        if($this->merchantService->isGPayEnabled()) {
+            array_push($apmData->apmName, 'gpay');
+
+            $googlePayData = $this->getGooglePayData('order', $context, $arg);
+        }
 
         $customerInfo = $context->getCustomer()->getActiveBillingAddress();
         $name = $customerInfo->getFirstName()." ".$customerInfo->getLastName();
@@ -338,6 +354,20 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
         }
 
         return $paymentMethodCategory;
+    }
+
+    public function getGooglePayData($page, $context, $args) { 
+        $currency = $context->getCurrency();
+        $price =  $page === 'checkout' ? $args->getPage()->getCart()->getPrice() : $args->getPage()->getOrder()->getPrice();
+        $customerInfo = $context->getCustomer()->getActiveBillingAddress();
+
+        return [
+            "currency" => $currency->getIsoCode(),
+            "totalPrice" => $price->getTotalPrice(),
+            "gPayMerchantId" => $this->merchantService->getGPayMerchantId(),
+            "gpayButtonStyle" => $this->merchantService->getGPayButtonStyle(),
+            "billingCountry" => $customerInfo->getCountry()->getIso()
+        ];
     }
 
 }
