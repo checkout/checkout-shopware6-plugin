@@ -1,7 +1,7 @@
 {
   "name": "checkoutcom/shopware6",
   "description": "Checkout.com Shopware6 plugin",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "type": "shopware-platform-plugin",
   "license": "MIT",
   "require": {
@@ -26,7 +26,7 @@
   "require-dev": {
     "phpstan/phpstan": "^0.12.84",
     "paragonie/sodium_compat": "^1.8",
-	  "shopware/storefront": "*",
+  "shopware/storefront": "*",
     "shopware/administration": "*"
   }
 }
