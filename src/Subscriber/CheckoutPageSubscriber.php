@@ -20,6 +20,7 @@ use RuntimeException;
 use Checkoutcom\Helper\CkoLogger;
 use Checkoutcom\Helper\LogFields;
 use Checkoutcom\Service\MerchantService;
+use PackageVersions\Versions;
 
 /**
  * CheckoutPageSubscriber
