@@ -58,37 +58,49 @@
             <argument type="service" id="Checkoutcom\Service\CustomerService" />
             <argument type="service" id="Checkoutcom\Config\Config" />
             <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService" />
-            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
-        </service>
-
-        <!-- Checkout controller -->
-        <service id="Checkoutcom\Storefront\Controller\CheckoutController" public="true">
-            <!-- <argument type="service" id="Shopware\Core\Checkout\Order\SalesChannel\OrderService"/> -->
+            <call method="setContainer">
+	            <argument type="service" id="service_container"/>
+            </call>
         </service>
 
         <!-- Refund controller -->
         <service id="Checkoutcom\Storefront\Controller\RefundController" public="true">
             <argument type="service" id="Checkoutcom\Service\PaymentService" />
+            <call method="setContainer">
+	            <argument type="service" id="service_container"/>
+            </call>
         </service>
 
         <!-- Void controller -->
         <service id="Checkoutcom\Storefront\Controller\VoidController" public="true">
             <argument type="service" id="Checkoutcom\Service\PaymentService" />
+            <call method="setContainer">
+	            <argument type="service" id="service_container"/>
+            </call>
         </service>
 
         <!-- Capture controller -->
         <service id="Checkoutcom\Storefront\Controller\CaptureController" public="true">
             <argument type="service" id="Checkoutcom\Service\PaymentService" />
+            <call method="setContainer">
+	            <argument type="service" id="service_container"/>
+            </call>
         </service>
 
         <!-- RedirectionController controller -->
         <service id="Checkoutcom\Storefront\Controller\RedirectionController" public="true">
             <argument type="service" id="Checkoutcom\Service\PaymentService" />
+            <call method="setContainer">
+	            <argument type="service" id="service_container"/>
+            </call>
         </service>
 
          <!-- SepaSourceController controller -->
         <service id="Checkoutcom\Storefront\Controller\SepaSourceController" public="true">
             <argument type="service" id="Checkoutcom\Service\PaymentService" />
+            <call method="setContainer">
+	            <argument type="service" id="service_container"/>
+            </call>
         </service>
 
         <!-- Utility service -->
