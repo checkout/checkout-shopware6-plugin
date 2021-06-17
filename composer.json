@@ -5,9 +5,9 @@
   "type": "shopware-platform-plugin",
   "license": "MIT",
   "require": {
-    "phpunit/phpunit": "^8.3",
-    "shopware/core": "^6.3",
-    "monolog/monolog": "^1"
+    "phpunit/phpunit": "^8 || ^9",
+    "shopware/core": "*",
+    "monolog/monolog": "^1 || ^2"
   },
   "autoload": {
     "psr-4": {
@@ -25,6 +25,8 @@
   },
   "require-dev": {
     "phpstan/phpstan": "^0.12.84",
-    "shopware/storefront": "6.3.5.4"
+    "paragonie/sodium_compat": "^1.8",
+  "shopware/storefront": "*",
+    "shopware/administration": "*"
   }
 }
