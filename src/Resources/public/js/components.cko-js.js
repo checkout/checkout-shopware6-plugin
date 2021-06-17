@@ -20,8 +20,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
   } else {
-    const form = document.querySelector("#confirmPaymentForm");
-    const button = form.querySelector("button");
+    const swVersion = document.getElementById("sw-version").value;
+
+    // form to submit when validation is done
+    const confirmForm = swVersion.startsWith('6.4') ? document.querySelector("#confirmOrderForm") : document.querySelector("#confirmPaymentForm")
+    
+    // button that triggers the validation process
+    const button = swVersion.startsWith('6.4') ? document.querySelector("#confirmFormSubmit") : form.querySelector("button")
+    
     const ckoId = document.getElementById("cko_pay_id").value;
     let isCkoPayment = false;
     let apmSelected;
@@ -238,13 +244,13 @@ document.addEventListener("DOMContentLoaded", function () {
               fadeIframeError();
             }, 3000);
           } else {
-            form.submit();
+            confirmForm.submit();
           }
         } else {
-          form.submit();
+          confirmForm.submit();
         }
       } else {
-        form.submit();
+        confirmForm.submit();
       }
     }
 
