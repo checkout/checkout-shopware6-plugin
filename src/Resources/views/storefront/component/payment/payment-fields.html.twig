@@ -1,6 +1,9 @@
 {# Add SW 6.4 compatibility #}
 
 {% block payment_fields_template %}
+
+    <input type='hidden' name='sw-version' id="sw-version" value="{{ page.shopwareVersion }}" />
+
     {% if '6.3' in page.shopwareVersion %}
         {% sw_include '@Checkoutcom/storefront/component/payment/sw6_3.html.twig' %}
 
