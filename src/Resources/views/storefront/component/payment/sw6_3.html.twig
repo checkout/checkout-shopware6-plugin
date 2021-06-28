@@ -104,7 +104,9 @@
                             <script>
                                 let localization = localeConvert(document.getElementById('locale_used').value);
 
-                                const form = document.querySelector('#confirmPaymentForm')
+                                const swVersion = "{{page.shopwareVersion}}"
+                                const form = document.querySelector('#changePaymentForm')
+
                                 Frames.init({
                                     publicKey : "{{ page.ckoPublicKey }}",
                                     localization : localization,
@@ -136,7 +138,7 @@
                                             .then(response => {})
                                             .catch(err => {});
 
-                                        form.submit()
+                                        swVersion.startsWith('6.4') ? document.querySelector("#confirmOrderForm").submit() : form.submit()
                                     }
                                 );
                  
