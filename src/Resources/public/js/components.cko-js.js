@@ -23,17 +23,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const swVersion = document.getElementById("sw-version").value;
 
     // form to submit when validation is done
-    const confirmForm = swVersion.startsWith('6.4') ? document.querySelector("#confirmOrderForm") : document.querySelector("#confirmPaymentForm")
+    const confirmForm = swVersion.startsWith('6.4') ? document.getElementById("changePaymentForm") : document.querySelector("#confirmPaymentForm")
     
     // button that triggers the validation process
-    const button = swVersion.startsWith('6.4') ? document.querySelector("#confirmFormSubmit") : form.querySelector("button")
+    const button = swVersion.startsWith('6.4') ? document.querySelector("#confirmFormSubmit") : confirmForm.querySelector("button")
     
     const ckoId = document.getElementById("cko_pay_id").value;
     let isCkoPayment = false;
     let apmSelected;
 
-    if (form.querySelector("input[name='paymentMethodId']:checked")) {
-      const radioChecked = form
+    if (confirmForm.querySelector("input[name='paymentMethodId']:checked")) {
+      const radioChecked = confirmForm
         .querySelector("input[name='paymentMethodId']:checked")
         .value.toString();
       isCkoPayment = radioChecked === ckoId ? true : false;
@@ -46,11 +46,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .value;
 
     let cardIframe = document.getElementsByClassName("cko-iframe")[0];
-    let radios = form.querySelectorAll("input[name='paymentMethodId']");
+    let radios = confirmForm.querySelectorAll("input[name='paymentMethodId']");
 
     let klarnaMethod = document.getElementById("cko-klarna-methods");
     let SepaFields = document.getElementById("cko-sepa");
-    let ckoPaymentMethod = form.querySelector("input[name='paymentMethodId']");
+    let ckoPaymentMethod = confirmForm.querySelector("input[name='paymentMethodId']");
     let paymentMethods = document.getElementsByName("paymentMethodId");
     let ckoPaymentMethods = document.getElementById(
       "cko_components_credit_card"
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (ckoPaymentMethod) {
       if (
-        form.querySelector("input[name='paymentMethodId']:checked").value ===
+        confirmForm.querySelector("input[name='paymentMethodId']:checked").value ===
         ckoPaymentMethodId
       ) {
         ckoPaymentMethods.style.display = "block";

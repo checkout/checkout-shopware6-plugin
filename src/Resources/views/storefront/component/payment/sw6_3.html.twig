@@ -103,8 +103,7 @@
                             {# Initialise framesjs #}
                             <script>
                                 let localization = localeConvert(document.getElementById('locale_used').value);
-
-                                const swVersion = "{{page.shopwareVersion}}"
+                                
                                 const form = document.querySelector('#changePaymentForm')
 
                                 Frames.init({
@@ -138,7 +137,7 @@
                                             .then(response => {})
                                             .catch(err => {});
 
-                                        swVersion.startsWith('6.4') ? document.querySelector("#confirmOrderForm").submit() : form.submit()
+                                        form.submit()
                                     }
                                 );
                  
