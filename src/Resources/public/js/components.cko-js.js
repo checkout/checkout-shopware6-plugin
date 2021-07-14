@@ -22,11 +22,14 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     const swVersion = document.getElementById("sw-version").value;
 
-    // form to submit when validation is done
+    // form used to display cko payment methods
     const confirmForm = swVersion.startsWith('6.4') ? document.getElementById("changePaymentForm") : document.querySelector("#confirmPaymentForm")
-    
+
     // button that triggers the validation process
     const button = swVersion.startsWith('6.4') ? document.querySelector("#confirmFormSubmit") : confirmForm.querySelector("button")
+    
+    // form to submit when validation is done
+    const submitForm = swVersion.startsWith('6.4') ? document.querySelector("#confirmOrderForm") : document.querySelector("#confirmPaymentForm")
     
     const ckoId = document.getElementById("cko_pay_id").value;
     let isCkoPayment = false;
@@ -244,7 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
               fadeIframeError();
             }, 3000);
           } else {
-            confirmForm.submit();
+            submitForm.submit();
           }
         } else {
           confirmForm.submit();
