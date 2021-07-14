@@ -184,7 +184,7 @@ function CheckoutcomGooglePay() {
 			.then(res => res.json())
 			.then(response => {
 				if(response.success) {
-					swVersion.startsWith("6.4") ? document.querySelector("#confirmOrderForm").submit() : document.querySelector('#changePaymentForm').submit();
+					document.querySelector("#confirmOrderForm").submit()
 					document.getElementsByClassName('gpay-card-info-container')[0].disabled = true
 				} else {
 					write('Error while saving card token');
