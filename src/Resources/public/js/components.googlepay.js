@@ -6,7 +6,6 @@
  * @return     {Function}  { description_of_the_return_value }
  */
 function CheckoutcomGooglePay() {
-	const $form = document.getElementById('confirmOrderForm');
 	const $buttonArea = document.getElementById('cko-google-pay-area');
 	const $publicKey = document.getElementById('cko_pk').value;
 	const $googlePayEnv = document.getElementById('gpay_env').value;
@@ -14,6 +13,7 @@ function CheckoutcomGooglePay() {
 	const $ckoPaymentMethodId = document.getElementById('cko_payment_methodId').value;
 	const $defaultPaymentMethod = document.querySelectorAll('input[name="paymentMethodId"]:checked');
 	const $selectedPaymentMethodId = $defaultPaymentMethod[0].value
+	const swVersion = document.getElementById("sw_version").value
 
 	/**
 	 * Constants
@@ -184,7 +184,7 @@ function CheckoutcomGooglePay() {
 			.then(res => res.json())
 			.then(response => {
 				if(response.success) {
-					jQuery('#confirmOrderForm > .btn').click();
+					swVersion.startsWith("6.4") ? document.querySelector("#confirmOrderForm").submit() : document.querySelector('#changePaymentForm').submit();
 					document.getElementsByClassName('gpay-card-info-container')[0].disabled = true
 				} else {
 					write('Error while saving card token');

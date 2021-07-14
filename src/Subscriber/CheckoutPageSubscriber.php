@@ -163,7 +163,10 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'sessionData' => $apmData->sessionData ?? null,
                 'sepaCreditor' => $apmData->sepaCreditor ?? null,
                 'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null,
-                'customerBillingAddress' => $billingAddress
+                'customerBillingAddress' => $billingAddress,
+                'googlePayData' => $googlePayData ?? null,
+                'googlePayEnv' => Url::isLive($publicKey) ? 'PRODUCTION' : 'TEST',
+                'shopwareVersion' => strtok(Versions::getVersion('shopware/core'), '@')
             ]
         );
     }
