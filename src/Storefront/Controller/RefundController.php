@@ -21,7 +21,7 @@ class RefundController extends StorefrontController
 
     /**
      * @RouteScope(scopes={"api"})
-     * @Route("/api/v{version}/cko/refund", defaults={"auth_enabled"=true}, name="cko.api.refund", methods={"POST"})
+     * @Route("/{nodes}/cko/refund", defaults={"auth_enabled"=true, "nodes"=null}, requirements={"nodes"=".+"}, name="cko.api.refund", methods={"POST"})
      *
      */
     public function refund(Request $request): JsonResponse

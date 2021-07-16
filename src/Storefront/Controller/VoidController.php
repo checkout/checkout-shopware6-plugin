@@ -20,7 +20,7 @@ class VoidController extends StorefrontController
 
     /**
      * @RouteScope(scopes={"api"})
-     * @Route("/api/v{version}/cko/void", defaults={"auth_enabled"=true}, name="cko.api.void", methods={"POST"})
+     * @Route("/{nodes}/cko/void", defaults={"auth_enabled"=true, "nodes"=null}, requirements={"nodes"=".+"}, name="cko.api.void", methods={"POST"})
      *
      */
     public function void(Request $request): JsonResponse

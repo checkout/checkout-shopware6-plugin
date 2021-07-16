@@ -21,7 +21,7 @@ class CaptureController extends StorefrontController
 
     /**
      * @RouteScope(scopes={"api"})
-     * @Route("/api/v{version}/cko/capture", defaults={"auth_enabled"=true}, name="cko.api.capture", methods={"POST"})
+     * @Route("/{nodes}/cko/capture", defaults={"auth_enabled"=true, "nodes"=null}, requirements={"nodes"=".+"}, name="cko.api.capture", methods={"POST"})
      *
      */
     public function capture(Request $request): JsonResponse
