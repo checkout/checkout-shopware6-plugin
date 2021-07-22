@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
             submitForm.submit();
           }
         } else {
-          confirmForm.submit();
+          submitForm.submit();
         }
       } else {
         confirmForm.submit();
