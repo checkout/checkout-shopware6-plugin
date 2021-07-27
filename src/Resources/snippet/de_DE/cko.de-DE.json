@@ -17,7 +17,7 @@
             "paywithcard" : "Kartenzahlung",
             "IbanMessage" : "Bitte geben Sie Ihre IBAN Nummer ein",
             "Iban" : "IBAN:",
-            "sepaConfirm" : "Speichern und fortfahren",
+            "sepaConfirm" : "Bitte gehen Sie zur Kasse",
             "error" : "Fehler aufgetreten",
             "validIbanMessage": "Bitte geben Sie ein gültiges Iban ein",
             "clickContinue": "Mandat nicht angenommen, klicken Sie auf Weiter",
