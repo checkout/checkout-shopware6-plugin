@@ -17,7 +17,7 @@
             "paywithcard" : "card Payment",
             "IbanMessage" : "Please enter IBAN number",
             "Iban" : "IBAN:",
-            "sepaConfirm" : "click save to continue",
+            "sepaConfirm" : "Please proceed to checkout",
             "error" : "error occured",
             "validIbanMessage": "Please enter valid Iban",
             "clickContinue": "Mandate not accepted, click continue",

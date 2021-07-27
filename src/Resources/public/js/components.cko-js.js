@@ -26,7 +26,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmForm = swVersion.startsWith('6.4') ? document.getElementById("changePaymentForm") : document.querySelector("#confirmPaymentForm")
 
     // button that triggers the validation process
-    const button = swVersion.startsWith('6.4') ? document.querySelector("#confirmFormSubmit") : confirmForm.querySelector("button")
+    let  button;
+    if(swVersion.startsWith('6.4')) {
+      button = document.querySelector("#confirmFormSubmit") ? document.querySelector("#confirmFormSubmit") : document.querySelector("#confirmOrderForm").querySelector("button")
+    } else {
+      button  = confirmForm.querySelector("button")
+    }
     
     // form to submit when validation is done
     const submitForm = swVersion.startsWith('6.4') ? document.querySelector("#confirmOrderForm") : document.querySelector("#confirmPaymentForm")
@@ -253,7 +258,7 @@ document.addEventListener("DOMContentLoaded", function () {
           submitForm.submit();
         }
       } else {
-        confirmForm.submit();
+        submitForm.submit();
       }
     }
 
