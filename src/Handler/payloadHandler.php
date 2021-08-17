@@ -44,7 +44,6 @@ class payloadHandler {
         $paymentParam['token'] = $token;
         $paymentParam['success_url'] = $redirectionUrl['success'];
         $paymentParam['failure_url'] = $redirectionUrl['fail'];
-        $paymentParam['3ds']['enabled'] = true;
         $paymentParam['metadata']['reference'] = $orderNumber;
         $paymentParam['metadata']['correlation_id'] = $correlationId;
         $paymentParam['metadata']['order_transaction_id'] = $orderTransactionId;
