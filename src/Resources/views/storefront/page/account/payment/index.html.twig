@@ -1,0 +1,8 @@
+{% sw_extends '@Storefront/storefront/page/account/payment/index.html.twig' %}
+
+{% block page_account_payment_fields %}
+    {% sw_include '@Checkoutcom/storefront/component/payment/payment-fields.html.twig' with {
+        'visiblePaymentMethodsLimit': null,
+        'selectedPaymentMethodId': context.customer.defaultPaymentMethodId
+    } %}
+{% endblock %}

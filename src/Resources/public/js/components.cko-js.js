@@ -20,14 +20,28 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
   } else {
-    const form = document.querySelector("#confirmPaymentForm");
-    const button = form.querySelector("button");
+    const swVersion = document.getElementById("sw-version").value;
+
+    // form used to display cko payment methods
+    const confirmForm = swVersion.startsWith('6.4') ? document.getElementById("changePaymentForm") : document.querySelector("#confirmPaymentForm")
+
+    // button that triggers the validation process
+    let  button;
+    if(swVersion.startsWith('6.4')) {
+      button = document.querySelector("#confirmFormSubmit") ? document.querySelector("#confirmFormSubmit") : document.querySelector("#confirmOrderForm").querySelector("button")
+    } else {
+      button  = confirmForm.querySelector("button")
+    }
+    
+    // form to submit when validation is done
+    const submitForm = swVersion.startsWith('6.4') ? document.querySelector("#confirmOrderForm") : document.querySelector("#confirmPaymentForm")
+    
     const ckoId = document.getElementById("cko_pay_id").value;
     let isCkoPayment = false;
     let apmSelected;
 
-    if (form.querySelector("input[name='paymentMethodId']:checked")) {
-      const radioChecked = form
+    if (confirmForm.querySelector("input[name='paymentMethodId']:checked")) {
+      const radioChecked = confirmForm
         .querySelector("input[name='paymentMethodId']:checked")
         .value.toString();
       isCkoPayment = radioChecked === ckoId ? true : false;
@@ -40,11 +54,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .value;
 
     let cardIframe = document.getElementsByClassName("cko-iframe")[0];
-    let radios = form.querySelectorAll("input[name='paymentMethodId']");
+    let radios = confirmForm.querySelectorAll("input[name='paymentMethodId']");
 
     let klarnaMethod = document.getElementById("cko-klarna-methods");
     let SepaFields = document.getElementById("cko-sepa");
-    let ckoPaymentMethod = form.querySelector("input[name='paymentMethodId']");
+    let ckoPaymentMethod = confirmForm.querySelector("input[name='paymentMethodId']");
     let paymentMethods = document.getElementsByName("paymentMethodId");
     let ckoPaymentMethods = document.getElementById(
       "cko_components_credit_card"
@@ -62,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (ckoPaymentMethod) {
       if (
-        form.querySelector("input[name='paymentMethodId']:checked").value ===
+        confirmForm.querySelector("input[name='paymentMethodId']:checked").value ===
         ckoPaymentMethodId
       ) {
         ckoPaymentMethods.style.display = "block";
@@ -238,13 +252,13 @@ document.addEventListener("DOMContentLoaded", function () {
               fadeIframeError();
             }, 3000);
           } else {
-            form.submit();
+            submitForm.submit();
           }
         } else {
-          form.submit();
+          submitForm.submit();
         }
       } else {
-        form.submit();
+        submitForm.submit();
       }
     }
 

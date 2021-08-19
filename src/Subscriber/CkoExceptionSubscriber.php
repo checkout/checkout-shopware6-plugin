@@ -37,7 +37,7 @@ class CkoExceptionSubscriber implements EventSubscriberInterface {
     public function logException(ExceptionEvent $event)
     {
 
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
 
         if (!$exception instanceof RuntimeException)
             CkoLogger::log()->Error(

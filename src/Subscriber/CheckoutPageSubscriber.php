@@ -20,6 +20,7 @@ use RuntimeException;
 use Checkoutcom\Helper\CkoLogger;
 use Checkoutcom\Helper\LogFields;
 use Checkoutcom\Service\MerchantService;
+use PackageVersions\Versions;
 
 /**
  * CheckoutPageSubscriber
@@ -109,7 +110,8 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'sepaCreditor' => $apmData->sepaCreditor ?? null,
                 'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null,
                 'googlePayData' => $googlePayData ?? null,
-                'googlePayEnv' => Url::isLive($publicKey) ? 'PRODUCTION' : 'TEST'
+                'googlePayEnv' => Url::isLive($publicKey) ? 'PRODUCTION' : 'TEST',
+                'shopwareVersion' => strtok(Versions::getVersion('shopware/core'), '@')
             ]
         );
     }
@@ -161,7 +163,10 @@ class CheckoutPageSubscriber implements EventSubscriberInterface
                 'sessionData' => $apmData->sessionData ?? null,
                 'sepaCreditor' => $apmData->sepaCreditor ?? null,
                 'paymentMethodCategory' => $this->getPaymentMethodCategory($apmData->paymentMethodAvailable ?? null) ?? null,
-                'customerBillingAddress' => $billingAddress
+                'customerBillingAddress' => $billingAddress,
+                'googlePayData' => $googlePayData ?? null,
+                'googlePayEnv' => Url::isLive($publicKey) ? 'PRODUCTION' : 'TEST',
+                'shopwareVersion' => strtok(Versions::getVersion('shopware/core'), '@')
             ]
         );
     }

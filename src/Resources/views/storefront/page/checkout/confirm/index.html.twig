@@ -10,7 +10,8 @@
                 <input type="hidden" id="gpay_merchant_id" name="gpay_currency" value = "{{page.googlePayData.gPayMerchantId}}" />
                 <input type="hidden" name="cko_payment_methodId" id="cko_payment_methodId" value="{{page.ckoPaymentMethodId}}" />
                 <input type="hidden" name="gpay_env" id="gpay_env" value="{{page.googlePayEnv}}" />
-                
+                <input type="hidden" name="sw_version" id="sw_version" value="{{page.shopwareVersion}}" />
+                <br>
                 <script>
                     /**
                     * Setting these info as global variable as we need them in Gpay script
